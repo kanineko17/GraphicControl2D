@@ -1,0 +1,12 @@
+bin/
+obj/
+*.user
+*.suo
+*.cache
+*.log
+*.tmp
+*.db
+*.DS_Store
+.vs/
+packages/
+LocalData/
