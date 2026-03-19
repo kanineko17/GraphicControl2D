@@ -1,0 +1,185 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Linq;
+using System.Numerics;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace graphicbox2d
+{
+    /// <summary>
+    /// 円図形クラス
+    /// </summary>
+    public class Circle2D : FillObject2D
+    {
+        // ===============================================================================
+        // 公開プロパティ
+        // ===============================================================================
+
+        /// <summary>
+        /// 図形の種類
+        /// </summary>
+        public override eObject2DType m_Type => eObject2DType.Circle;
+
+        /// <summary>
+        /// X座標
+        /// </summary>
+        public float X { get; set; } = 0;
+
+        /// <summary>
+        /// Y座標
+        /// </summary>
+        public float Y { get; set; } = 0;
+
+        /// <summary>
+        /// 円の半径
+        /// </summary>
+        public float R { get; set; } = 0;
+
+
+        // ===============================================================================
+        // 非公開プロパティ
+        // ===============================================================================
+
+        /// <summary>
+        /// 図形の中心点
+        /// </summary>
+        internal override Vector2 CenterPoint { get { return new Vector2(X, Y); } }
+
+        // ===============================================================================
+        // 公開メソッド
+        // ===============================================================================
+
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public Circle2D()
+        {
+        }
+
+        /// <summary>
+        /// コピーを作成する
+        /// </summary>
+        /// <returns>コピーしたオブジェクト</returns>
+        public override Object2D Clone()
+        {
+            Circle2D clone = new Circle2D();
+
+            // 基底クラスのデータをコピー
+            this.BaseCopyDataTo(clone);
+
+            // 派生クラスのデータをコピー
+            clone.X = this.X;
+            clone.Y = this.Y;
+            clone.R = this.R;
+
+            return clone;
+        }
+
+        // ===============================================================================
+        // 非公開メソッド
+        // ===============================================================================
+
+        /// <summary>
+        /// マウスヒット中の図形（拡大した図形）を返す。
+        /// </summary>
+        /// <returns>拡張された図形</returns>
+        internal override Object2D GetHitObject()
+        {
+            Circle2D circle = (Circle2D)this.Clone();
+
+            if (circle.IsFilled == true)
+            {
+                circle.R *= MouseHitPolyOffset;
+            }
+            else
+            {
+                circle.LineWidth += MouseHitLineOffset;
+            }
+
+            return circle;
+        }
+
+        /// <summary>
+        /// マウスポイントがこの図形にヒットしているか判定する。
+        /// </summary>
+        /// <param name="MousePoint">マウスポイント</param>
+        /// <param name="MusePointRange">マウスヒット半径</param>
+        /// <returns></returns>
+        internal override eMouseHitType IsHitMousePoint(PointF MousePoint, float MusePointRange)
+        {
+            eMouseHitType eMouseHitType;
+
+            if (IsFilled == true)
+            {
+                eMouseHitType = GraphicCaluculate.IsHitMouseRangeFillCircle(this.X, this.Y, this.R, MousePoint, MusePointRange);
+            }
+            else
+            {
+                eMouseHitType = GraphicCaluculate.IsHitMouseRangeLineCircle(this.X, this.Y, this.R, this.LineWidth, MousePoint, MusePointRange);
+            }
+
+            return eMouseHitType;
+        }
+
+        /// <summary>
+        /// マウスポイントとこの図形の距離を取得する
+        /// </summary>
+        /// <param name="X">マウスポイントX座標</param>
+        /// <param name="Y">マウスポイントY座標</param>
+        /// <returns>距離</returns>
+        internal override float GetDistanceHitMousePoint(float X, float Y)
+        {
+            Vector2 MousePoint = new Vector2(X, Y);
+
+            return Vector2.Distance(MousePoint, CenterPoint);
+        }
+
+        /// <summary>
+        /// 図形を移動させる
+        /// </summary>
+        /// <param name="Movement">移動量</param>
+        internal override void Move(PointF Movement)
+        {
+            X += Movement.X;
+            Y += Movement.Y;
+        }
+
+        /// <summary>
+        /// 図形を移動させる
+        /// </summary>
+        /// <param name="X">移動量X</param>
+        /// <param name="Y">移動量Y</param>
+        internal override void Move(float X, float Y)
+        {
+            this.X += X;
+            this.Y += Y;
+        }
+
+        /// <summary>
+        /// バウンディングボックスを取得する
+        /// </summary>
+        internal override PointF[] GetBoundingBox()
+        {
+            return GraphicCaluculate.GetBoundingBoxCircle(X, Y, R);
+        }
+
+        /// <summary>
+        /// コピー元のObject2Dデータをコピー先にコピーする。
+        /// </summary>
+        /// <param name="target">コピー先</param>
+        protected new void BaseCopyDataTo(Object2D target)
+        {
+            base.BaseCopyDataTo(target);
+
+            Circle2D circle = (Circle2D)target;
+
+            circle.X = this.X;
+            circle.Y = this.Y;
+            circle.R = this.R;
+        }
+    }
+}
