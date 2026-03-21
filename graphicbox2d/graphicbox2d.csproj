@@ -6,7 +6,7 @@
 
     <!-- NuGet パッケージ情報 -->
     <PackageId>GraphicBox2D</PackageId>
-    <Version>3.2.2</Version>
+    <Version>3.2.3</Version>
     <Authors>Yuji</Authors>
     <Company>Kanineko</Company>
     <Description>2D Graphics Drawing Control</Description>
@@ -52,14 +52,12 @@
     </Reference>
 
     <!-- net472 -->
-    <None Include="DLL\CSharrpSusikiCalculater.dll"
-          Pack="true"
-          PackagePath="lib\net472" />
+    <None Include="DLL\CSharrpSusikiCalculater.dll" Pack="true" PackagePath="lib\net472" />
 
     <!-- net8 -->
-    <None Include="DLL\CSharrpSusikiCalculater.dll"
-          Pack="true"
-          PackagePath="lib\net8.0-windows" />
+    <None Include="DLL\CSharrpSusikiCalculater.dll" Pack="true" PackagePath="lib\net8.0-windows">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <!-- 依存パッケージ -->
