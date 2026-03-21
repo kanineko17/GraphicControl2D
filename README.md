@@ -150,7 +150,7 @@ this.graphic2DControl1.LoadData(@"C:\Users\kani\Desktop\Data\shapes.json");
 
 ### Background Image
 If you want to use the background image shown in this README, you can download it from the following link:
-「https://raw.githubusercontent.com/kanineko17/GraphicControl2D/main/README_PNG/README2.png」
+https://raw.githubusercontent.com/kanineko17/GraphicControl2D/main/README_PNG/README2.png
 
 Then, set it to the BackgroundImage property of graphicBox2d.
 ![GraphicBox2D Demo](https://raw.githubusercontent.com/kanineko17/GraphicControl2D/main/README_PNG/README6.png)
