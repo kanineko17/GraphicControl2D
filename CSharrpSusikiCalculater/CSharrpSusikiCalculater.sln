@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36717.8 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSharrpSusikiCalculater", "CSharrpSusikiCalculater\CSharrpSusikiCalculater.csproj", "{A4984897-1D64-4F09-88D2-938329F72D9E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "test", "test\test.csproj", "{FBF8A429-BE5C-4531-B2C9-86E707A4A10F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A4984897-1D64-4F09-88D2-938329F72D9E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A4984897-1D64-4F09-88D2-938329F72D9E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A4984897-1D64-4F09-88D2-938329F72D9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A4984897-1D64-4F09-88D2-938329F72D9E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FBF8A429-BE5C-4531-B2C9-86E707A4A10F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FBF8A429-BE5C-4531-B2C9-86E707A4A10F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FBF8A429-BE5C-4531-B2C9-86E707A4A10F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FBF8A429-BE5C-4531-B2C9-86E707A4A10F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B08691AF-C3CD-452C-83C3-E8F474596ACE}
+	EndGlobalSection
+EndGlobal

@@ -55,7 +55,9 @@
     <None Include="DLL\CSharrpSusikiCalculater.dll" Pack="true" PackagePath="lib\net472" />
 
     <!-- net8 -->
-    <None Include="DLL\CSharrpSusikiCalculater.dll" Pack="true" PackagePath="lib\net8.0-windows" />
+    <None Include="DLL\CSharrpSusikiCalculater.dll" Pack="true" PackagePath="lib\net8.0-windows">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <!-- 依存パッケージ -->
