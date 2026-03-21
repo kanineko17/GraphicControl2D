@@ -1,4 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
   <PropertyGroup>
     <TargetFrameworks>net472;net8.0-windows</TargetFrameworks>
     <UseWindowsForms>true</UseWindowsForms>
@@ -10,52 +11,74 @@
     <Company>Kanineko</Company>
     <Description>2D Graphics Drawing Control</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <RepositoryUrl>http://kanineko.com/graphic2dcontroltop/</RepositoryUrl>
     <PackageIcon>icon.png</PackageIcon>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+
+    <RepositoryUrl>https://github.com/kanineko17/GraphicControl2D.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+
+    <!-- 🔥 重要（これが今回のキモ） -->
+    <IncludeBuildOutput>true</IncludeBuildOutput>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+
+    <!-- ソース自動管理 -->
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
-    <Title>GraphicControl2D</Title>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
+  <!-- ソースコード -->
   <ItemGroup>
-    <!-- ソースコードとリソースを自動で全部含める -->
     <Compile Include="**\*.cs" />
     <EmbeddedResource Include="**\*.resx" />
+
     <Compile Remove="obj\**" />
     <EmbeddedResource Remove="obj\**" />
     <None Remove="obj\**" />
-    <EmbeddedResource Include="Graphic2DControl.bmp" />
 
-    <!-- アイコン -->
-    <None Include="icon.png" Pack="true" PackagePath="\" />
+    <EmbeddedResource Include="Graphic2DControl.bmp" />
   </ItemGroup>
 
+  <!-- アイコン -->
+  <ItemGroup>
+    <None Include="icon.png" Pack="true" PackagePath="\" />
+    <None Include="README.md" Pack="true" PackagePath="" />
+  </ItemGroup>
+
+  <!-- 🔥 外部DLL（ちゃんと両ターゲットに対応させる） -->
   <ItemGroup>
     <Reference Include="CSharrpSusikiCalculater">
       <HintPath>DLL\CSharrpSusikiCalculater.dll</HintPath>
       <Private>true</Private>
     </Reference>
 
-    <None Include="DLL\CSharrpSusikiCalculater.dll" Pack="true" PackagePath="lib\net472" />
+    <!-- net472 -->
+    <None Include="DLL\CSharrpSusikiCalculater.dll"
+          Pack="true"
+          PackagePath="lib\net472" />
+
+    <!-- net8 -->
+    <None Include="DLL\CSharrpSusikiCalculater.dll"
+          Pack="true"
+          PackagePath="lib\net8.0-windows" />
   </ItemGroup>
-  
+
+  <!-- 依存パッケージ -->
   <ItemGroup>
-    <!-- SkiaSharp の正しい依存関係 -->
     <PackageReference Include="Microsoft.Bcl.HashCode" Version="6.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+
+    <!-- SkiaSharp -->
     <PackageReference Include="SkiaSharp" Version="3.119.1" />
     <PackageReference Include="SkiaSharp.Views.WindowsForms" Version="3.119.1" />
     <PackageReference Include="SkiaSharp.NativeAssets.Win32" Version="3.119.1" />
 
-    <!-- 他の依存関係 -->
+    <!-- 低レベル依存 -->
     <PackageReference Include="System.Memory" Version="4.5.5" />
     <PackageReference Include="System.Buffers" Version="4.6.1" />
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.5.3" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <None Include="README.md" Pack="true" PackagePath="" />
+
+    <!-- SourceLink -->
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
   </ItemGroup>
 
 </Project>
