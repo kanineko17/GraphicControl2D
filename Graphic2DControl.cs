@@ -1570,6 +1570,8 @@ namespace graphicbox2d
                 Controls.Add(skControl);
                 skControl.Focus(); // ← 起動直後にキー入力を受けるため
             }
+
+            SetskBackGroundBitmap(this.BackgroundImage);
         }
 
         /// <summary>

@@ -168,14 +168,17 @@ namespace graphicbox2d
         public Color SelectBoxColor { get { return _SelectBoxColor; } set { SetWithInvalidate(ref _SelectBoxColor, in value); } }
         private Color _SelectBoxColor = Color.White;
 
+
+
+
+        #region オーバーライドコントロールプロパティ
+
         /// <summary>
-        /// グリッド座標テキストの色
+        /// 背景画像
         /// </summary>
-        public override Color ForeColor
-        {
-            get => base.ForeColor;
-            set => base.ForeColor = value;
-        }
+        public override Image BackgroundImage { get => _BackgroundImage; set => SetWithInvalidate(ref _BackgroundImage, in value); }
+        private Image _BackgroundImage = null;
+        #endregion
 
         /// <summary>
         /// 値を設定し、変更があった場合はInvalidateを呼び出します。
@@ -185,10 +188,20 @@ namespace graphicbox2d
         /// <param name="value">更新後データ</param>
         private void SetWithInvalidate<T>(ref T Property, in T value)
         {
+            if (Property == null)
+            {
+                Property = value;
+                // デザインモード用の再描画要求
+                this.Refresh();
+
+                return;
+            }
+
             if(Property.Equals(value) == false)
             {
                 Property = value;
-                this.Invalidate();
+                // デザインモード用の再描画要求
+                this.Refresh();
             }
         }
 
