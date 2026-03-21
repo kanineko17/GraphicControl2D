@@ -20,11 +20,11 @@ namespace test
 
         private void button1_Click(object sender, EventArgs e)
         {
-            //PointF[] tttt =  test222();
-            var t = SusikiCalculater.Caluculate("√2x + 2√(2(x+2)^(2+2x^x))*2(x+2)", 0, 1, 0.1);
+            ////PointF[] tttt =  test222();
+            //var t = SusikiCalculater.Caluculate("√2x + 2√(2(x+2)^(2+2x^x))*2(x+2)", 0, 1, 0.1);
 
-            string test = SusikiCalculater.ConertSusikiToCSharpSusiki("||sin(x)| - |cos(x)||+2^2√(1+|sin(x)|) + |tan(x/2) + |-2||");
-            test = SusikiCalculater.ConertSusikiToCSharpSusiki("√2x + 2*√(2(x+2)^(2+2x^x))*2(x+2)");
+            //string test = SusikiCalculater.ConertSusikiToCSharpSusiki("||sin(x)| - |cos(x)||+2^2√(1+|sin(x)|) + |tan(x/2) + |-2||");
+            //test = SusikiCalculater.ConertSusikiToCSharpSusiki("√2x + 2*√(2(x+2)^(2+2x^x))*2(x+2)");
         }
 
         double Func(double x)
