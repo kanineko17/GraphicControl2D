@@ -1,6 +1,6 @@
 # GraphicBox2D ReadMe
 
-![GraphicBox2D Demo](https://raw.githubusercontent.com/kanineko17/GraphicControl2D/main/README2.png)
+![GraphicBox2D Demo](https://raw.githubusercontent.com/kanineko17/GraphicControl2D/main/README_PNG/README2.png)
 
 ## GitHub Repository
 https://github.com/kanineko17/GraphicControl2D
@@ -23,7 +23,7 @@ If you find any bugs or have feature requests, please feel free to contact me he
 
 2. Use the following sample code to draw shapes inside the `Graphic2DControl`.
 
-![GraphicBox2D Demo](https://raw.githubusercontent.com/kanineko17/GraphicControl2D/main/README4.png)
+![GraphicBox2D Demo](https://raw.githubusercontent.com/kanineko17/GraphicControl2D/main/README_PNG/README4.png)
 
 ```csharp
 Layer2D layer2D = new Layer2D();
@@ -131,7 +131,7 @@ You can switch between a simple drawing mode and an interactive mode that allows
 
 ![GraphicBox2D Demo](https://raw.githubusercontent.com/kanineko17/GraphicControl2D/main/README_PNG/README5.png)
 
-### データの保存
+### Saving Data
 
 You can save the drawn shape objects in JSON format.
 		
@@ -140,10 +140,17 @@ You can save the drawn shape objects in JSON format.
 this.graphic2DControl1.SaveData(@"C:\Users\kani\Desktop\Data\shapes.json");
 ```
 
-### データの読み込み
+### Loading Data
 You can load shape object data from a previously saved JSON file
 		
 ```csharp
 // Load
 this.graphic2DControl1.LoadData(@"C:\Users\kani\Desktop\Data\shapes.json");
 ```
+
+### Background Image
+このREADMEに移っている背景の画像が欲しいなら、ここにアクセスしてください。
+https://raw.githubusercontent.com/kanineko17/GraphicControl2D/main/README_PNG/README2.png
+
+そして、grapphicbox2dの「BackgroundImage」プロパティに設定してください。
+https://raw.githubusercontent.com/kanineko17/GraphicControl2D/main/README_PNG/README6.png
