@@ -554,7 +554,7 @@ namespace graphicbox2d
 
             if (m_Parent.IsCaluculatingSusiki == true)
             {
-                otherText = "Info : 数式計算中・・・・";
+                otherText = "Info : Calculating formula・・・・";
             }
 
             // マウス位置テキストの描画
