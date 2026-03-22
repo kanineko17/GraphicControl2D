@@ -154,3 +154,79 @@ https://raw.githubusercontent.com/kanineko17/GraphicControl2D/main/graphicbox2d/
 
 Then, set it to the BackgroundImage property of graphicBox2d.
 ![GraphicBox2D Demo](https://raw.githubusercontent.com/kanineko17/GraphicControl2D/main/graphicbox2d/README_PNG/README6.png)
+
+
+### How to Create a Math Graph
+
+```csharp
+// Graph
+MathGraph2D graph = new MathGraph2D();
+graph.Susiki = "cos(x)+x^2";
+graph.StartX = -50.0f;
+graph.EndX = 50.0f;
+graph.Color = Color.White;
+graph.CalculateInterval = 0.05f;
+graph.CalculateGraphPoints();
+this.graphic2dControl1.Layers[0].MathGraphs.Add(graph);
+```
+
+※ After setting the formula, be sure to call the `CalculateGraphPoints()` method to compute the point list.
+
+---
+
+**Overview**  
+Specify the formula to be graphed as a string in the `Susiki` property.
+
+Example:
+```csharp
+graph.Susiki = "x^(2√2) + 3*x + 2 + |sin(x)÷2|2";
+```
+
+---
+
+**Variable Name**  
+Only the variable **"x"** can be used in formulas.
+
+✔ Examples:
+- sin(x)
+- x^2 + 3×x + 2
+
+✖ Invalid Examples:
+- sin(a)
+- a^2 + 3×a + 2
+
+---
+
+**Supported Operators**
+- Multiplication: ×, *
+- Division: ÷, /
+- Addition: ＋, +
+- Subtraction: －, -
+- Power: ＾, ^
+
+---
+
+**Supported Symbols**
+- Square root: √ (e.g., √x, √(x+1))
+- Absolute value: | (e.g., |x+1|)
+
+---
+
+**Supported Constants**
+- Pi: π
+- Napier's constant: e
+
+---
+
+**Supported Functions**
+- Arc sine: Asin, ArcSin
+- Arc cosine: Acos, ArcCos
+- Arc tangent: Atan, ArcTan
+- Sine: Sin
+- Cosine: Cos
+- Tangent: Tan
+- Hyperbolic sine: Sinh
+- Hyperbolic cosine: Cosh
+- Hyperbolic tangent: Tanh
+- Logarithm (natural log): Log
+- Exponential function: Exp

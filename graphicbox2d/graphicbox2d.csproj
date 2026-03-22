@@ -1,12 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
   <PropertyGroup>
-    <TargetFrameworks>net472;net8.0-windows7.0</TargetFrameworks>
+    <TargetFrameworks>net472;net8.0-windows</TargetFrameworks>
     <UseWindowsForms>true</UseWindowsForms>
 
     <!-- NuGet パッケージ情報 -->
     <PackageId>GraphicBox2D</PackageId>
-    <Version>3.3.2</Version>
+    <Version>3.3.3</Version>
     <Authors>Yuji</Authors>
     <Company>Kanineko</Company>
     <Description>2D Graphics Drawing Control</Description>
@@ -45,28 +45,6 @@
     <None Include="icon.png" Pack="true" PackagePath="\" />
     <None Include="README.md" Pack="true" PackagePath="" />
   </ItemGroup>
-
-  <!-- net472 用 DLL -->
-  <ItemGroup Condition="'$(TargetFramework)' == 'net472'">
-    <Reference Include="CSharrpSusikiCalculater">
-      <HintPath>DLL\net472\CSharrpSusikiCalculater.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
-  <!-- net8.0-windows 用 DLL -->
-  <ItemGroup Condition="'$(TargetFramework)' == 'net8.0-windows'">
-    <Reference Include="CSharrpSusikiCalculater">
-      <HintPath>DLL\net8.0-windows\CSharrpSusikiCalculater.dll</HintPath>
-    </Reference>
-
-    <Content Include="DLL\net8.0-windows\CSharrpSusikiCalculater.dll" Pack="true">
-      <PackagePath>lib\net8.0-windows7.0</PackagePath>
-      <PackageCopyToOutput>true</PackageCopyToOutput>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
-
 
   <!-- 依存パッケージ -->
   <ItemGroup>
