@@ -172,8 +172,6 @@ this.graphic2dControl1.Layers[0].MathGraphs.Add(graph);
 
 ※ After setting the formula, be sure to call the `CalculateGraphPoints()` method to compute the point list.
 
----
-
 **Overview**  
 Specify the formula to be graphed as a string in the `Susiki` property.
 
@@ -181,8 +179,6 @@ Example:
 ```csharp
 graph.Susiki = "x^(2√2) + 3*x + 2 + |sin(x)÷2|2";
 ```
-
----
 
 **Variable Name**  
 Only the variable **"x"** can be used in formulas.
