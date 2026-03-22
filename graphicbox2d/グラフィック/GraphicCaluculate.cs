@@ -1,5 +1,4 @@
-﻿using CSharpCaluc;
-using graphicbox2d.オブジェクトマネージャー;
+﻿using graphicbox2d.オブジェクトマネージャー;
 using SkiaSharp;
 using System;
 using System.Collections;

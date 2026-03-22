@@ -1,12 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
   <PropertyGroup>
-    <TargetFrameworks>net472;net8.0-windows</TargetFrameworks>
+    <TargetFrameworks>net472;net8.0-windows7.0</TargetFrameworks>
     <UseWindowsForms>true</UseWindowsForms>
 
     <!-- NuGet パッケージ情報 -->
     <PackageId>GraphicBox2D</PackageId>
-    <Version>3.2.5</Version>
+    <Version>3.3.2</Version>
     <Authors>Yuji</Authors>
     <Company>Kanineko</Company>
     <Description>2D Graphics Drawing Control</Description>
@@ -28,9 +28,13 @@
   <ItemGroup>
     <Compile Include="**\*.cs" />
     <EmbeddedResource Include="**\*.resx" />
+    <Compile Remove="DLL\**" />
 
     <Compile Remove="obj\**" />
+
+    <EmbeddedResource Remove="DLL\**" />
     <EmbeddedResource Remove="obj\**" />
+    <None Remove="DLL\**" />
     <None Remove="obj\**" />
 
     <EmbeddedResource Include="Graphic2DControl.bmp" />
@@ -47,12 +51,6 @@
     <Reference Include="CSharrpSusikiCalculater">
       <HintPath>DLL\net472\CSharrpSusikiCalculater.dll</HintPath>
     </Reference>
-    
-    <Content Include="DLL\net472\CSharrpSusikiCalculater.dll" Pack="true">
-      <PackagePath>lib\net472</PackagePath>
-      <PackageCopyToOutput>true</PackageCopyToOutput>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
 
   <!-- net8.0-windows 用 DLL -->
@@ -62,7 +60,7 @@
     </Reference>
 
     <Content Include="DLL\net8.0-windows\CSharrpSusikiCalculater.dll" Pack="true">
-      <PackagePath>lib\net8.0-windows10.0.19041</PackagePath>
+      <PackagePath>lib\net8.0-windows7.0</PackagePath>
       <PackageCopyToOutput>true</PackageCopyToOutput>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -72,7 +70,9 @@
 
   <!-- 依存パッケージ -->
   <ItemGroup>
+    <PackageReference Include="AngleSharp" Version="1.4.0" />
     <PackageReference Include="Microsoft.Bcl.HashCode" Version="6.0.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="5.3.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
 
     <!-- SkiaSharp -->
@@ -81,9 +81,10 @@
     <PackageReference Include="SkiaSharp.NativeAssets.Win32" Version="3.119.1" />
 
     <!-- 低レベル依存 -->
-    <PackageReference Include="System.Memory" Version="4.5.5" />
+    <PackageReference Include="System.Memory" Version="4.6.3" />
     <PackageReference Include="System.Buffers" Version="4.6.1" />
-    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.5.3" />
+    <PackageReference Include="System.Numerics.Vectors" Version="4.6.1" />
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.1.2" />
 
     <!-- SourceLink -->
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
