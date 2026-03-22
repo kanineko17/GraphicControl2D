@@ -6,7 +6,7 @@
 
     <!-- NuGet パッケージ情報 -->
     <PackageId>GraphicBox2D</PackageId>
-    <Version>3.2.4</Version>
+    <Version>3.2.5</Version>
     <Authors>Yuji</Authors>
     <Company>Kanineko</Company>
     <Description>2D Graphics Drawing Control</Description>
@@ -42,25 +42,17 @@
     <None Include="README.md" Pack="true" PackagePath="" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="CSharrpSusikiCalculater">
-      <HintPath>DLL\CSharrpSusikiCalculater.dll</HintPath>
-      <Private>true</Private>
-    </Reference>
-
-    <!-- net472 -->
-    <None Include="DLL\net472\CSharrpSusikiCalculater.dll" Pack="true" PackagePath="lib\net472" />
-
-    <!-- net8 -->
-    <None Include="DLL\net8.0-windows\CSharrpSusikiCalculater.dll"
-      Pack="true" PackagePath="lib\net8.0-windows10.0.19041" />
-  </ItemGroup>
-
   <!-- net472 用 DLL -->
   <ItemGroup Condition="'$(TargetFramework)' == 'net472'">
     <Reference Include="CSharrpSusikiCalculater">
       <HintPath>DLL\net472\CSharrpSusikiCalculater.dll</HintPath>
     </Reference>
+    
+    <Content Include="DLL\net472\CSharrpSusikiCalculater.dll" Pack="true">
+      <PackagePath>lib\net472</PackagePath>
+      <PackageCopyToOutput>true</PackageCopyToOutput>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <!-- net8.0-windows 用 DLL -->
@@ -68,6 +60,12 @@
     <Reference Include="CSharrpSusikiCalculater">
       <HintPath>DLL\net8.0-windows\CSharrpSusikiCalculater.dll</HintPath>
     </Reference>
+
+    <Content Include="DLL\net8.0-windows\CSharrpSusikiCalculater.dll" Pack="true">
+      <PackagePath>lib\net8.0-windows10.0.19041</PackagePath>
+      <PackageCopyToOutput>true</PackageCopyToOutput>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 
