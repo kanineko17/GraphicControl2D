@@ -195,8 +195,6 @@ Only the variable **"x"** can be used in formulas.
 - sin(a)
 - a^2 + 3×a + 2
 
----
-
 **Supported Operators**
 - Multiplication: ×, *
 - Division: ÷, /
@@ -204,19 +202,13 @@ Only the variable **"x"** can be used in formulas.
 - Subtraction: －, -
 - Power: ＾, ^
 
----
-
 **Supported Symbols**
 - Square root: √ (e.g., √x, √(x+1))
 - Absolute value: | (e.g., |x+1|)
 
----
-
 **Supported Constants**
 - Pi: π
 - Napier's constant: e
-
----
 
 **Supported Functions**
 - Arc sine: Asin, ArcSin
