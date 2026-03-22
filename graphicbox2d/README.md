@@ -31,13 +31,13 @@ layer2D.LayerName = "Layer1";
 layer2D.ZOrder = 0;
 layer2D.IsVisible = true;
 
-this.graphic2DControl1.Layers.Add(layer2D);
+this.graphic2dControl1.Layers.Add(layer2D);
 
 // Point
 Point2D point = new Point2D();
 point.X = -1;
 point.Y = -1;
-this.graphic2DControl1.Layers[0].Points.Add(point);
+this.graphic2dControl1.Layers[0].Points.Add(point);
 
 // Circle
 Circle2D circle = new Circle2D();
@@ -46,7 +46,7 @@ circle.Y = 3;
 circle.R = 1.0f;
 circle.IsFilled = false;
 circle.LineColor = Color.Red;
-this.graphic2DControl1.Layers[0].Circles.Add(circle);
+this.graphic2dControl1.Layers[0].Circles.Add(circle);
 
 // Polygon
 Polygon2D polygon2D = new Polygon2D();
@@ -57,7 +57,7 @@ polygon2D.FillColor = Color.Green;
 polygon2D.Points.Add(new PointF(-2, 2));
 polygon2D.Points.Add(new PointF(-1, 4));
 polygon2D.Points.Add(new PointF(0, 2));
-this.graphic2DControl1.Layers[0].Polygons.Add(polygon2D);
+this.graphic2dControl1.Layers[0].Polygons.Add(polygon2D);
 
 // Text : Welcome
 Text2D text = new Text2D();
@@ -66,7 +66,7 @@ text.Y = -3;
 text.FontSize = 16.0f;
 text.Text = "Welcome to the graphicBox2d";
 text.Angle = 30.0f;
-this.graphic2DControl1.Layers[0].Texts.Add(text);
+this.graphic2dControl1.Layers[0].Texts.Add(text);
 
 Group2D group = new Group2D();
 
@@ -98,7 +98,7 @@ arc.IsFilled = false;
 arc.LineColor = Color.Cyan;
 group.ObjectList.Add(new Group2DItem(arc, 2));
 
-this.graphic2DControl1.Layers[0].Groups.Add(group);
+this.graphic2dControl1.Layers[0].Groups.Add(group);
 
 // Text : cosθ
 Text2D text3 = new Text2D();
@@ -106,7 +106,7 @@ text3.X = 1.5f;
 text3.Y = 1.0f;
 text3.FontSize = 16.0f;
 text3.Text = "cosθ";
-this.graphic2DControl1.Layers[0].Texts.Add(text3);
+this.graphic2dControl1.Layers[0].Texts.Add(text3);
 
 // Graph
 MathGraph2D graph = new MathGraph2D();
@@ -116,10 +116,10 @@ graph.EndX = 50.0f;
 graph.Color = Color.White;
 graph.CalculateInterval = 0.05f;
 graph.CalculateGraphPoints();
-this.graphic2DControl1.Layers[0].MathGraphs.Add(graph);
+this.graphic2dControl1.Layers[0].MathGraphs.Add(graph);
 
 // Redraw
-this.graphic2DControl1.Invalidate();
+this.graphic2dControl1.Invalidate();
 ```
 ![GraphicBox2D Demo](https://raw.githubusercontent.com/kanineko17/GraphicControl2D/main/graphicbox2d/README_PNG/README3.png)
 
@@ -137,7 +137,7 @@ You can save the drawn shape objects in JSON format.
 		
 ```csharp
 // Save
-this.graphic2DControl1.SaveData(@"C:\Users\kani\Desktop\Data\shapes.json");
+this.graphic2dControl1.SaveData(@"C:\Users\kani\Desktop\Data\shapes.json");
 ```
 
 ### Loading Data
@@ -145,7 +145,7 @@ You can load shape object data from a previously saved JSON file
 		
 ```csharp
 // Load
-this.graphic2DControl1.LoadData(@"C:\Users\kani\Desktop\Data\shapes.json");
+this.graphic2dControl1.LoadData(@"C:\Users\kani\Desktop\Data\shapes.json");
 ```
 
 ### Background Image
