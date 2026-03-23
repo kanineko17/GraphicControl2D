@@ -6,7 +6,7 @@
 
     <!-- NuGet パッケージ情報 -->
     <PackageId>GraphicBox2D</PackageId>
-    <Version>3.3.5</Version>
+    <Version>3.3.6</Version>
     <Authors>Yuji</Authors>
     <Company>Kanineko</Company>
     <Description>2D Graphics Drawing Control</Description>

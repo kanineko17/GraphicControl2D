@@ -1,6 +1,6 @@
 # GraphicBox2D ReadMe
 
-![GraphicBox2D Demo](https://raw.githubusercontent.com/kanineko17/GraphicControl2D/main/graphicbox2d/README_PNG/README2.png)
+![GraphicBox2D Demo](https://raw.githubusercontent.com/kanineko17/GraphicControl2D/main/README_PNG/README2.png)
 
 ## GitHub Repository
 https://github.com/kanineko17/GraphicControl2D
@@ -23,7 +23,7 @@ If you find any bugs or have feature requests, please feel free to contact me he
 
 2. Use the following sample code to draw shapes inside the `Graphic2DControl`.
 
-![GraphicBox2D Demo](https://raw.githubusercontent.com/kanineko17/GraphicControl2D/main/graphicbox2d/README_PNG/README4.png)
+![GraphicBox2D Demo](https://raw.githubusercontent.com/kanineko17/GraphicControl2D/main/README_PNG/README4.png)
 
 ```csharp
 Layer2D layer2D = new Layer2D();
@@ -121,7 +121,7 @@ this.graphic2dControl1.Layers[0].MathGraphs.Add(graph);
 // Redraw
 this.graphic2dControl1.Invalidate();
 ```
-![GraphicBox2D Demo](https://raw.githubusercontent.com/kanineko17/GraphicControl2D/main/graphicbox2d/README_PNG/README3.png)
+![GraphicBox2D Demo](https://raw.githubusercontent.com/kanineko17/GraphicControl2D/main/README_PNG/README3.png)
 
 ### Mode
 You can switch between a simple drawing mode and an interactive mode that allows mouse operations.
@@ -129,7 +129,7 @@ You can switch between a simple drawing mode and an interactive mode that allows
 - **Default Mode**: A basic drawing mode. Mouse interactions are not supported.
 - **Slect Mode**: An interactive mode that allows you to select, move, and delete shape objects using the mouse.
 
-![GraphicBox2D Demo](https://raw.githubusercontent.com/kanineko17/GraphicControl2D/main/graphicbox2d/README_PNG/README5.png)
+![GraphicBox2D Demo](https://raw.githubusercontent.com/kanineko17/GraphicControl2D/main/README_PNG/README5.png)
 
 ### Saving Data
 
@@ -150,10 +150,10 @@ this.graphic2dControl1.LoadData(@"C:\Users\kani\Desktop\Data\shapes.json");
 
 ### Background Image
 If you want to use the background image shown in this README, you can download it from the following link:
-https://raw.githubusercontent.com/kanineko17/GraphicControl2D/main/graphicbox2d/BACKGROUND.png
+https://raw.githubusercontent.com/kanineko17/GraphicControl2D/main/BACKGROUND.png
 
 Then, set it to the BackgroundImage property of graphicBox2d.
-![GraphicBox2D Demo](https://raw.githubusercontent.com/kanineko17/GraphicControl2D/main/graphicbox2d/README_PNG/README6.png)
+![GraphicBox2D Demo](https://raw.githubusercontent.com/kanineko17/GraphicControl2D/main/README_PNG/README6.png)
 
 
 ### How to Create a Math Graph
@@ -217,4 +217,3 @@ Only the variable **"x"** can be used in formulas.
 - Hyperbolic cosine: Cosh
 - Hyperbolic tangent: Tanh
 - Logarithm (natural log): Log
-- Exponential function: Exp
