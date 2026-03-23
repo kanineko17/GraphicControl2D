@@ -1,4 +1,5 @@
-﻿using SkiaSharp;
+﻿using graphicbox2d.オブジェクトマネージャー_旧;
+using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -9,26 +10,9 @@ namespace graphicbox2d.オブジェクトマネージャー
     internal static class DrawManager
     {
         /// <summary>
-        /// ペンマネージャー
+        /// SKTypefaceマネージャー
         /// </summary>
-        internal static readonly PenManager Pen = new PenManager();
-
-        /// <summary>
-        /// 矢印ペンマネージャー
-        /// </summary>
-        internal static readonly ArrowPenManager ArrowPen = new ArrowPenManager();
-
-        /// <summary>
-        /// ブラシマネージャー
-        /// </summary>
-        internal static readonly BrushManager Brush = new BrushManager();
-
-        /// <summary>
-        /// フォントマネージャー
-        /// </summary>
-        internal static readonly FontManager Font = new FontManager();
-
-        internal static readonly SKFontManager SKFontManager = new SKFontManager();
+        internal static readonly SKTypefaceManager SKTypeface = new SKTypefaceManager();
 
         /// <summary>
         /// 線種パターンをまとめたディクショナリ
@@ -47,8 +31,6 @@ namespace graphicbox2d.オブジェクトマネージャー
         /// </summary>
         static DrawManager()
         {
-
-
 
         }
 
@@ -147,7 +129,11 @@ namespace graphicbox2d.オブジェクトマネージャー
 
         internal static SKFont GetSKFont(string FontName, float FontSize, SKFontStyle sKFontStyle = null)
         {
-            return SKFontManager.GetFont(FontName, FontSize, sKFontStyle);
+            SKTypeface typeface = SKTypeface.GetSKTypeface(FontName, sKFontStyle);
+
+            SKFont skFont = new SKFont(typeface, FontSize);
+
+            return skFont;
         }
 
         /// <summary>
@@ -158,62 +144,11 @@ namespace graphicbox2d.オブジェクトマネージャー
         /// <returns></returns>
         internal static SKFont ConvertFontToSKFont(Font font)
         {
-            return SKFontManager.GetFont(font.Name, font.Size * 1.33f, font.Style.ToSKFontStyle());
-        }
+            SKTypeface typeface = SKTypeface.GetSKTypeface(font.Name, font.Style.ToSKFontStyle());
 
-        /// <summary>
-        /// ソリッドブラシを取得する
-        /// </summary>
-        /// <param name="color"></param>
-        /// <returns>ソリッドブラシ</returns>
-        /// <exception cref="ObjectDisposedException"></exception>
-        internal static SolidBrush GetSolidBrush(Color color)
-        {
-            return Brush.GetSolidBrush(color);
-        }
+            SKFont skFont = new SKFont(typeface, font.Size * 1.33f);
 
-        /// <summary>
-        /// ペンを取得する
-        /// </summary>
-        /// <param name="color">色</param>
-        /// <param name="width">太さ</param>
-        /// <param name="dashStyle">線種</param>
-        /// <param name="dashPattern">カスタムパターン（LineStyle.Custom時のみ有効）</param>
-        /// <returns>ペン</returns>
-        internal static Pen GetPen(Color color, float width = 1.0f, DashStyle dashStyle = DashStyle.Solid, float[] dashPattern = null)
-        {
-            return Pen.GetPen(color, width, dashStyle, dashPattern);
-        }
-
-        /// <summary>
-        /// ペンを取得する
-        /// </summary>
-        /// <param name="color">色</param>
-        /// <param name="width">太さ</param>
-        /// <param name="dashStyle">線種</param>
-        /// <param name="startCap">始点キャップ</param>
-        /// <param name="endCap">終点キャップ</param>
-        /// <param name="dashPattern">カスタムパターン（LineStyle.Custom時のみ有効）</param>
-        /// <returns>ペン</returns>
-        internal static Pen GetArrowPen(Color color, float width = 1.0f,
-                  DashStyle dashStyle = DashStyle.Solid,
-                  Arrow2DLineCapType startCap = Arrow2DLineCapType.None,
-                  Arrow2DLineCapType endCap = Arrow2DLineCapType.None,
-                  float[] dashPattern = null)
-        {
-            return ArrowPen.GetPen(color, width, dashStyle, startCap, endCap, dashPattern);
-        }
-
-        /// <summary>
-        /// フォントを取得する
-        /// </summary>
-        /// <param name="FontName">フォント名</param>
-        /// <param name="FontSize">サイズ</param>
-        /// <param name="style">スタイル（省略可）</param>
-        /// <returns>フォント</returns>
-        internal static Font GetFont(string FontName, float FontSize, FontStyle style = FontStyle.Regular)
-        {
-            return Font.GetFont(FontName, FontSize, style);
+            return skFont;
         }
     }
 }

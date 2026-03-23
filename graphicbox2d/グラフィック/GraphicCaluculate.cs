@@ -2392,11 +2392,11 @@ namespace graphicbox2d
         /// ・生成した font と SKTextBlob は finally で Dispose  
         /// ・フォント指定でのテキスト計測に便利なオーバーロード  
         /// </remarks>
-        public static SKRect GetTextRect(string text, float fontSize, string fontName)
+        public static SKRect GetTextRect(string text, Font font)
         {
-            SKFont font = DrawManager.GetSKFont(fontName, fontSize);
+            SKFont skFont = DrawManager.ConvertFontToSKFont(font);
 
-            SKTextBlob sKTextBlob = SKTextBlob.Create(text, font);
+            SKTextBlob sKTextBlob = SKTextBlob.Create(text, skFont);
 
             try
             {
@@ -2406,7 +2406,7 @@ namespace graphicbox2d
             }
             finally
             {
-                font.Dispose();
+                skFont.Dispose();
                 sKTextBlob.Dispose();
             }
         }

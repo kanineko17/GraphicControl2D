@@ -1,4 +1,5 @@
-﻿using SkiaSharp;
+﻿using graphicbox2d.オブジェクトマネージャー_旧;
+using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Drawing;

@@ -1,4 +1,5 @@
 ﻿using graphicbox2d.その他;
+using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -58,16 +59,6 @@ namespace graphicbox2d
         /// 背景のグリッドマネージャー
         /// </summary>
         internal readonly GridManager_Old m_GridManager;
-
-        /// <summary>
-        /// 情報テキスト作成に必要なデータのキャッシュ
-        /// </summary>
-        internal InfoTextData m_CashInfoTextData = new InfoTextData();
-
-        /// <summary>
-        /// 情報テキスト表示位置データ
-        /// </summary>
-        internal InfoTextPositionData m_ITPData = new InfoTextPositionData();
 
         /// <summary>
         /// コンストラクタ
@@ -537,11 +528,6 @@ namespace graphicbox2d
         /// <param name="g"></param>
         public void DrawInfoText(Graphics g)
         {
-            if (IsChangeInfoTextData() == true)
-            {
-                UpdateInfoTextPositionData(g);
-            }
-
             Font font = m_Parent.InfoTextFont;
             Brush brush = DrawManager_Old.GetSolidBrush(m_Parent.ForeColor);
 
@@ -557,61 +543,42 @@ namespace graphicbox2d
                 otherText = "Info : Calculating formula・・・・";
             }
 
+            PointF textPoint;
+
             // マウス位置テキストの描画
-            g.DrawString(mousePosText, font, brush, m_ITPData.Mouse.X, m_ITPData.Mouse.Y);
+            textPoint = GetDrawInfoTextPosition(g, mousePosText, 1);
+            g.DrawString(mousePosText, font, brush, textPoint.X, textPoint.Y);
 
             // スケーリングテキストの描画
-            g.DrawString(scaleText, font, brush, m_ITPData.Scale.X, m_ITPData.Scale.Y);
+            textPoint = GetDrawInfoTextPosition(g, scaleText, 2);
+            g.DrawString(scaleText, font, brush, textPoint.X, textPoint.Y);
 
             // その他テキストの描画
-            g.DrawString(otherText, font, brush, m_ITPData.Other.X, m_ITPData.Other.Y);
+            textPoint = GetDrawInfoTextPosition(g, otherText, 3);
+            g.DrawString(otherText, font, brush, textPoint.X, textPoint.Y);
 
-        }
-
-        /// <summary>
-        /// 情報テキスト作成に必要なデータが変更されているか判定
-        /// </summary>
-        /// <returns>true:変更されている false:変更されていない</returns>
-        public bool IsChangeInfoTextData()
-        {
-            if (m_CashInfoTextData.Font != m_Parent.Font || m_CashInfoTextData.ForeColor != m_Parent.ForeColor)
-            {
-                return true;
-            }
-
-            return false;
         }
 
         /// <summary>
         /// 情報テキストの表示位置データを更新
         /// </summary>
         /// <param name="g"></param>
-        public void UpdateInfoTextPositionData(Graphics g)
+        public PointF GetDrawInfoTextPosition(Graphics g, string Text, int OutRecordNo)
         {
+            if (string.IsNullOrEmpty(Text) == true)
+            {
+                return default;
+            }
+
             // コントロールの右下に表示
-            SizeF textSize = g.MeasureString("Mouse Position : X=999.9999, Y=999.9999", m_Parent.InfoTextFont);
+            SizeF textSize = g.MeasureString(Text, m_Parent.InfoTextFont);
 
             // マウス位置テキストの表示位置の更新
-            PointF MousePositionTextPt = new PointF();
-            MousePositionTextPt.X = m_Parent.ClientSize.Width  - textSize.Width  - 5;
-            MousePositionTextPt.Y = m_Parent.ClientSize.Height - textSize.Height - 5;
-            m_ITPData.Mouse = MousePositionTextPt;
+            PointF TextPt = new PointF();
+            TextPt.X = m_Parent.ClientSize.Width - textSize.Width - 5;
+            TextPt.Y = m_Parent.ClientSize.Height - OutRecordNo * textSize.Height - 5;
 
-            // スケーリングテキストの表示位置の更新
-            PointF ScalingTextPt = new PointF();
-            ScalingTextPt.X = m_Parent.ClientSize.Width - textSize.Width - 5;
-            ScalingTextPt.Y = m_Parent.ClientSize.Height - 2 * textSize.Height - 5;
-            m_ITPData.Scale = ScalingTextPt;
-
-            // その他テキストデータの更新
-            PointF OtherTextPt = new PointF();
-            OtherTextPt.X = m_Parent.ClientSize.Width - textSize.Width - 5;
-            OtherTextPt.Y = m_Parent.ClientSize.Height - 3 * textSize.Height - 5;
-            m_ITPData.Other = OtherTextPt;
-
-            // キャッシュデータの更新
-            m_CashInfoTextData.Font      = m_Parent.Font;
-            m_CashInfoTextData.ForeColor = m_Parent.ForeColor;
+            return TextPt;
         }
 
         /// <summary>

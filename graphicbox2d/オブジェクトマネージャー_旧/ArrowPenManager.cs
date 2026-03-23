@@ -1,10 +1,9 @@
-﻿using graphicbox2d.その他;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 
-namespace graphicbox2d
+namespace graphicbox2d.オブジェクトマネージャー_旧
 {
     /// <summary>
     /// ArrowPenManager

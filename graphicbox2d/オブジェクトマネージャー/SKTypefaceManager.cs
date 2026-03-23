@@ -6,12 +6,11 @@ namespace graphicbox2d
 {
     /// <summary>
     /// SKFont マネージャー
-    /// Typeface と Font をキャッシュして再利用できるようにしたクラス。
+    /// Typeface をキャッシュして再利用できるようにしたクラス。
     /// </summary>
-    internal class SKFontManager : IDisposable
+    internal class SKTypefaceManager : IDisposable
     {
         private readonly Dictionary<TypefaceKey, SKTypeface> _TypefaceCache = new Dictionary<TypefaceKey, SKTypeface>();
-        private readonly Dictionary<SKFontKey, SKFont> _FontCache = new Dictionary<SKFontKey, SKFont>();
         private bool _disposed = false;
 
         /// <summary>
@@ -21,9 +20,9 @@ namespace graphicbox2d
         /// <param name="fontSize">サイズ</param>
         /// <param name="style">スタイル（省略可）</param>
         /// <returns>SKFont</returns>
-        public SKFont GetFont(string fontName, float fontSize, SKFontStyle style = null)
+        public SKTypeface GetSKTypeface(string fontName, SKFontStyle style = null)
         {
-            if (_disposed) throw new ObjectDisposedException(nameof(SKFontManager));
+            if (_disposed) throw new ObjectDisposedException(nameof(SKTypefaceManager));
 
             var typefaceKey = new TypefaceKey(fontName, style);
             if (!_TypefaceCache.TryGetValue(typefaceKey, out SKTypeface typeface))
@@ -35,14 +34,7 @@ namespace graphicbox2d
                 _TypefaceCache[typefaceKey] = typeface;
             }
 
-            var fontKey = new SKFontKey(typefaceKey, fontSize);
-            if (!_FontCache.TryGetValue(fontKey, out SKFont font))
-            {
-                font = new SKFont(typeface, fontSize);
-                _FontCache[fontKey] = font;
-            }
-
-            return font;
+            return typeface;
         }
 
         /// <summary>
@@ -50,12 +42,6 @@ namespace graphicbox2d
         /// </summary>
         public void Clear()
         {
-            foreach (var font in _FontCache.Values)
-            {
-                font.Dispose();
-            }
-            _FontCache.Clear();
-
             foreach (var typeface in _TypefaceCache.Values)
             {
                 typeface.Dispose();
@@ -92,28 +78,5 @@ namespace graphicbox2d
 
         public override bool Equals(object obj) => obj is TypefaceKey other && Equals(other);
         public override int GetHashCode() => HashCode.Combine(FontName, Style);
-    }
-
-    /// <summary>
-    /// Font キャッシュ用キー
-    /// </summary>
-    internal struct SKFontKey
-    {
-        public TypefaceKey TypefaceKey { get; }
-        public float FontSize { get; }
-
-        public SKFontKey(TypefaceKey typefaceKey, float fontSize)
-        {
-            TypefaceKey = typefaceKey;
-            FontSize = fontSize;
-        }
-
-        public bool Equals(SKFontKey other)
-        {
-            return TypefaceKey.Equals(other.TypefaceKey) && FontSize.Equals(other.FontSize);
-        }
-
-        public override bool Equals(object obj) => obj is SKFontKey other && Equals(other);
-        public override int GetHashCode() => HashCode.Combine(TypefaceKey, FontSize);
     }
 }

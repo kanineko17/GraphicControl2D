@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 
-namespace graphicbox2d
+namespace graphicbox2d.オブジェクトマネージャー_旧
 {
     /// <summary>
     /// フォントマネージャー

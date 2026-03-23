@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace graphicbox2d
+namespace graphicbox2d.オブジェクトマネージャー_旧
 {
     /// <summary>
     /// ブラシマネージャー

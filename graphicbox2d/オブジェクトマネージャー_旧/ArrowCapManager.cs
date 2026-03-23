@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace graphicbox2d.その他
+namespace graphicbox2d.オブジェクトマネージャー_旧
 {
     /// <summary>
     /// 矢印キャップのキャッシュを管理するクラス

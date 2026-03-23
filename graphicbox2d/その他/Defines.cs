@@ -366,46 +366,4 @@ namespace graphicbox2d
             TextPoint = point;
         }
     }
-
-    /// <summary>
-    /// 情報テキストデータ
-    /// 情報テキスト作成に必要なデータをまとめた構造体
-    /// </summary>
-    internal struct InfoTextData
-    {
-        public Font Font;
-        public Color ForeColor;
-
-        /// <summary>
-        /// コンストラクタ
-        /// </summary>
-        /// <param name="font">フォント</param>
-        /// <param name="forColor">フォントカラー</param>
-        public InfoTextData(Font font, Color forColor)
-        {
-            Font = font;
-            ForeColor = forColor;
-        }
-    }
-
-    /// <summary>
-    /// 情報テキストの表示位置データ
-    /// </summary>
-    internal struct InfoTextPositionData
-    {
-        /// <summary>
-        /// マウス座標テキストの表示位置
-        /// </summary>
-        public PointF Mouse;
-
-        /// <summary>
-        /// スケーリングテキストの表示位置
-        /// </summary>
-        public PointF Scale;
-
-        /// <summary>
-        /// その他テキストの表示位置
-        /// </summary>
-        public PointF Other;
-    }
 }
