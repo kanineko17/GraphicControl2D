@@ -36,6 +36,11 @@ namespace graphicbox2d
         private  float [] SELECT_BOX_DASH_STYLE = new float[] { 3, 5 };
 
         /// <summary>
+        /// 数式計算中文字列
+        /// </summary>
+        private const string CALUCULATING_TEXT = "Info : Calculating formula..............";
+
+        /// <summary>
         /// 破棄済フラグ
         /// </summary>
         private bool _disposed = false;
@@ -540,7 +545,7 @@ namespace graphicbox2d
 
             if (m_Parent.IsCaluculatingSusiki == true)
             {
-                otherText = "Info : Calculating formula・・・・";
+                otherText = CALUCULATING_TEXT;
             }
 
             PointF textPoint;

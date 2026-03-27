@@ -1,4 +1,5 @@
 ﻿using graphicbox2d.オブジェクトマネージャー;
+using graphicbox2d.グラフィック計算;
 using graphicbox2d.その他;
 using SkiaSharp;
 using System;
@@ -56,6 +57,15 @@ namespace graphicbox2d
         /// 背景のグリッドマネージャー
         /// </summary>
         internal readonly GridManager m_GridManager;
+
+        // ===============================================================================
+        // 定数
+        // ===============================================================================
+
+        /// <summary>
+        /// 数式計算中文字列
+        /// </summary>
+        private const string CALUCULATING_TEXT = "Info : Calculating formula....";
 
         /// <summary>
         /// コンストラクタ
@@ -148,8 +158,8 @@ namespace graphicbox2d
         public void DrawLine2D(SKCanvas canvas, Line2D line)
         {
             // グリッド座標をクライアント座標に変換
-            SKPoint ClientStart = GraphicCaluculate.ConvertGridPointToClientPoint(line.Start);
-            SKPoint ClientEnd = GraphicCaluculate.ConvertGridPointToClientPoint(line.End);
+            SKPoint ClientStart = CalConvert.ConvertGridPointToClientPoint(line.Start);
+            SKPoint ClientEnd = CalConvert.ConvertGridPointToClientPoint(line.End);
 
             SKPaint paint = GetLineSKPaint(line);
 
@@ -159,7 +169,7 @@ namespace graphicbox2d
             // 選択状態なら選択ボックスを描画
             if (line.IsSelect == true)
             {
-                SKPoint[] points = GraphicCaluculate.GetBoundingBoxLineSK(ClientStart, ClientEnd, line.Width);
+                SKPoint[] points = CalBoundBox.GetBoundingBoxLineSK(ClientStart, ClientEnd, line.Width);
 
                 canvas.DrawPolygon(points, m_SelectBoxPaint);
             }
@@ -188,7 +198,7 @@ namespace graphicbox2d
         {
             // グリッド座標をクライアント座標に変換
             PointF PointF       = new PointF(circle.X, circle.Y);
-            SKPoint ClientPointF = GraphicCaluculate.ConvertGridPointToClientPoint(PointF);
+            SKPoint ClientPointF = CalConvert.ConvertGridPointToClientPoint(PointF);
             float ClientR       = circle.R * m_Parent.DisplayGridWidth;
 
             if (circle.IsFilled == true)
@@ -207,7 +217,7 @@ namespace graphicbox2d
 
             if (circle.IsSelect == true)
             {
-                SKPoint[] points = GraphicCaluculate.GetBoundingBoxCircleSK(ClientPointF.X, ClientPointF.Y, ClientR);
+                SKPoint[] points = CalBoundBox.GetBoundingBoxCircleSK(ClientPointF.X, ClientPointF.Y, ClientR);
                 canvas.DrawPolygon(points, m_SelectBoxPaint);
             }
         }
@@ -222,7 +232,7 @@ namespace graphicbox2d
         public void DrawPolygon2D(SKCanvas canvas, Polygon2D polygon)
         {
             // グリッド座標をクライアント座標に変換
-            SKPoint[] ClientPoints = polygon.Points.Select(pt => GraphicCaluculate.ConvertGridPointToClientPoint(pt)).ToArray();
+            SKPoint[] ClientPoints = polygon.Points.Select(pt => CalConvert.ConvertGridPointToClientPoint(pt)).ToArray();
 
 
             if (polygon.IsFilled == true)
@@ -241,7 +251,7 @@ namespace graphicbox2d
 
             if (polygon.IsSelect == true)
             {
-                SKPoint[] points = GraphicCaluculate.GetBoundingBoxPolygonSK(ClientPoints);
+                SKPoint[] points = CalBoundBox.GetBoundingBoxPolygonSK(ClientPoints);
                 canvas.DrawPolygon(points, m_SelectBoxPaint);
             }
         }
@@ -256,8 +266,8 @@ namespace graphicbox2d
         public void DrawArrow2D(SKCanvas canvas, Arrow2D arrow)
         {
             // グリッド座標をクライアント座標に変換
-            SKPoint ClientStart = GraphicCaluculate.ConvertGridPointToClientPoint(arrow.Start);
-            SKPoint ClientEnd   = GraphicCaluculate.ConvertGridPointToClientPoint(arrow.End);
+            SKPoint ClientStart = CalConvert.ConvertGridPointToClientPoint(arrow.Start);
+            SKPoint ClientEnd   = CalConvert.ConvertGridPointToClientPoint(arrow.End);
 
             SKPaint paint = GetLineSKPaint(arrow);
             canvas.DrawLine(ClientStart, ClientEnd, paint);
@@ -265,7 +275,7 @@ namespace graphicbox2d
             // 選択中の場合はハイライト描画
             if (arrow.IsSelect == true)
             {
-                SKPoint[] points = GraphicCaluculate.GetBoundingBoxLineSK(ClientStart, ClientEnd, arrow.Width);
+                SKPoint[] points = CalBoundBox.GetBoundingBoxLineSK(ClientStart, ClientEnd, arrow.Width);
                 canvas.DrawPolygon(points, m_SelectBoxPaint);
             }
         }
@@ -279,12 +289,11 @@ namespace graphicbox2d
         {
             // グリッド座標をクライアント座標に変換
             PointF PointF = new PointF(text.X, text.Y);
-            SKPoint ClientPoint = GraphicCaluculate.ConvertGridPointToClientPoint(PointF);
-
             SKPaint paint = GetTextSKPaint(text);
 
             SKFont font = DrawManager.GetSKFont(text.FontName, text.DrawFontSize);
 
+            SKPoint ClientPoint = CalConvert.ConvertGridPointToClientPoint(PointF);
             try
             {
                 if (Comp.IsEqual(text.Angle, 0))
@@ -310,9 +319,9 @@ namespace graphicbox2d
 
                 if (text.IsSelect)
                 {
-                    var points = GraphicCaluculate.GetBoundingBoxTextSK(
+                    var points = CalBoundBox.GetBoundingBoxTextSK(
                         ClientPoint.X, ClientPoint.Y,
-                        font, text.Text, text.Angle);
+                        font, text.Text, text.Angle, eCalculateType.Client);
 
                     canvas.DrawPolygon(points, m_SelectBoxPaint);
                 }
@@ -341,7 +350,7 @@ namespace graphicbox2d
         {
             // グリッド座標をクライアント座標に変換
             PointF PointF       = new PointF(arc.X, arc.Y);
-            SKPoint ClientPointF = GraphicCaluculate.ConvertGridPointToClientPoint(PointF);
+            SKPoint ClientPointF = CalConvert.ConvertGridPointToClientPoint(PointF);
             float ClientR       = arc.R * m_Parent.DisplayGridWidth;
 
 
@@ -361,7 +370,7 @@ namespace graphicbox2d
 
             if (arc.IsSelect == true)
             {
-                SKPoint[] points = GraphicCaluculate.GetBoundingBoxCircleSK(ClientPointF.X, ClientPointF.Y, ClientR);
+                SKPoint[] points = CalBoundBox.GetBoundingBoxCircleSK(ClientPointF.X, ClientPointF.Y, ClientR);
                 canvas.DrawPolygon(points, m_SelectBoxPaint);
             }
         }
@@ -380,7 +389,7 @@ namespace graphicbox2d
             }
 
             // グリッド座標をクライアント座標に変換
-            SKPoint[] ClientPoints = graph.Points.Select(pt => GraphicCaluculate.ConvertGridPointToClientPoint(pt)).ToArray();
+            SKPoint[] ClientPoints = graph.Points.Select(pt => CalConvert.ConvertGridPointToClientPoint(pt)).ToArray();
 
             SKPaint paint = GetLineSKPaint(graph);
 
@@ -388,7 +397,7 @@ namespace graphicbox2d
 
             if (graph.IsSelect == true)
             {
-                SKPoint[] points = GraphicCaluculate.GetBoundingBoxPolygonSK(ClientPoints);
+                SKPoint[] points = CalBoundBox.GetBoundingBoxPolygonSK(ClientPoints);
                 canvas.DrawPolygon(points, m_SelectBoxPaint);
             }
         }
@@ -410,9 +419,9 @@ namespace graphicbox2d
             if (group.IsSelect == true)
             {
                 // グリッド座標をクライアント座標に変換
-                SKPoint[] ClientPoints = group.AllBoundingBoxPoints.Select(pt => GraphicCaluculate.ConvertGridPointToClientPoint(pt)).ToArray();
+                SKPoint[] ClientPoints = group.AllBoundingBoxPoints.Select(pt => CalConvert.ConvertGridPointToClientPoint(pt)).ToArray();
 
-                SKPoint[] points = GraphicCaluculate.GetBoundingBoxPolygonSK(ClientPoints);
+                SKPoint[] points = CalBoundBox.GetBoundingBoxPolygonSK(ClientPoints);
                 canvas.DrawPolygon(points, m_SelectBoxPaint);
             }
         }
@@ -627,7 +636,7 @@ namespace graphicbox2d
 
                 if (m_Parent.IsCaluculatingSusiki == true)
                 {
-                    otherText = "Info : Calculating formula・・・・";
+                    otherText = CALUCULATING_TEXT;
                 }
 
                 PointF textPoint;
@@ -663,12 +672,12 @@ namespace graphicbox2d
             }
 
             // コントロールの右下に表示
-            SKRect textSize = GraphicCaluculate.GetTextRect(Text, m_Parent.InfoTextFont);
+            SizeF textSize = CalText.GetTextSize(Text, m_Parent.InfoTextFont, eCalculateType.Client);
 
             // マウス位置テキストの表示位置の更新
             PointF TextPt = new PointF();
-            TextPt.X = m_Parent.ClientSize.Width  - textSize.Width;
-            TextPt.Y = m_Parent.ClientSize.Height - OutRecordNo * textSize.Height - 5;
+            TextPt.X = m_Parent.ClientSize.Width - textSize.Width - 5;
+            TextPt.Y = m_Parent.ClientSize.Height - OutRecordNo * m_Parent.InfoTextFont.Height;
 
             return TextPt;
         }
@@ -682,7 +691,7 @@ namespace graphicbox2d
             // クライアント座標のマウス位置を取得
             Point ClientMousePoint = m_Parent.PointToClient(Cursor.Position);
             // グリッド座標に変換
-            PointF GridMousePoint = GraphicCaluculate.ConvertClientPointToGridPoint(ClientMousePoint);
+            PointF GridMousePoint = CalConvert.ConvertClientPointToGridPoint(ClientMousePoint);
 
             return GridMousePoint;
         }

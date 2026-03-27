@@ -1,4 +1,5 @@
 ﻿using graphicbox2d.オブジェクトマネージャー;
+using graphicbox2d.グラフィック計算;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
@@ -276,6 +277,9 @@ namespace graphicbox2d
             return _GridYAxisCenterPaint;
         }
 
+        /// <summary>
+        /// グリッドデータを更新
+        /// </summary>
         private void UpdateGridData()
         {
             // 初期化
@@ -422,11 +426,11 @@ namespace graphicbox2d
             // BottomRight 以外は文字サイズを測る
             if (m_Graphic2DControl.TextPosition != eGridTextPosition.BottomRight)
             {
-                SKRect rect = GraphicCaluculate.GetTextRect(text, this.GridSKFont);
+                SizeF size = CalText.GetTextSize(text, this.GridSKFont, eCalculateType.Client);
                 // 横幅
-                DisplayTextWidth = rect.Width;
+                DisplayTextWidth = size.Width;
 
-                DisplayTextHeight = rect.Height;
+                DisplayTextHeight = size.Height;
             }
 
             float DisplayTextOffsetX = m_Graphic2DControl.TextOffsetX * Graphic2DControl.UserZoom;
@@ -457,7 +461,6 @@ namespace graphicbox2d
 
             return offset;
         }
-
 
         /// <summary>
         /// グリッド座標テキスト用フォントを取得する

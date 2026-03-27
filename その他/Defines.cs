@@ -40,7 +40,9 @@ namespace graphicbox2d
         /// <summary>数式グラフ図形</summary>
         MathGraph,
         /// <summary>グループ図形</summary>
-        Group
+        Group,
+        /// <summary>イメージ図形</summary>
+        Image
     }
 
     /// <summary>
@@ -235,6 +237,12 @@ namespace graphicbox2d
         Client,
         /// <summary> グリッド座標系 </summary>
         Grid
+    }
+
+    internal enum eRotateType
+    {
+        TopLeft,
+        Center
     }
 
     // ===============================================================================

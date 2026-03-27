@@ -1,4 +1,5 @@
-﻿using System;
+﻿using graphicbox2d.グラフィック計算;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -185,7 +186,7 @@ namespace graphicbox2d
         /// </summary>
         internal override PointF[] GetBoundingBox()
         {
-            return GraphicCaluculate.GetBoundingBoxPolygon(AllBoundingBoxPoints.ToArray());
+            return CalBoundBox.GetBoundingBoxPolygon(AllBoundingBoxPoints.ToArray());
         }
 
         /// <summary>

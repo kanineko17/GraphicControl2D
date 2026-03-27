@@ -1,4 +1,5 @@
-﻿using System;
+﻿using graphicbox2d.グラフィック計算;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -155,7 +156,7 @@ namespace graphicbox2d
 
             GetBoundingBoxCenterPointAndCircumCircleR(out _BoundingBox, out _CenterPoint, out _CircumCircleR);
 
-            eMouseHitType = GraphicCaluculate.IsHitMouseRangeFillPolygon(_CenterPoint.ToPointF(), _CircumCircleR, _BoundingBox.ToList(), MousePoint, MusePointRange);
+            eMouseHitType = CalIsHit.IsHitMouseRangeFillPolygon(_CenterPoint.ToPointF(), _CircumCircleR, _BoundingBox.ToList(), MousePoint, MusePointRange);
 
             return eMouseHitType;
         }
@@ -199,7 +200,7 @@ namespace graphicbox2d
         /// </summary>
         internal override PointF[] GetBoundingBox()
         {
-            return GraphicCaluculate.GetBoundingBoxText(X, Y, Text, DrawFontSize, FontName, Angle, eCalculateType.Grid);
+            return CalBoundBox.GetBoundingBoxText(X, Y, Text, DrawFontSize, FontName, Angle, eCalculateType.Grid);
         }
 
         /// <summary>

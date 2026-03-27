@@ -46,7 +46,6 @@ namespace graphicbox2d.オブジェクトマネージャー
         /// </param>
         /// <param name="customDashPhase">カスタム線種の開始位置（位相）。</param>
         /// <returns>設定済みの SKPaint オブジェクト。</returns>
-
         internal static SKPaint GetLineSkPaint(Color color, float width = 1.0f, bool IsAntiAlias = true,
             LineStyle LineStyle = LineStyle.Solid,
             float[] customLineStyle = default,
@@ -95,7 +94,6 @@ namespace graphicbox2d.オブジェクトマネージャー
         /// </summary>
         /// <param name="color">塗りつぶし色。</param>
         /// <returns>設定済みの SKPaint オブジェクト。</returns>
-
         internal static SKPaint GetFillSkPaint(Color color)
         {
             SKPaint sKPaint = new SKPaint();
@@ -126,7 +124,6 @@ namespace graphicbox2d.オブジェクトマネージャー
         /// </summary>
         /// <param name="color">文字色。</param>
         /// <returns>設定済みの SKPaint オブジェクト。</returns>
-
         internal static SKFont GetSKFont(string FontName, float FontSize, SKFontStyle sKFontStyle = null)
         {
             SKTypeface typeface = SKTypeface.GetSKTypeface(FontName, sKFontStyle);

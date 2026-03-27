@@ -1,4 +1,5 @@
-﻿using System;
+﻿using graphicbox2d.グラフィック計算;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -137,15 +138,15 @@ namespace graphicbox2d
             Vector2 _CenterPoint;
             float   _CircumCircleR;
 
-            GetCenterPointAndCircumCircleR(out _CenterPoint, out _CircumCircleR);
+            GraphicCaluculate.GetCenterPointAndCircumCircleR(Points, out _CenterPoint, out _CircumCircleR);
 
             if (IsFilled == true)
             {
-                eMouseHitType = GraphicCaluculate.IsHitMouseRangeFillPolygon(_CenterPoint.ToPoint(), _CircumCircleR, Points, MousePoint, MusePointRange);
+                eMouseHitType = CalIsHit.IsHitMouseRangeFillPolygon(_CenterPoint.ToPoint(), _CircumCircleR, Points, MousePoint, MusePointRange);
             }
             else
             {
-                eMouseHitType = GraphicCaluculate.IsHitMouseRangeLinePolygon(_CenterPoint.ToPoint(), _CircumCircleR, Points, LineWidth, MousePoint, MusePointRange);
+                eMouseHitType = CalIsHit.IsHitMouseRangeLinePolygon(_CenterPoint.ToPoint(), _CircumCircleR, Points, LineWidth, MousePoint, MusePointRange);
             }
 
             return eMouseHitType;
@@ -194,18 +195,7 @@ namespace graphicbox2d
         /// </summary>
         internal override PointF[] GetBoundingBox()
         {
-            return GraphicCaluculate.GetBoundingBoxPolygon(Points.ToArray());
-        }
-
-        /// <summary>
-        /// ポリゴンの中心点と外接円の半径を同時に取得する
-        /// </summary>
-        /// <param name="centerPoint">ポリゴンの中心点</param>
-        /// <param name="circumCircleR">外接円の半径</param>
-        internal void GetCenterPointAndCircumCircleR(out Vector2 centerPoint, out float circumCircleR)
-        {
-            centerPoint = GraphicCaluculate.CaluculateCenterPoint(Points);
-            circumCircleR = GraphicCaluculate.CaluculateCircumCircleR(centerPoint, Points);
+            return CalBoundBox.GetBoundingBoxPolygon(Points.ToArray());
         }
 
         /// <summary>

@@ -15,29 +15,16 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using static System.Windows.Forms.AxHost;
+using static graphicbox2d.グラフィック計算.CalConvert;
+using graphicbox2d.グローバル変数;
 
-namespace graphicbox2d
+namespace graphicbox2d.グラフィック計算
 {
     /// <summary>
     /// 図形の交差判定や色々な計算を行うクラス
     /// </summary>
     internal static class GraphicCaluculate
     {
-        /// <summary>
-        /// グラフィック2Dコントロールオブジェクト
-        /// </summary>
-        public static Graphic2DControl Graphic2DControl { get; set; }
-
-        /// <summary>
-        /// グラフィック描画エンジンオブジェクト
-        /// </summary>
-        public static GraphicDrawEngine GraphicDrawEngine {get; set; }
-
-        /// <summary>
-        /// 線図形のバウンディングボックスの幅
-        /// </summary>
-        private const int LINE_BOUNDING_BOX_WITDH = 4; 
-
         // ===============================================================================
         // 交差判定系関数
         // ===============================================================================
@@ -626,7 +613,7 @@ namespace graphicbox2d
             float towRadian = (float)GetAngle(Center1ToCenter2);
 
             // 度数法に変換
-            float towAngle = GraphicCaluculate.RadianToDegree(towRadian);
+            float towAngle = RadianToDegree(towRadian);
 
             // 中点１→中点２のベクトルが円弧の範囲内にあるか判定
             if (Comp.IsAtMost(StartAngle, towAngle) == true && Comp.IsAtMost(towAngle, EndAngle) == true)
@@ -658,8 +645,8 @@ namespace graphicbox2d
                 eIsCrossLineAndCircle RetLine;
 
                 PointF ArcStartPt = new PointF(
-                    Circle1Center.X + R1 * (float)Math.Cos(GraphicCaluculate.DegreeToRadian(StartAngle)),
-                    Circle1Center.Y + R1 * (float)Math.Sin(GraphicCaluculate.DegreeToRadian(StartAngle))
+                    Circle1Center.X + R1 * (float)Math.Cos(DegreeToRadian(StartAngle)),
+                    Circle1Center.Y + R1 * (float)Math.Sin(DegreeToRadian(StartAngle))
                     );
 
                 IsCrossLineAndCircle(Circle1Center, ArcStartPt, 0, Circle2Center, R2, out RetLine);
@@ -678,8 +665,8 @@ namespace graphicbox2d
                 }
 
                 PointF ArcEndPt = new PointF(
-                    Circle1Center.X + R1 * (float)Math.Cos(GraphicCaluculate.DegreeToRadian(EndAngle)),
-                    Circle1Center.Y + R1 * (float)Math.Sin(GraphicCaluculate.DegreeToRadian(EndAngle))
+                    Circle1Center.X + R1 * (float)Math.Cos(DegreeToRadian(EndAngle)),
+                    Circle1Center.Y + R1 * (float)Math.Sin(DegreeToRadian(EndAngle))
                     );
 
 
@@ -822,7 +809,7 @@ namespace graphicbox2d
             float towRadian = (float)GetAngle(Center1ToCenter2);
 
             // 度数法に変換
-            float towAngle = GraphicCaluculate.RadianToDegree(towRadian);
+            float towAngle = RadianToDegree(towRadian);
 
             // 中点１→中点２のベクトルが円弧の範囲内にあるか判定
             if (Comp.IsAtMost(StartAngle, towAngle) == true && Comp.IsAtMost(towAngle, EndAngle) == true)
@@ -857,8 +844,8 @@ namespace graphicbox2d
             eIsCrossLineAndCircle RetLine;
 
             PointF ArcStartPt = new PointF(
-                Circle1Center.X + R1 * (float)Math.Cos(GraphicCaluculate.DegreeToRadian(StartAngle)),
-                Circle1Center.Y + R1 * (float)Math.Sin(GraphicCaluculate.DegreeToRadian(StartAngle))
+                Circle1Center.X + R1 * (float)Math.Cos(DegreeToRadian(StartAngle)),
+                Circle1Center.Y + R1 * (float)Math.Sin(DegreeToRadian(StartAngle))
                 );
 
             IsCrossLineAndCircle(Circle1Center, ArcStartPt, LineWidth, Circle2Center, R2, out RetLine);
@@ -877,8 +864,8 @@ namespace graphicbox2d
             }
 
             PointF ArcEndPt = new PointF(
-                Circle1Center.X + R1 * (float)Math.Cos(GraphicCaluculate.DegreeToRadian(EndAngle)),
-                Circle1Center.Y + R1 * (float)Math.Sin(GraphicCaluculate.DegreeToRadian(EndAngle))
+                Circle1Center.X + R1 * (float)Math.Cos(DegreeToRadian(EndAngle)),
+                Circle1Center.Y + R1 * (float)Math.Sin(DegreeToRadian(EndAngle))
                 );
 
 
@@ -971,7 +958,7 @@ namespace graphicbox2d
                 // を判定する。これを徹底的に高速化した結果
                 // 判定処理が以下の式になる。（めっちゃわかりにくい）
                 // if ((pt1.Y > y) != (pt2.Y > y))
-                if ((pt1.Y > y) != (pt2.Y > y))
+                if (pt1.Y > y != pt2.Y > y)
                 {
                     float intersectX;
 
@@ -1033,468 +1020,7 @@ namespace graphicbox2d
             return false;
         }
 
-        // ===============================================================================
-        // マウスヒット判定系関数
-        // ===============================================================================
 
-        /// <summary>
-        /// マウス座標が指定されたポリゴンにヒットしているかを判定します。
-        /// </summary>
-        /// <param name="PolygonCenterPoint">ポリゴンの外接円の中心座標。</param>
-        /// <param name="CircleR">ポリゴンの外接円の半径。</param>
-        /// <param name="Points">ポリゴンを構成する頂点座標のリスト。</param>
-        /// <param name="MousePoint">判定対象のマウス座標。</param>
-        /// <param name="MouseHitRange">マウスのヒット判定範囲（半径）。</param>
-        /// <returns>
-        /// ヒット判定結果を <see cref="eMouseHitType"/> で返します。  
-        /// None: ヒットなし  
-        /// MousePointOnObject: マウスポイントがポリゴン内部にある  
-        /// CrossMouseRange: ポリゴンの頂点が範囲内に含まれる、または交差している
-        /// </returns>
-        /// <remarks>
-        /// まず外接円とマウスの交差判定を行い、ヒットしていない場合は処理を終了します。  
-        /// 外接円とヒットしている場合のみ、ポリゴン本体との詳細な交差判定を行います。
-        /// </remarks>
-        public static eMouseHitType IsHitMouseRangeFillPolygon(in PointF PolygonCenterPoint, float CircleR, in List<PointF> Points, in PointF MousePoint, float MouseHitRange)
-        {
-            bool IsHit;
-
-            //------------------------------
-            //　①外接円判定
-            //------------------------------
-
-            // ポリゴンの外接円とマウスがヒットしているか判定
-            IsHit = IsCrossCircles(PolygonCenterPoint, CircleR, MousePoint, MouseHitRange);
-
-            if (IsHit == false)
-            {
-                // 外接円とマウスがヒットしていなければ、ポリゴン本体もヒットしていないので処理終了
-                return eMouseHitType.None;
-            }
-
-            // ------------------------------
-            // ②外接円とマウスがヒットしている場合、ポリゴン本体とマウスがヒットしているか厳密に判定する
-            // ------------------------------
-            eIsCrossPolygonAndCircle Ret;
-
-            IsCrossPolygonAndCircle(Points, MousePoint, MouseHitRange, out Ret);
-
-            eMouseHitType hitType;
-
-            switch (Ret)
-            {
-                // 交差していない
-                case eIsCrossPolygonAndCircle.None:
-                    hitType = eMouseHitType.None;
-                    break;
-                // ポリゴン内にマウスがある
-                case eIsCrossPolygonAndCircle.InPolygon:
-                    hitType = eMouseHitType.MousePointOnObject;
-                    break;
-                // ポリゴンの頂点がマウスの内側に含まれている
-                case eIsCrossPolygonAndCircle.InCircle:
-                    hitType = eMouseHitType.CrossMouseRange;
-                    break;
-                // 接している、または交差している
-                case eIsCrossPolygonAndCircle.Cross:
-                    hitType = eMouseHitType.CrossMouseRange;
-                    break;
-                // 想定外
-                default:
-                    hitType = eMouseHitType.None;
-                    break;
-            }
-
-            return hitType;
-        }
-
-        /// <summary>
-        /// ポリゴンの外接円および輪郭線とマウス位置の当たり判定を行う
-        /// </summary>
-        /// <param name="PolygonCenterPoint">ポリゴンの中心座標</param>
-        /// <param name="CircleR">ポリゴン外接円の半径</param>
-        /// <param name="Points">ポリゴンを構成する頂点リスト</param>
-        /// <param name="lineWidth">ポリゴン輪郭線の太さ</param>
-        /// <param name="MousePoint">マウス座標</param>
-        /// <param name="MouseHitRange">マウスの当たり判定範囲（半径）</param>
-        /// <param name="IsConvertLineWidth">線の太さをグリッド座標サイズに変換するかどうかのフラグ。デフォルトは true。</param>
-        /// <returns>
-        /// eMouseHitType の判定結果：  
-        /// ・None : ヒットしていない  
-        /// ・MousePointOnObject : マウスがポリゴンの輪郭線上にある  
-        /// ・CrossMouseRange : マウスの当たり判定円がポリゴン輪郭線と交差している  
-        /// </returns>
-
-        public static eMouseHitType IsHitMouseRangeLinePolygon(in PointF PolygonCenterPoint, float CircleR, in List<PointF> Points, float lineWidth, in PointF MousePoint, float MouseHitRange)
-        {
-            bool IsHit;
-
-            // 線幅をグリッド座標サイズに変換
-            lineWidth = (float)lineWidth / (float)Graphic2DControl.DisplayGridWidth;
-
-            //------------------------------
-            //　①外接円判定
-            //------------------------------
-
-            // ポリゴンの外接円とマウスがヒットしているか判定
-            IsHit = IsCrossCircles(PolygonCenterPoint, CircleR, MousePoint, MouseHitRange);
-
-            if (IsHit == false)
-            {
-                // 外接円とマウスがヒットしていなければ、ポリゴン本体もヒットしていないので処理終了
-                return eMouseHitType.None;
-            }
-
-            // ------------------------------
-            // ②外接円とマウスがヒットしている場合、ポリゴン本体とマウスがヒットしているか厳密に判定する
-            // ------------------------------
-            eIsCrossPolygonAndCircleLine Ret;
-
-            IsCrossPolygonAndCircleLine(Points, MousePoint, MouseHitRange, lineWidth, out Ret);
-
-            eMouseHitType hitType;
-
-            switch (Ret)
-            {
-                // 交差していない
-                case eIsCrossPolygonAndCircleLine.None:
-                    hitType = eMouseHitType.None;
-                    break;
-                // ポリゴンの輪郭線上にマウスがある
-                case eIsCrossPolygonAndCircleLine.OnLine:
-                    hitType = eMouseHitType.MousePointOnObject;
-                    break;
-                // 接している、または交差している
-                case eIsCrossPolygonAndCircleLine.Cross:
-                    hitType = eMouseHitType.CrossMouseRange;
-                    break;
-                // 想定外
-                default:
-                    hitType = eMouseHitType.None;
-                    break;
-            }
-
-            return hitType;
-        }
-
-        /// <summary>
-        /// マウス座標が指定された線分にヒットしているかを判定します。
-        /// </summary>
-        /// <param name="lineStart">線分の始点座標。</param>
-        /// <param name="lineEnd">線分の終点座標。</param>
-        /// <param name="lineWidth">線分の太さ（ピクセル単位）。</param>
-        /// <param name="MousePoint">判定対象のマウス座標。</param>
-        /// <param name="MouseHitRange">マウスのヒット判定範囲（半径）。</param>
-        /// <returns>
-        /// ヒット判定結果を <see cref="eMouseHitType"/> で返します。  
-        /// None: ヒットなし  
-        /// MousePointOnObject: 線上にマウスがある  
-        /// CrossMouseRange: 接触または交差している
-        /// </returns>
-        /// <remarks>
-        /// 内部的には線分と円の交差判定を行い、その結果をマウスヒット種別に変換します。
-        /// </remarks>
-        public static eMouseHitType IsHitMouseRangeLine(in PointF lineStart, in PointF lineEnd, float lineWidth, in PointF MousePoint, float MouseHitRange)
-        {
-            // 線幅をグリッド座標サイズに変換
-            lineWidth = (float)lineWidth / (float)Graphic2DControl.DisplayGridWidth;
-
-            eIsCrossLineAndCircle Ret;
-
-            // 線とマウスの交差判定を行う
-            IsCrossLineAndCircle(lineStart, lineEnd, lineWidth, MousePoint, MouseHitRange, out Ret);
-
-            eMouseHitType hitType;
-
-            switch (Ret)
-            {
-                // 交差していない
-                case eIsCrossLineAndCircle.None:
-                    hitType = eMouseHitType.None;
-                    break;
-                // 線上にマウスがある
-                case eIsCrossLineAndCircle.OnCenter:
-                    hitType = eMouseHitType.MousePointOnObject;
-                    break;
-                // 接している、または交差している
-                case eIsCrossLineAndCircle.Contact:
-                case eIsCrossLineAndCircle.Cross:
-                    hitType = eMouseHitType.CrossMouseRange;
-                    break;
-                // 想定外
-                default:
-                    hitType = eMouseHitType.None;
-                    break;
-            }
-
-            return hitType;
-        }
-
-        /// <summary>
-        /// マウス座標が指定された円（塗りつぶしあり）にヒットしているかを判定します。
-        /// </summary>
-        /// <param name="x">円の中心座標 X。</param>
-        /// <param name="y">円の中心座標 Y。</param>
-        /// <param name="r">円の半径。</param>
-        /// <param name="MousePoint">判定対象のマウス座標。</param>
-        /// <param name="MouseHitRange">マウスのヒット判定範囲（半径）。</param>
-        /// <returns>
-        /// ヒット判定結果を <see cref="eMouseHitType"/> で返します。  
-        /// None: ヒットなし  
-        /// CrossMouseRange: 接触または交差している  
-        /// MousePointOnObject: マウスポイントが円の内側に含まれている
-        /// </returns>
-        /// <remarks>
-        /// 内部的には円同士の交差判定を行い、その結果をマウスヒット種別に変換します。
-        /// </remarks>
-        public static eMouseHitType IsHitMouseRangeFillCircle(float x, float y, float r, in PointF MousePoint, float MouseHitRange)
-        {
-            // 判定対象の円の中心座標
-            PointF CircVector = new PointF(x, y);
-            eIsCrossCircles Ret;
-
-            IsCrossCircles(CircVector, r, MousePoint, MouseHitRange, out Ret);
-
-            eMouseHitType hitType;
-
-            switch (Ret)
-            {
-                // 交差していない
-                case eIsCrossCircles.None:
-                    hitType = eMouseHitType.None;
-                    break;
-                // 接している、または交差している
-                case eIsCrossCircles.Cross:
-                case eIsCrossCircles.Circ1PtInCirc2:
-                    hitType = eMouseHitType.CrossMouseRange;
-                    break;
-                // マウスポイントが円の内側に含まれている
-                case eIsCrossCircles.Circ2PtInCirc1:
-                case eIsCrossCircles.BothIn:
-                    hitType = eMouseHitType.MousePointOnObject;
-                    break;
-                // 想定外
-                default:
-                    hitType = eMouseHitType.None;
-                    break;
-            }
-
-            return hitType;
-        }
-
-        /// <summary>
-        /// 円の輪郭線とマウス位置の当たり判定を行う
-        /// </summary>
-        /// <param name="x">円の中心座標X</param>
-        /// <param name="y">円の中心座標Y</param>
-        /// <param name="r">円の半径</param>
-        /// <param name="lineWidth">円の輪郭線の太さ</param>
-        /// <param name="MousePoint">マウス座標</param>
-        /// <param name="MouseHitRange">マウスの当たり判定範囲（半径）</param>
-        /// <returns>
-        /// eMouseHitType の判定結果：  
-        /// ・None : ヒットしていない  
-        /// ・CrossMouseRange : マウスの当たり判定円が円の輪郭線と交差している  
-        /// ・MousePointOnObject : マウスポイントが円の輪郭線上にある  
-        /// </returns>
-
-        public static eMouseHitType IsHitMouseRangeLineCircle(float x, float y, float r, float lineWidth, in PointF MousePoint, float MouseHitRange)
-        {
-            // 線幅をグリッド座標サイズに変換
-            lineWidth = (float)lineWidth / (float)Graphic2DControl.DisplayGridWidth;
-
-            // 判定対象の円の中心座標
-            PointF CircVector = new PointF(x, y);
-            eIsCrossCirclesOutLine Ret;
-
-            IsCrossCirclesOutLine(CircVector, r, lineWidth, MousePoint, MouseHitRange, 0, out Ret);
-
-            eMouseHitType hitType;
-
-            switch (Ret)
-            {
-                // 交差していない
-                case eIsCrossCirclesOutLine.None:
-                    hitType = eMouseHitType.None;
-                    break;
-                // 接している、または交差している
-                case eIsCrossCirclesOutLine.Cross:
-                    hitType = eMouseHitType.CrossMouseRange;
-                    break;
-                // マウスポイントが円の輪郭線上にある
-                case eIsCrossCirclesOutLine.Circ2PtOnCirc1:
-                    hitType = eMouseHitType.MousePointOnObject;
-                    break;
-                // 想定外
-                default:
-                    hitType = eMouseHitType.None;
-                    break;
-            }
-
-            return hitType;
-        }
-
-        /// <summary>
-        /// マウスポイントと円弧（塗りつぶし領域）の当たり判定を行うメソッド。
-        /// 円弧の中心座標・半径・開始角度・終了角度を指定し、
-        /// マウスポイントが円弧の内部または近傍にあるかどうかを判定する。
-        /// </summary>
-        /// <param name="x">円弧の中心座標X。</param>
-        /// <param name="y">円弧の中心座標Y。</param>
-        /// <param name="r">円弧の半径。</param>
-        /// <param name="StartAngle">円弧の開始角度（度数法）。</param>
-        /// <param name="EndAngle">円弧の終了角度（度数法）。</param>
-        /// <param name="MousePoint">判定対象となるマウスポイント座標。</param>
-        /// <param name="MouseHitRange">マウス判定の許容範囲（半径）。</param>
-        /// <returns>
-        /// eMouseHitType 列挙値:
-        /// - None : 当たり判定なし  
-        /// - CrossMouseRange : マウス範囲が円弧と交差または接触  
-        /// - MousePointOnObject : マウスポイントが円弧内部に含まれる  
-        /// </returns>
-
-        public static eMouseHitType IsHitMouseRangeFillArc(float x, float y, float r, float StartAngle, float EndAngle, in PointF MousePoint, float MouseHitRange)
-        {
-            // 判定対象の円の中心座標
-            PointF CircVector = new PointF(x, y);
-            eIsCrossArcAndCircle Ret;
-
-            IsCrossArcAndCircle(CircVector, r, StartAngle, EndAngle, MousePoint, MouseHitRange, out Ret);
-
-            eMouseHitType hitType;
-
-            switch (Ret)
-            {
-                // 交差していない
-                case eIsCrossArcAndCircle.None:
-                    hitType = eMouseHitType.None;
-                    break;
-                // 接している、または交差している
-                case eIsCrossArcAndCircle.Cross:
-                case eIsCrossArcAndCircle.ArcPtInCirc:
-                    hitType = eMouseHitType.CrossMouseRange;
-                    break;
-                // マウスポイントが円弧の内側に含まれている
-                case eIsCrossArcAndCircle.CircPtInArc:
-                    hitType = eMouseHitType.MousePointOnObject;
-                    break;
-                // 想定外
-                default:
-                    hitType = eMouseHitType.None;
-                    break;
-            }
-
-            return hitType;
-        }
-
-        /// <summary>
-        /// マウスポイントと円弧（輪郭線）の当たり判定を行うメソッド。
-        /// 円弧の中心座標・半径・開始角度・終了角度・線幅を指定し、
-        /// マウスポイントが円弧の輪郭線上または近傍にあるかどうかを判定する。
-        /// </summary>
-        /// <param name="x">円弧の中心座標X。</param>
-        /// <param name="y">円弧の中心座標Y。</param>
-        /// <param name="r">円弧の半径。</param>
-        /// <param name="StartAngle">円弧の開始角度（度数法）。</param>
-        /// <param name="EndAngle">円弧の終了角度（度数法）。</param>
-        /// <param name="lineWidth">円弧の線幅。</param>
-        /// <param name="MousePoint">判定対象となるマウスポイント座標。</param>
-        /// <param name="MouseHitRange">マウス判定の許容範囲（半径）。</param>
-        /// <returns>
-        /// eMouseHitType 列挙値:
-        /// - None : 当たり判定なし  
-        /// - CrossMouseRange : マウス範囲が円弧と交差または接触  
-        /// - MousePointOnObject : マウスポイントが円弧の輪郭線上にある  
-        /// </returns>
-
-        public static eMouseHitType IsHitMouseRangeLineArc(float x, float y, float r, float StartAngle, float EndAngle, float lineWidth, bool IsDrawSideLines, in PointF MousePoint, float MouseHitRange)
-        {
-            // 線幅をグリッド座標サイズに変換
-            lineWidth = (float)lineWidth / (float)Graphic2DControl.DisplayGridWidth;
-
-            // 判定対象の円の中心座標
-            PointF CircVector = new PointF(x, y);
-            eIsCrossArcAndCircleOutLine Ret;
-
-            IsCrossArcAndCircleOutLine(CircVector, r, StartAngle, EndAngle, lineWidth, IsDrawSideLines, MousePoint,  MouseHitRange, out Ret);
-
-            eMouseHitType hitType;
-
-            switch (Ret)
-            {
-                // 交差していない
-                case eIsCrossArcAndCircleOutLine.None:
-                    hitType = eMouseHitType.None;
-                    break;
-                // 接している、または交差している
-                case eIsCrossArcAndCircleOutLine.Cross:
-                    hitType = eMouseHitType.CrossMouseRange;
-                    break;
-                // マウスポイントが円弧の輪郭線上にある
-                case eIsCrossArcAndCircleOutLine.CircPtOnArc:
-                    hitType = eMouseHitType.MousePointOnObject;
-                    break;
-                // 想定外
-                default:
-                    hitType = eMouseHitType.None;
-                    break;
-            }
-
-            return hitType;
-        }
-
-        /// <summary>
-        /// 折れ線グラフ（点リストで構成されたポリゴンライン）に対して、
-        /// 指定されたマウス座標がヒットしているかどうかを判定する。
-        /// </summary>
-        /// <param name="GraphPoints">グラフを構成する点リスト</param>
-        /// <param name="lineWidth">グラフ線の太さ</param>
-        /// <param name="MousePoint">判定対象のマウス座標</param>
-        /// <param name="MouseHitRange">マウス判定円の半径</param>
-        /// <returns>
-        /// マウスとグラフの関係を示す列挙値:
-        /// <list type="bullet">
-        /// <item><description><see cref="eMouseHitType.None"/> : ヒットしていない</description></item>
-        /// <item><description><see cref="eMouseHitType.MousePointOnObject"/> : グラフ線上にマウスがある</description></item>
-        /// <item><description><see cref="eMouseHitType.CrossMouseRange"/> : マウス判定円がグラフ線と交差している</description></item>
-        /// </list>
-        /// </returns>
-        public static eMouseHitType IsHitMouseRangeLineGraph(in List<PointF> GraphPoints, float lineWidth, in PointF MousePoint, float MouseHitRange)
-        {
-            // 線幅をグリッド座標サイズに変換
-            lineWidth = (float)lineWidth / (float)Graphic2DControl.DisplayGridWidth;
-
-            // ------------------------------
-            // グラフ本体とマウスがヒットしているか厳密に判定する
-            // ------------------------------
-            eIsCrossPolygonAndCircleLine Ret;
-
-            IsCrossCurvePointsAndCircleLine(GraphPoints, MousePoint, MouseHitRange, lineWidth, out Ret);
-
-            eMouseHitType hitType;
-
-            switch (Ret)
-            {
-                // 交差していない
-                case eIsCrossPolygonAndCircleLine.None:
-                    hitType = eMouseHitType.None;
-                    break;
-                // ポリゴンの輪郭線上にマウスがある
-                case eIsCrossPolygonAndCircleLine.OnLine:
-                    hitType = eMouseHitType.MousePointOnObject;
-                    break;
-                // 接している、または交差している
-                case eIsCrossPolygonAndCircleLine.Cross:
-                    hitType = eMouseHitType.CrossMouseRange;
-                    break;
-                // 想定外
-                default:
-                    hitType = eMouseHitType.None;
-                    break;
-            }
-
-            return hitType;
-        }
 
         // ===============================================================================
         // その他幾何学計算系関数
@@ -1620,8 +1146,8 @@ namespace graphicbox2d
                 return false;
             }
 
-            k_a = (((b_0.X - a_0.X) * b.Y - (b_0.Y - a_0.Y) * b.X)) / (a.X * b.Y - a.Y * b.X);
-            k_b = (((a_0.X - b_0.X) * a.Y - (a_0.Y - b_0.Y) * a.X)) / (b.X * a.Y - b.Y * a.X);
+            k_a = ((b_0.X - a_0.X) * b.Y - (b_0.Y - a_0.Y) * b.X) / (a.X * b.Y - a.Y * b.X);
+            k_b = ((a_0.X - b_0.X) * a.Y - (a_0.Y - b_0.Y) * a.X) / (b.X * a.Y - b.Y * a.X);
 
             return true;
         }
@@ -1691,121 +1217,6 @@ namespace graphicbox2d
         }
 
         /// <summary>
-        /// Graphics と同じ描画設定（TextRenderingHint等）で最も正確な文字列の描画矩形を取得する。
-        /// MeasureCharacterRanges を使うため、余白が少ない精密な領域を返す。
-        /// </summary>
-        /// <param name="g">Graphics</param>
-        /// <param name="text">文字列</param>
-        /// <param name="font">フォント</param>
-        /// <returns>描画矩形</returns>
-        /// <exception cref="ArgumentNullException"></exception>
-        public static RectangleF GetTextRectangle(Graphics g, string text, Font font)
-        {
-            if (text == null)
-            {
-                text = string.Empty;
-            }
-            if (font == null)
-            {
-                throw new ArgumentNullException(nameof(font));
-            }
-
-            // 描画設定は呼び出し側の Graphics に合わせるのがベスト（ClearType/AntiAlias 等）
-            // ここでは最小限の StringFormat を用意
-            using (StringFormat sf = new StringFormat(StringFormat.GenericTypographic))
-            {
-                sf.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
-                sf.SetMeasurableCharacterRanges(new[] { new CharacterRange(0, text.Length) });
-
-                // 十分に大きなレイアウト矩形を用意（折り返しなしの場合は幅は大きめ）
-                RectangleF layoutRect = new RectangleF(0, 0, 10000f, 10000f);
-
-                Region[] regions = g.MeasureCharacterRanges(text, font, layoutRect, sf);
-                if (regions != null && regions.Length > 0)
-                {
-                    RectangleF Rect = regions[0].GetBounds(g);
-
-                    // 日本語文字が含まれている場合、幅を少し広げる補正を行う
-                    int JapaneseCharCount = CountJapaneseChars(text);
-
-                    Rect.Width += JapaneseCharCount * 1.5f * (font.Size / 24f);
-
-                    return Rect;
-                }
-
-                return RectangleF.Empty;
-            }
-        }
-
-        /// <summary>
-        /// 引数の文字列に含まれる日本語文字（ひらがな・カタカナ・漢字）の数を返す。
-        /// </summary>
-        /// <param name="text">対象文字列</param>
-        /// <returns>日本語文字の数</returns>
-        public static int CountJapaneseChars(string text)
-        {
-            if (string.IsNullOrEmpty(text))
-                return 0;
-
-            // 正規表現で日本語文字を判定
-            // ひらがな: \u3040-\u309F
-            // カタカナ: \u30A0-\u30FF
-            // 漢字: \u4E00-\u9FFF （基本漢字）
-            // ※必要に応じて拡張漢字領域も追加可能
-            Regex regex = new Regex(@"[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FFF]");
-
-            int count = 0;
-            foreach (char c in text)
-            {
-                if (regex.IsMatch(c.ToString()))
-                {
-                    count++;
-                }
-            }
-
-            return count;
-        }
-
-        /// <summary>
-        /// Graphics と同じ描画設定（TextRenderingHint等）で最も正確な文字列の描画矩形を取得する。
-        /// MeasureCharacterRanges を使うため、余白が少ない精密な領域を返す。
-        /// </summary>
-        /// <param name="text">文字列</param>
-        /// <param name="font">フォント</param>
-        /// <returns>描画矩形</returns>
-        /// <exception cref="ArgumentNullException"></exception>
-        public static RectangleF GetTextRectangle(string text, Font font)
-        {
-
-            Graphics g = Graphic2DControl.CreateGraphics();
-
-            try
-            {
-                return GetTextRectangle(g, text, font);
-            }
-            finally
-            {
-                g.Dispose();
-            }
-        }
-
-        /// <summary>
-        /// Graphics と同じ描画設定（TextRenderingHint等）で最も正確な文字列の描画矩形を取得する。
-        /// MeasureCharacterRanges を使うため、余白が少ない精密な領域を返す。
-        /// </summary>
-        /// <param name="text">文字列</param>
-        /// <param name="FontSize">フォントサイズ</param>
-        /// <param name="FontName">フォント名</param>
-        /// <returns></returns>
-        public static RectangleF GetTextRectangle(string text, float FontSize, string FontName)
-        {
-            using (Font font = new Font(FontName, FontSize))
-            {
-                return GetTextRectangle(text, font);
-            }
-        }
-
-        /// <summary>
         /// ポリゴンの中心点を計算
         /// </summary>
         /// <param name="Points">ポリゴン座標</param>
@@ -1836,7 +1247,29 @@ namespace graphicbox2d
                 AllSumVec.Y += pt.Y;
             }
 
-            return (AllSumVec / Points.Count);
+            return AllSumVec / Points.Count;
+        }
+
+        /// <summary>
+        /// ポリゴンの中心点と外接円の半径を同時に取得する
+        /// </summary>
+        /// <param name="centerPoint">ポリゴンの中心点</param>
+        /// <param name="circumCircleR">外接円の半径</param>
+        internal static void GetCenterPointAndCircumCircleR(PointF[] Points, out Vector2 centerPoint, out float circumCircleR)
+        {
+            centerPoint = CaluculateCenterPoint(Points);
+            circumCircleR = CaluculateCircumCircleR(centerPoint, Points);
+        }
+
+        /// <summary>
+        /// ポリゴンの中心点と外接円の半径を同時に取得する
+        /// </summary>
+        /// <param name="centerPoint">ポリゴンの中心点</param>
+        /// <param name="circumCircleR">外接円の半径</param>
+        internal static void GetCenterPointAndCircumCircleR(List<PointF> Points, out Vector2 centerPoint, out float circumCircleR)
+        {
+            centerPoint = CaluculateCenterPoint(Points);
+            circumCircleR = CaluculateCircumCircleR(centerPoint, Points);
         }
 
         /// <summary>
@@ -1877,538 +1310,6 @@ namespace graphicbox2d
             }
 
             return MaxDistance;
-        }
-
-        /// <summary>
-        /// 弧度法（ラジアン）を度数法（度）に変換する。
-        /// </summary>
-        /// <param name="radian">角度（ラジアン）</param>
-        /// <returns>角度（度数法）</returns>
-        public static float RadianToDegree(float radian)
-        {
-            return radian * 180f / (float)Math.PI;
-        }
-
-        /// <summary>
-        /// 度数法（度）を弧度法（ラジアン）に変換する。
-        /// </summary>
-        /// <param name="degree">角度（度数法）</param>
-        /// <returns>角度（ラジアン）</returns>
-        public static float DegreeToRadian(float degree)
-        {
-            return degree * (float)Math.PI / 180f;
-        }
-
-        // ===============================================================================
-        // 座標変換系関数
-        // ===============================================================================
-
-        /// <summary>
-        /// グリッド座標をクライアント座標に変換します。
-        /// </summary>
-        /// <param name="GridPoint">変換対象のグリッド座標 (X, Y)</param>
-        /// <param name="ClientCenterPoint">クライアント座標系の中心点</param>
-        /// <returns>変換後のクライアント座標</returns>
-        /// <remarks>
-        /// Y座標はクライアント座標系に合わせて反転されます。
-        /// </remarks>
-        public static Point ConvertGridPointToClientPoint(in PointF GridPoint)
-        {
-            Vector2 ClientPointV = new Vector2();
-
-            ClientPointV.X = GridPoint.X * Graphic2DControl.DisplayGridWidth;
-            ClientPointV.Y = -1 * GridPoint.Y * Graphic2DControl.DisplayGridWidth;
-
-            // 更に始点座標を足す
-            ClientPointV = ClientPointV + Graphic2DControl.DisplayCenterPoint.ToVector2();
-
-            return ClientPointV.ToPoint();
-        }
-
-        /// <summary>
-        /// クライアント座標をグリッド座標に変換します。
-        /// </summary>
-        /// <param name="ClientPoint">変換対象のクライアント座標</param>
-        /// <returns>変換後のグリッド座標。</returns>
-        /// <remarks>
-        /// Y座標はグリッド座標系に合わせて反転されます。
-        /// </remarks>
-        public static PointF ConvertClientPointToGridPoint(in Point ClientPoint)
-        {
-            Vector2 GridV = new Vector2();
-
-            GridV.X =      (float)(ClientPoint.X - (float)Graphic2DControl.DisplayCenterPoint.X) / (float)Graphic2DControl.DisplayGridWidth;
-            GridV.Y = -1 * (float)(ClientPoint.Y - (float)Graphic2DControl.DisplayCenterPoint.Y) / (float)Graphic2DControl.DisplayGridWidth;
-
-            return GridV.ToPointF();
-        }
-
-        /// <summary>
-        /// クライアント座標のマウス移動量をグリッド座標のマウス移動量に変換します。
-        /// </summary>
-        /// <param name="ClientPoint">マウス移動量（クライアント座標）</param>
-        /// <returns>マウス移動量（グリッド座標）</returns>
-        public static PointF ConvertClientMouseMovementToGridMouseMovement(in Point ClientPoint)
-        {
-            Vector2 GridV = new Vector2();
-
-            GridV.X = ConvertClientLengthToGridLength(ClientPoint.X);
-            GridV.Y = -1 * ConvertClientLengthToGridLength(ClientPoint.Y);
-
-            return GridV.ToPointF();
-        }
-
-        /// <summary>
-        /// クライアント座標の長さをグリッド座標の長さに変換します。
-        /// </summary>
-        /// <param name="Length">クライアント座標の長さ</param>
-        /// <returns>グリッド座標の長さ</returns>
-        public static float ConvertClientLengthToGridLength(int Length)
-        {
-            return (float)Length / (float)Graphic2DControl.DisplayGridWidth;
-        }
-
-        /// <summary>
-        /// グリッド座標の PointF をクライアント座標の PointF に変換
-        /// </summary>
-        /// <param name="GridPoint">グリッド座標の点（PointF）</param>
-        /// <returns>クライアント座標に変換された PointF</returns>
-        public static SKPoint ConvertGridPointToClientPoint(PointF GridPoint)
-        {
-            Vector2 cliGridV = new Vector2();
-            cliGridV.X = GridPoint.X * Graphic2DControl.DisplayGridWidth;
-            cliGridV.Y = -1 * GridPoint.Y * Graphic2DControl.DisplayGridWidth;
-            cliGridV += Graphic2DControl.DisplayCenterPoint.ToVector2();
-            return cliGridV.ToSKPoint();
-        }
-
-        /// <summary>
-        /// グリッド座標 (x, y) をクライアント座標 (outX, outY) に変換
-        /// </summary>
-        /// <param name="x">グリッド座標 X</param>
-        /// <param name="y">グリッド座標 Y</param>
-        /// <param name="outX">クライアント座標 X 出力</param>
-        /// <param name="outY">クライアント座標 Y 出力</param>
-        public static void ConvertGridPointToClientPoint(float x, float y, out float outX, out float outY)
-        {
-            outX = x * Graphic2DControl.DisplayGridWidth;
-            outY = -1 * y * Graphic2DControl.DisplayGridWidth;
-            outX += Graphic2DControl.DisplayCenterPoint.X;
-            outY += Graphic2DControl.DisplayCenterPoint.Y;
-        }
-
-        /// <summary>
-        /// グリッド座標の PointF をクライアント座標の PointF に変換
-        /// </summary>
-        /// <param name="GridPoints">グリッド座標の点リスト（PointF）</param>
-        /// <returns>クライアント座標に変換された PointFリスト</returns>
-        public static SKPoint [] ConvertGridPointToClientPoint(PointF[] GridPoints)
-        {
-            SKPoint[] ClientPoints = new SKPoint[GridPoints.Length];
-
-            for (int i = 0; i < GridPoints.Length; i++)
-            {
-                ClientPoints[i] = ConvertGridPointToClientPoint(GridPoints[i]);
-            }
-
-            return ClientPoints;
-        }
-
-        /// <summary>
-        /// Line2Dオブジェクト をベクトルに変換します。
-        /// </summary>
-        /// <param name="line">変換対象の線分。</param>
-        /// <param name="startVec">線分の始点を表すベクトル。</param>
-        /// <param name="lineVec">線分の方向ベクトル（終点 - 始点）。</param>
-        /// <remarks>
-        /// 始点を基準に、終点との差分ベクトルを算出します。
-        /// </remarks>
-        public static void ConvertLine2DToVector2(in Line2D line, out Vector2 startVec, out Vector2 lineVec)
-        {
-            startVec = line.Start.ToVector2();
-            lineVec = line.End.ToVector2() - line.Start.ToVector2();
-        }
-
-        // ===============================================================================
-        // バウンディングボックス取得関数
-        // ===============================================================================
-
-        /// <summary>
-        /// 線分を囲むバウンディングボックス（四角形の頂点）を計算して返す
-        /// </summary>
-        /// <param name="Start">線分の始点</param>
-        /// <param name="End">線分の終点</param>
-        /// <param name="Width">線の幅</param>
-        /// <param name="calculateType">座標系の種類（Client または Grid）</param>
-        /// <returns>バウンディングボックスの4頂点座標</returns>
-
-        public static PointF[] GetBoundingBoxLine(PointF Start, PointF End, int Width, eCalculateType calculateType = eCalculateType.Client)
-        {
-            return GetBoundingBoxLine<PointF>(Start.ToVector2(), End.ToVector2(), Width, calculateType);
-        }
-
-        /// <summary>
-        /// 線分を囲むバウンディングボックス（四角形の頂点）を計算して返す
-        /// </summary>
-        /// <param name="Start">線分の始点</param>
-        /// <param name="End">線分の終点</param>
-        /// <param name="Width">線の幅</param>
-        /// <param name="calculateType">座標系の種類（Client または Grid）</param>
-        /// <returns>バウンディングボックスの4頂点座標</returns>
-
-        public static SKPoint[] GetBoundingBoxLineSK(SKPoint Start, SKPoint End, int Width, eCalculateType calculateType = eCalculateType.Client)
-        {
-            return GetBoundingBoxLine<SKPoint>(Start.ToVector2(), End.ToVector2(), Width, calculateType);
-        }
-
-        /// <summary>
-        /// 線分を囲むバウンディングボックス（四角形の頂点）を計算して返す
-        /// </summary>
-        /// <param name="Start">線分の始点</param>
-        /// <param name="End">線分の終点</param>
-        /// <param name="Width">線の幅</param>
-        /// <param name="calculateType">座標系の種類（Client または Grid）</param>
-        /// <returns>バウンディングボックスの4頂点座標</returns>
-
-        private static T[] GetBoundingBoxLine<T>(Vector2 Start, Vector2 End, int Width, eCalculateType calculateType = eCalculateType.Client)
-        {
-            // 線を囲む四角形の頂点を計算して返す
-            // 幅を考慮してバウンディングボックスを計算
-            Vector2 line = End - Start;
-
-            // 線分の直行ベクトルを求める
-            Vector2 TyokkouVector = new Vector2(-line.Y, line.X);
-
-            float length;
-
-            if (calculateType == eCalculateType.Grid)
-            {
-                length = GraphicCaluculate.ConvertClientLengthToGridLength(Width + LINE_BOUNDING_BOX_WITDH);
-            }
-            else
-            {
-                length = Width + LINE_BOUNDING_BOX_WITDH;
-            }
-
-
-            TyokkouVector = Vector2.Normalize(TyokkouVector) * length;
-
-            if (typeof(T) == typeof(PointF))
-            {
-                PointF[] boundingBox = new PointF[4];
-
-                boundingBox[0] = (Start + TyokkouVector).ToPointF();
-                boundingBox[1] = (End + TyokkouVector).ToPointF();
-                boundingBox[2] = (End - TyokkouVector).ToPointF();
-                boundingBox[3] = (Start - TyokkouVector).ToPointF();
-
-                return boundingBox as T[];
-            }
-            else if (typeof(T) == typeof(SKPoint))
-            {
-                SKPoint[] boundingBox = new SKPoint[4];
-                boundingBox[0] = (Start + TyokkouVector).ToSKPoint();
-                boundingBox[1] = (End + TyokkouVector).ToSKPoint();
-                boundingBox[2] = (End - TyokkouVector).ToSKPoint();
-                boundingBox[3] = (Start - TyokkouVector).ToSKPoint();
-
-                return boundingBox as T[];
-            }
-
-            return null;
-        }
-
-        /// <summary>
-        /// 円を囲むバウンディングボックス（四角形の頂点）を計算して返す
-        /// </summary>
-        /// <typeparam name="T">PointF または SKPoint</typeparam>
-        /// <param name="X">円の中心X座標</param>
-        /// <param name="Y">円の中心Y座標</param>
-        /// <param name="R">円の半径</param>
-        /// <returns>バウンディングボックスの4頂点座標</returns>
-        public static PointF[] GetBoundingBoxCircle(float X, float Y, float R)
-        {
-            return new PointF[]
-            {
-                new PointF(X - R, Y - R),
-                new PointF(X + R, Y - R),
-                new PointF(X + R, Y + R),
-                new PointF(X - R, Y + R)
-            };
-        }
-
-        /// <summary>
-        /// 円を囲むバウンディングボックス（四角形の頂点）を計算して返す
-        /// </summary>
-        /// <typeparam name="T">PointF または SKPoint</typeparam>
-        /// <param name="X">円の中心X座標</param>
-        /// <param name="Y">円の中心Y座標</param>
-        /// <param name="R">円の半径</param>
-        /// <returns>バウンディングボックスの4頂点座標</returns>
-        public static SKPoint[] GetBoundingBoxCircleSK(float X, float Y, float R)
-        {
-            return new SKPoint[]
-            {
-                new SKPoint(X - R, Y - R),
-                new SKPoint(X + R, Y - R),
-                new SKPoint(X + R, Y + R),
-                new SKPoint(X - R, Y + R)
-            };
-        }
-
-        /// <summary>
-        /// 多角形を囲むバウンディングボックス（四角形の頂点）を計算して返す
-        /// </summary>
-        /// <param name="Points">多角形の頂点座標配列</param>
-        /// <returns>バウンディングボックスの4頂点座標（Pointsがnullまたは空ならnull）</returns>
-
-        public static PointF[] GetBoundingBoxPolygon(PointF[] Points)
-        {
-            if (Points == null || Points.Length == 0) return null;
-
-            float minX = Points[0].X, maxX = Points[0].X;
-            float minY = Points[0].Y, maxY = Points[0].Y;
-
-            foreach (var p in Points)
-            {
-                if (p.X < minX) minX = p.X;
-                if (p.X > maxX) maxX = p.X;
-                if (p.Y < minY) minY = p.Y;
-                if (p.Y > maxY) maxY = p.Y;
-            }
-
-            return new PointF[]
-            {
-                new PointF(minX, minY),
-                new PointF(maxX, minY),
-                new PointF(maxX, maxY),
-                new PointF(minX, maxY)
-            };
-        }
-
-        public static SKPoint[] GetBoundingBoxPolygonSK(SKPoint[] Points)
-        {
-            if (Points == null || Points.Length == 0) return null;
-
-            float minX = Points[0].X, maxX = Points[0].X;
-            float minY = Points[0].Y, maxY = Points[0].Y;
-
-            foreach (var p in Points)
-            {
-                if (p.X < minX) minX = p.X;
-                if (p.X > maxX) maxX = p.X;
-                if (p.Y < minY) minY = p.Y;
-                if (p.Y > maxY) maxY = p.Y;
-            }
-
-            return new SKPoint[]
-            {
-                new SKPoint(minX, minY),
-                new SKPoint(maxX, minY),
-                new SKPoint(maxX, maxY),
-                new SKPoint(minX, maxY)
-            };
-        }
-
-        /// <summary>
-        /// テキストを囲むバウンディングボックス（四角形の頂点）を計算して返す
-        /// </summary>
-        /// <param name="X">テキスト描画位置のX座標</param>
-        /// <param name="Y">テキスト描画位置のY座標</param>
-        /// <param name="sKTextBlob">描画対象の SKTextBlob</param>
-        /// <param name="Angle">回転角度（度数法）</param>
-        /// <param name="calculateType">座標系の種類（Client または Grid）</param>
-        /// <returns>バウンディングボックスの4頂点座標</returns>
-        public static PointF[] GetBoundingBoxText(
-            float X,
-            float Y,
-            string text,
-            float fontSize,
-            string fontName,
-            float Angle,
-            eCalculateType calculateType = eCalculateType.Client)
-        {
-            SKFont font =  DrawManager.GetSKFont(fontName, fontSize);
-
-            SKTextBlob sKTextBlob = SKTextBlob.Create(text, font);
-
-            try
-            {
-                SKRect textRect = sKTextBlob.Bounds;
-
-                float width = textRect.Width;
-                float height = textRect.Height;
-
-                if (calculateType == eCalculateType.Grid)
-                {
-                    width = ConvertClientLengthToGridLength((int)width);
-                    height = ConvertClientLengthToGridLength((int)height);
-                }
-                else
-                {
-                    // Client座標系では角度を反転
-                    Angle = -Angle;
-                }
-
-                // テキスト矩形の4頂点を定義（原点基準）
-                PointF[] boundingBoxPoints =
-                {
-                    new PointF(0, 0),
-                    new PointF(width, 0),
-                    new PointF(width, -height),
-                    new PointF(0, -height)
-                };
-
-                // 回転行列を適用
-                if (!Comp.IsEqual(Angle, 0f))
-                {
-                    using (Matrix matrix = new Matrix())
-                    {
-                        matrix.Rotate(Angle);
-                        matrix.TransformPoints(boundingBoxPoints);
-                    }
-                }
-
-                // 出力位置に平行移動
-                for (int i = 0; i < boundingBoxPoints.Length; i++)
-                {
-
-                    boundingBoxPoints[i].X += X;
-                    boundingBoxPoints[i].Y += Y;
-                }
-
-                return boundingBoxPoints;
-            }
-            finally
-            {
-                sKTextBlob.Dispose();
-            }
-
-        }
-
-        /// <summary>
-        /// テキストを囲むバウンディングボックス（四角形の頂点）を計算して返す
-        /// </summary>
-        /// <param name="X">テキスト描画位置のX座標</param>
-        /// <param name="Y">テキスト描画位置のY座標</param>
-        /// <param name="sKTextBlob">描画対象の SKTextBlob</param>
-        /// <param name="Angle">回転角度（度数法）</param>
-        /// <param name="calculateType">座標系の種類（Client または Grid）</param>
-        /// <returns>バウンディングボックスの4頂点座標</returns>
-        public static SKPoint[] GetBoundingBoxTextSK(
-            float X,
-            float Y,
-            SKFont font,
-            string text,
-            float Angle,
-            eCalculateType calculateType = eCalculateType.Client)
-        {
-            SKRect textRect;
-
-            float width = font.MeasureText(text, out textRect);
-
-            float height = textRect.Height;
-
-            if (calculateType == eCalculateType.Grid)
-            {
-                height = -height;
-                width = ConvertClientLengthToGridLength((int)width);
-                height = ConvertClientLengthToGridLength((int)height);
-            }
-            else
-            {
-                // Client座標系では角度を反転
-                Angle = -Angle;
-            }
-
-            // テキスト矩形の4頂点を定義（原点基準）
-            SKPoint[] boundingBoxPoints =
-            {
-            new SKPoint(0, 0),
-            new SKPoint(width, 0),
-            new SKPoint(width, height),
-            new SKPoint(0, height)
-            };
-
-            // 回転行列を適用
-            if (!Comp.IsEqual(Angle, 0f))
-            {
-                SKMatrix matrix = SKMatrix.CreateRotationDegrees(Angle);
-                boundingBoxPoints = matrix.MapPoints(boundingBoxPoints);
-            }
-
-            // 出力位置に平行移動
-            for (int i = 0; i < boundingBoxPoints.Length; i++)
-            {
-
-                boundingBoxPoints[i].X += X;
-                boundingBoxPoints[i].Y += Y;
-            }
-
-            return boundingBoxPoints;
-        }
-
-        /// <summary>
-        /// 指定したテキストと SKFont を使用して、
-        /// 描画時に必要となるテキストの境界矩形（バウンディングボックス）を取得する。
-        /// </summary>
-        /// <param name="text">計測対象の文字列</param>
-        /// <param name="font">使用する SKFont（呼び出し元で生成済み）</param>
-        /// <returns>テキストの描画領域を表す SKRect</returns>
-        /// <remarks>
-        /// ・SKTextBlob を生成して Bounds から矩形を取得  
-        /// ・font と SKTextBlob は finally で確実に Dispose  
-        /// ・改行を含む場合は SKTextBlob が行単位で処理するため、
-        ///   実際の描画位置と一致する矩形が得られる  
-        /// </remarks>
-        public static SKRect GetTextRect(string text, SKFont font)
-        {
-            SKTextBlob sKTextBlob = SKTextBlob.Create(text, font);
-
-            try
-            {
-                SKRect textRect = sKTextBlob.Bounds;
-
-                return textRect;
-            }
-            finally
-            {
-                font.Dispose();
-                sKTextBlob.Dispose();
-            }
-        }
-
-        /// <summary>
-        /// フォント名とサイズを指定して SKFont を生成し、
-        /// テキストの描画領域（バウンディングボックス）を取得する。
-        /// </summary>
-        /// <param name="text">計測対象の文字列</param>
-        /// <param name="fontSize">フォントサイズ（px）</param>
-        /// <param name="fontName">フォント名</param>
-        /// <returns>テキストの描画領域を表す SKRect</returns>
-        /// <remarks>
-        /// ・DrawManager.GetSKFont により SKFont を生成  
-        /// ・SKTextBlob を使用して Bounds を取得  
-        /// ・生成した font と SKTextBlob は finally で Dispose  
-        /// ・フォント指定でのテキスト計測に便利なオーバーロード  
-        /// </remarks>
-        public static SKRect GetTextRect(string text, Font font)
-        {
-            SKFont skFont = DrawManager.ConvertFontToSKFont(font);
-
-            SKTextBlob sKTextBlob = SKTextBlob.Create(text, skFont);
-
-            try
-            {
-                SKRect textRect = sKTextBlob.Bounds;
-
-                return textRect;
-            }
-            finally
-            {
-                skFont.Dispose();
-                sKTextBlob.Dispose();
-            }
         }
 
         // ===============================================================================

@@ -1,19 +1,17 @@
 ﻿using graphicbox2d.グラフィック計算;
+using SkiaSharp;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
+using System.Reflection;
 
 namespace graphicbox2d
 {
     /// <summary>
-    /// 円図形クラス
+    /// 画像図形クラス
     /// </summary>
-    public class Circle2D : FillObject2D
+    public class Image2D : Object2D
     {
         // ===============================================================================
         // 公開プロパティ
@@ -22,22 +20,37 @@ namespace graphicbox2d
         /// <summary>
         /// 図形の種類
         /// </summary>
-        public override eObject2DType m_Type => eObject2DType.Circle;
+        public override eObject2DType m_Type => eObject2DType.Image;
 
         /// <summary>
-        /// X座標
+        /// 左上X座標
         /// </summary>
         public float X { get; set; } = 0;
 
         /// <summary>
-        /// Y座標
+        /// 左上Y座標
         /// </summary>
         public float Y { get; set; } = 0;
 
         /// <summary>
-        /// 円の半径
+        /// 幅
         /// </summary>
-        public float R { get; set; } = 0;
+        public float Width { get; set; } = 100;
+
+        /// <summary>
+        /// 高さ
+        /// </summary>
+        public float Height { get; set; } = 100;
+
+        /// <summary>
+        /// 回転角度（度）
+        /// </summary>
+        public float Angle { get; set; } = 0;
+
+        /// <summary>
+        /// 描画する画像
+        /// </summary>
+        public SKBitmap Bitmap { get; set; } = null;
 
 
         // ===============================================================================
@@ -47,17 +60,20 @@ namespace graphicbox2d
         /// <summary>
         /// 図形の中心点
         /// </summary>
-        internal override Vector2 CenterPoint { get { return new Vector2(X, Y); } }
+        internal override Vector2 CenterPoint
+        {
+            get { return new Vector2(X + Width / 2f, Y + Height / 2f); }
+        }
+
 
         // ===============================================================================
         // 公開メソッド
         // ===============================================================================
 
-
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public Circle2D()
+        public Image2D()
         {
         }
 
@@ -67,7 +83,7 @@ namespace graphicbox2d
         /// <returns>コピーしたオブジェクト</returns>
         public override Object2D Clone()
         {
-            Circle2D clone = new Circle2D();
+            Image2D clone = new Image2D();
 
             // 基底クラスのデータをコピー
             this.BaseCopyDataTo(clone);
@@ -75,10 +91,16 @@ namespace graphicbox2d
             // 派生クラスのデータをコピー
             clone.X = this.X;
             clone.Y = this.Y;
-            clone.R = this.R;
+            clone.Width = this.Width;
+            clone.Height = this.Height;
+            clone.Angle = this.Angle;
+
+            // Bitmap は参照コピー（必要なら DeepCopy に変更）
+            clone.Bitmap = this.Bitmap;
 
             return clone;
         }
+
 
         // ===============================================================================
         // 非公開メソッド
@@ -87,41 +109,28 @@ namespace graphicbox2d
         /// <summary>
         /// マウスヒット中の図形（拡大した図形）を返す。
         /// </summary>
-        /// <returns>拡張された図形</returns>
         internal override Object2D GetHitObject()
         {
-            Circle2D circle = (Circle2D)this.Clone();
+            Image2D img = (Image2D)this.Clone();
 
-            if (circle.IsFilled == true)
-            {
-                circle.R *= MouseHitPolyOffset;
-            }
-            else
-            {
-                circle.LineWidth += MouseHitLineOffset;
-            }
-
-            return circle;
+            return img;
         }
 
         /// <summary>
         /// マウスポイントがこの図形にヒットしているか判定する。
         /// </summary>
-        /// <param name="MousePoint">マウスポイント</param>
-        /// <param name="MusePointRange">マウスヒット半径</param>
-        /// <returns></returns>
         internal override eMouseHitType IsHitMousePoint(PointF MousePoint, float MusePointRange)
         {
             eMouseHitType eMouseHitType;
 
-            if (IsFilled == true)
-            {
-                eMouseHitType = CalIsHit.IsHitMouseRangeFillCircle(this.X, this.Y, this.R, MousePoint, MusePointRange);
-            }
-            else
-            {
-                eMouseHitType = CalIsHit.IsHitMouseRangeLineCircle(this.X, this.Y, this.R, this.LineWidth, MousePoint, MusePointRange);
-            }
+            Vector2 _CenterPoint;
+            float _CircumCircleR;
+
+            PointF[] Points = GetBoundingBox();
+
+            GraphicCaluculate.GetCenterPointAndCircumCircleR(Points, out _CenterPoint, out _CircumCircleR);
+
+            eMouseHitType = CalIsHit.IsHitMouseRangeFillPolygon(_CenterPoint.ToPoint(), _CircumCircleR, Points.ToList(), MousePoint, MusePointRange);
 
             return eMouseHitType;
         }
@@ -129,20 +138,15 @@ namespace graphicbox2d
         /// <summary>
         /// マウスポイントとこの図形の距離を取得する
         /// </summary>
-        /// <param name="X">マウスポイントX座標</param>
-        /// <param name="Y">マウスポイントY座標</param>
-        /// <returns>距離</returns>
         internal override float GetDistanceHitMousePoint(float X, float Y)
         {
-            Vector2 MousePoint = new Vector2(X, Y);
-
-            return Vector2.Distance(MousePoint, CenterPoint);
+            Vector2 p = new Vector2(X, Y);
+            return Vector2.Distance(p, CenterPoint);
         }
 
         /// <summary>
         /// 図形を移動させる
         /// </summary>
-        /// <param name="Movement">移動量</param>
         internal override void Move(PointF Movement)
         {
             X += Movement.X;
@@ -152,8 +156,6 @@ namespace graphicbox2d
         /// <summary>
         /// 図形を移動させる
         /// </summary>
-        /// <param name="X">移動量X</param>
-        /// <param name="Y">移動量Y</param>
         internal override void Move(float X, float Y)
         {
             this.X += X;
@@ -165,22 +167,25 @@ namespace graphicbox2d
         /// </summary>
         internal override PointF[] GetBoundingBox()
         {
-            return CalBoundBox.GetBoundingBoxCircle(X, Y, R);
+            return CalBoundBox.GetBoundingBox(
+                X, Y, Width, Height, Angle, eCalculateType.Grid, eRotateType.Center);
         }
 
         /// <summary>
         /// コピー元のObject2Dデータをコピー先にコピーする。
         /// </summary>
-        /// <param name="target">コピー先</param>
         protected new void BaseCopyDataTo(Object2D target)
         {
             base.BaseCopyDataTo(target);
 
-            Circle2D circle = (Circle2D)target;
+            Image2D img = (Image2D)target;
 
-            circle.X = this.X;
-            circle.Y = this.Y;
-            circle.R = this.R;
+            img.X = this.X;
+            img.Y = this.Y;
+            img.Width = this.Width;
+            img.Height = this.Height;
+            img.Angle = this.Angle;
+            img.Bitmap = this.Bitmap;
         }
     }
 }

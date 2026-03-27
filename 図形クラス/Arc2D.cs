@@ -1,4 +1,5 @@
-﻿using System;
+﻿using graphicbox2d.グラフィック計算;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -113,11 +114,11 @@ namespace graphicbox2d
 
             if (IsFilled == true)
             {
-                eMouseHitType = GraphicCaluculate.IsHitMouseRangeFillArc(this.X, this.Y, this.R, this.StartAngle, this.EndAngle, MousePoint, MusePointRange);
+                eMouseHitType = CalIsHit.IsHitMouseRangeFillArc(this.X, this.Y, this.R, this.StartAngle, this.EndAngle, MousePoint, MusePointRange);
             }
             else
             {
-                eMouseHitType = GraphicCaluculate.IsHitMouseRangeLineArc(this.X, this.Y, this.R, this.StartAngle, this.EndAngle, this.LineWidth, this.IsDrawSideLines, MousePoint, MusePointRange);
+                eMouseHitType = CalIsHit.IsHitMouseRangeLineArc(this.X, this.Y, this.R, this.StartAngle, this.EndAngle, this.LineWidth, this.IsDrawSideLines, MousePoint, MusePointRange);
             }
 
             return eMouseHitType;
@@ -144,7 +145,7 @@ namespace graphicbox2d
         {
             PointF StartPoint = new PointF(X, Y);
 
-            float startRad = GraphicCaluculate.DegreeToRadian(StartAngle);
+            float startRad = CalConvert.DegreeToRadian(StartAngle);
             PointF EndPoint = new PointF(
                 X + R * (float)Math.Cos(startRad),
                 Y + R * (float)Math.Sin(startRad)
@@ -161,7 +162,7 @@ namespace graphicbox2d
         {
             PointF StartPoint = new PointF(X, Y);
 
-            float endRad = GraphicCaluculate.DegreeToRadian(EndAngle);
+            float endRad = CalConvert.DegreeToRadian(EndAngle);
             PointF EndPoint = new PointF(
                 X + R * (float)Math.Cos(endRad),
                 Y + R * (float)Math.Sin(endRad)

@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using graphicbox2d.グラフィック計算;
+using graphicbox2d.グローバル変数;
+using Newtonsoft.Json;
 using SkiaSharp;
 using SkiaSharp.Views.Desktop;
 using System;
@@ -497,19 +499,16 @@ namespace graphicbox2d
             // ウィンドウハンドルを取得
             hWnd = this.Handle;
 
+            Global.Graphic2DControl = this;
+            Global.GraphicDrawEngine = _DRAW_ENGINE;
+
             if (DesignMode == true)
             {
                 _DRAW_ENGINE_OLD = new GraphicDrawEngine_Old(this);
-
-                GraphicCaluculate_Old.Graphic2DControl = this;
-                GraphicCaluculate_Old.GraphicDrawEngine = _DRAW_ENGINE_OLD;
             }
             else
             {
                 _DRAW_ENGINE = new GraphicDrawEngine(this);
-
-                GraphicCaluculate.Graphic2DControl = this;
-                GraphicCaluculate.GraphicDrawEngine = _DRAW_ENGINE;
 
                 // SkiaSharpコントロール初期化
                 InitializaSKControl();
@@ -586,6 +585,10 @@ namespace graphicbox2d
             }
         }
 
+        /// <summary>
+        /// BackgroundImageチェンジイベント
+        /// </summary>
+        /// <param name="e"></param>
         protected override void OnBackgroundImageChanged(EventArgs e)
         {
             if (DesignMode == true)
@@ -595,21 +598,9 @@ namespace graphicbox2d
 
             base.OnBackgroundImageChanged(e);
 
-            SetskBackGroundBitmap(this.BackgroundImage);
+            this.sKBackGroundBitmap = this.BackgroundImage.ToSKBitmap();
 
             Invalidate();
-        }
-
-        private void SetskBackGroundBitmap(Image image)
-        {
-            if (image != null)
-            {
-                sKBackGroundBitmap = ComonUtil.ImageToSKBitmap(image);
-            }
-            else
-            {
-                sKBackGroundBitmap = null;
-            }
         }
 
         /// <summary>
@@ -898,7 +889,7 @@ namespace graphicbox2d
             if (IsDraggingObject == true)
             {
                 // マウスカーソルに合わせてオブジェクトを移動する
-                PointF GridMouseMovement = GraphicCaluculate.ConvertClientMouseMovementToGridMouseMovement(new Point(MouseMovement.X, MouseMovement.Y));
+                PointF GridMouseMovement = CalConvert.ConvertClientMouseMovementToGridMouseMovement(new Point(MouseMovement.X, MouseMovement.Y));
 
                 if (HitClientObject != null)
                 {
@@ -1073,7 +1064,7 @@ namespace graphicbox2d
         {
             Point MousePosition = new Point(X, Y);
 
-            PointF GridMousePoint = GraphicCaluculate.ConvertClientPointToGridPoint(MousePosition);
+            PointF GridMousePoint = CalConvert.ConvertClientPointToGridPoint(MousePosition);
 
             Object2D Old_HitClientObject = HitClientObject;
 
@@ -1571,7 +1562,7 @@ namespace graphicbox2d
                 skControl.Focus(); // ← 起動直後にキー入力を受けるため
             }
 
-            SetskBackGroundBitmap(this.BackgroundImage);
+            this.sKBackGroundBitmap = this.BackgroundImage.ToSKBitmap();
         }
 
         /// <summary>
@@ -1856,7 +1847,7 @@ namespace graphicbox2d
             }
 
             // 1px移動量（グリッド座標系）
-            float moveAmount = GraphicCaluculate.ConvertClientLengthToGridLength(1);
+            float moveAmount = CalConvert.ConvertClientLengthToGridLength(1);
 
             switch (e.KeyCode)
             {

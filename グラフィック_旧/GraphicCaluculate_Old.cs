@@ -1,4 +1,5 @@
 ﻿using graphicbox2d.オブジェクトマネージャー;
+using graphicbox2d.グローバル変数;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -22,16 +23,6 @@ namespace graphicbox2d
     /// </summary>
     internal static class GraphicCaluculate_Old
     {
-        /// <summary>
-        /// グラフィック2Dコントロールオブジェクト
-        /// </summary>
-        public static Graphic2DControl Graphic2DControl { get; set; }
-
-        /// <summary>
-        /// グラフィック描画エンジンオブジェクト
-        /// </summary>
-        public static GraphicDrawEngine_Old GraphicDrawEngine {get; set; }
-
         /// <summary>
         /// 線図形のバウンディングボックスの幅
         /// </summary>
@@ -1129,7 +1120,7 @@ namespace graphicbox2d
             bool IsHit;
 
             // 線幅をグリッド座標サイズに変換
-            lineWidth = (float)lineWidth / (float)Graphic2DControl.DisplayGridWidth;
+            lineWidth = (float)lineWidth / (float)Global.Graphic2DControl.DisplayGridWidth;
 
             //------------------------------
             //　①外接円判定
@@ -1196,7 +1187,7 @@ namespace graphicbox2d
         public static eMouseHitType IsHitMouseRangeLine(in PointF lineStart, in PointF lineEnd, float lineWidth, in PointF MousePoint, float MouseHitRange)
         {
             // 線幅をグリッド座標サイズに変換
-            lineWidth = (float)lineWidth / (float)Graphic2DControl.DisplayGridWidth;
+            lineWidth = (float)lineWidth / (float)Global.Graphic2DControl.DisplayGridWidth;
 
             eIsCrossLineAndCircle Ret;
 
@@ -1300,7 +1291,7 @@ namespace graphicbox2d
         public static eMouseHitType IsHitMouseRangeLineCircle(float x, float y, float r, float lineWidth, in PointF MousePoint, float MouseHitRange)
         {
             // 線幅をグリッド座標サイズに変換
-            lineWidth = (float)lineWidth / (float)Graphic2DControl.DisplayGridWidth;
+            lineWidth = (float)lineWidth / (float)Global.Graphic2DControl.DisplayGridWidth;
 
             // 判定対象の円の中心座標
             PointF CircVector = new PointF(x, y);
@@ -1409,7 +1400,7 @@ namespace graphicbox2d
         public static eMouseHitType IsHitMouseRangeLineArc(float x, float y, float r, float StartAngle, float EndAngle, float lineWidth, bool IsDrawSideLines, in PointF MousePoint, float MouseHitRange)
         {
             // 線幅をグリッド座標サイズに変換
-            lineWidth = (float)lineWidth / (float)Graphic2DControl.DisplayGridWidth;
+            lineWidth = (float)lineWidth / (float)Global.Graphic2DControl.DisplayGridWidth;
 
             // 判定対象の円の中心座標
             PointF CircVector = new PointF(x, y);
@@ -1461,7 +1452,7 @@ namespace graphicbox2d
         public static eMouseHitType IsHitMouseRangeLineGraph(in List<PointF> GraphPoints, float lineWidth, in PointF MousePoint, float MouseHitRange)
         {
             // 線幅をグリッド座標サイズに変換
-            lineWidth = (float)lineWidth / (float)Graphic2DControl.DisplayGridWidth;
+            lineWidth = (float)lineWidth / (float)Global.Graphic2DControl.DisplayGridWidth;
 
             // ------------------------------
             // グラフ本体とマウスがヒットしているか厳密に判定する
@@ -1776,7 +1767,7 @@ namespace graphicbox2d
         public static RectangleF GetTextRectangle(string text, Font font)
         {
 
-            Graphics g = Graphic2DControl.CreateGraphics();
+            Graphics g = Global.Graphic2DControl.CreateGraphics();
 
             try
             {
@@ -1915,11 +1906,11 @@ namespace graphicbox2d
         {
             Vector2 ClientPointV = new Vector2();
 
-            ClientPointV.X = GridPoint.X * Graphic2DControl.DisplayGridWidth;
-            ClientPointV.Y = -1 * GridPoint.Y * Graphic2DControl.DisplayGridWidth;
+            ClientPointV.X = GridPoint.X * Global.Graphic2DControl.DisplayGridWidth;
+            ClientPointV.Y = -1 * GridPoint.Y * Global.Graphic2DControl.DisplayGridWidth;
 
             // 更に始点座標を足す
-            ClientPointV = ClientPointV + Graphic2DControl.DisplayCenterPoint.ToVector2();
+            ClientPointV = ClientPointV + Global.Graphic2DControl.DisplayCenterPoint.ToVector2();
 
             return ClientPointV.ToPoint();
         }
@@ -1936,8 +1927,8 @@ namespace graphicbox2d
         {
             Vector2 GridV = new Vector2();
 
-            GridV.X =      (float)(ClientPoint.X - (float)Graphic2DControl.DisplayCenterPoint.X) / (float)Graphic2DControl.DisplayGridWidth;
-            GridV.Y = -1 * (float)(ClientPoint.Y - (float)Graphic2DControl.DisplayCenterPoint.Y) / (float)Graphic2DControl.DisplayGridWidth;
+            GridV.X =      (float)(ClientPoint.X - (float)Global.Graphic2DControl.DisplayCenterPoint.X) / (float)Global.Graphic2DControl.DisplayGridWidth;
+            GridV.Y = -1 * (float)(ClientPoint.Y - (float)Global.Graphic2DControl.DisplayCenterPoint.Y) / (float)Global.Graphic2DControl.DisplayGridWidth;
 
             return GridV.ToPointF();
         }
@@ -1964,7 +1955,7 @@ namespace graphicbox2d
         /// <returns>グリッド座標の長さ</returns>
         public static float ConvertClientLengthToGridLength(int Length)
         {
-            return (float)Length / (float)Graphic2DControl.DisplayGridWidth;
+            return (float)Length / (float)Global.Graphic2DControl.DisplayGridWidth;
         }
 
         /// <summary>
@@ -1975,9 +1966,9 @@ namespace graphicbox2d
         public static PointF ConvertGridPointToClientPoint(PointF GridPoint)
         {
             Vector2 cliGridV = new Vector2();
-            cliGridV.X = GridPoint.X * Graphic2DControl.DisplayGridWidth;
-            cliGridV.Y = -1 * GridPoint.Y * Graphic2DControl.DisplayGridWidth;
-            cliGridV += Graphic2DControl.DisplayCenterPoint.ToVector2();
+            cliGridV.X = GridPoint.X * Global.Graphic2DControl.DisplayGridWidth;
+            cliGridV.Y = -1 * GridPoint.Y * Global.Graphic2DControl.DisplayGridWidth;
+            cliGridV += Global.Graphic2DControl.DisplayCenterPoint.ToVector2();
             return cliGridV.ToPointF();
         }
 
@@ -1990,10 +1981,10 @@ namespace graphicbox2d
         /// <param name="outY">クライアント座標 Y 出力</param>
         public static void ConvertGridPointToClientPoint(float x, float y, out float outX, out float outY)
         {
-            outX = x * Graphic2DControl.DisplayGridWidth;
-            outY = -1 * y * Graphic2DControl.DisplayGridWidth;
-            outX += Graphic2DControl.DisplayCenterPoint.X;
-            outY += Graphic2DControl.DisplayCenterPoint.Y;
+            outX = x * Global.Graphic2DControl.DisplayGridWidth;
+            outY = -1 * y * Global.Graphic2DControl.DisplayGridWidth;
+            outX += Global.Graphic2DControl.DisplayCenterPoint.X;
+            outY += Global.Graphic2DControl.DisplayCenterPoint.Y;
         }
 
         /// <summary>

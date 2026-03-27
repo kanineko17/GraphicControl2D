@@ -1,9 +1,12 @@
 ﻿using graphicbox2d.オブジェクトマネージャー;
+using graphicbox2d.グラフィック計算;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Reflection;
@@ -283,7 +286,7 @@ namespace graphicbox2d
         /// <returns>円弧の両端の点</returns>
         private static PointF GetArcSideLinePoint(PointF center, float radius, float angle)
         {
-            float rad = GraphicCaluculate.DegreeToRadian(angle);
+            float rad = CalConvert.DegreeToRadian(angle);
             PointF sidePoint = new PointF(
                 center.X + radius * (float)Math.Cos(rad),
                 center.Y + radius * (float)Math.Sin(rad)
@@ -293,9 +296,16 @@ namespace graphicbox2d
         }
     }
 
+    /// <summary>
+    /// Color拡張メソッド
+    /// </summary>
     public static class ColorExtensions
     {
-        // 色の反転
+        /// <summary>
+        /// 色の反転
+        /// </summary>
+        /// <param name="color"></param>
+        /// <returns></returns>
         public static Color Invert(this Color color)
         {
             return Color.FromArgb(
@@ -306,7 +316,12 @@ namespace graphicbox2d
             );
         }
 
-        // 明るさを調整（係数を掛ける）
+        /// <summary>
+        /// 明るさを調整（係数を掛ける）
+        /// </summary>
+        /// <param name="color"></param>
+        /// <param name="factor"></param>
+        /// <returns></returns>
         public static Color AdjustBrightness(this Color color, float factor)
         {
             int r = (int)(color.R * factor);
@@ -463,34 +478,46 @@ namespace graphicbox2d
 
         }
 
+        /// <summary>
+        /// SKCanvas にテキストを描画する拡張メソッド。
+        /// 回転角度を指定でき、回転の中心はテキストの描画位置となる。
+        /// </summary>
+        /// <param name="canvas">描画先の <see cref="SKCanvas"/>。</param>
+        /// <param name="text">描画する文字列。</param>
+        /// <param name="X">描画位置の X 座標。</param>
+        /// <param name="Y">描画位置の Y 座標（ベースライン基準）。</param>
+        /// <param name="font">使用するフォント。</param>
+        /// <param name="paint">描画に使用するペイント。</param>
+        /// <param name="angle">回転角度（度）。0 の場合は回転なし。</param>
         public static void DrawText2(this SKCanvas canvas, string text, float X, float Y, SKFont font, SKPaint paint, float angle = 0)
         {
             SKTextBlob textBlob = SKTextBlob.Create(text, font);
 
-            var metrics = font.Metrics;
+            // フォントメトリクスからベースライン補正
+            
 
-            float OffsetY = Y - metrics.Ascent;
+            SizeF size = CalText.GetTextSize(text, font, eCalculateType.Client);
+            float OffsetY = Y + font.Metrics.CapHeight;
 
             try
             {
                 if (Comp.IsEqual(angle, 0))
                 {
-                    // 回転が無い場合はそのまま描画
+                    // 回転なし
                     canvas.DrawText(textBlob, X, OffsetY, paint);
                 }
                 else
                 {
-                    // 回転の中心を決める
+                    // 回転あり
                     canvas.Save();
                     canvas.Translate(X, OffsetY);
 
-                    // SkiaSharpは時計回りが正なので、必要なら符号調整
+                    // SkiaSharp は時計回りが正 → 反時計回りにしたい場合は符号反転
                     canvas.RotateDegrees(-angle);
 
-                    // 描画（座標は回転後の原点からの位置）
+                    // 原点から描画
                     canvas.DrawText(textBlob, 0, 0, paint);
 
-                    // 変換をリセット
                     canvas.Restore();
                 }
             }
@@ -500,16 +527,44 @@ namespace graphicbox2d
             }
         }
 
+        /// <summary>
+        /// SKPoint を指定してテキストを描画する拡張メソッド。
+        /// 座標指定以外は <see cref="DrawText2(SKCanvas, string, float, float, SKFont, SKPaint, float)"/> と同じ。
+        /// </summary>
+        /// <param name="canvas">描画先の <see cref="SKCanvas"/>。</param>
+        /// <param name="text">描画する文字列。</param>
+        /// <param name="point">描画位置。</param>
+        /// <param name="font">使用するフォント。</param>
+        /// <param name="paint">描画に使用するペイント。</param>
+        /// <param name="angle">回転角度（度）。</param>
         public static void DrawText2(this SKCanvas canvas, string text, SKPoint point, SKFont font, SKPaint paint, float angle = 0)
         {
             DrawText2(canvas, text, point.X, point.Y, font, paint, angle);
         }
 
+        /// <summary>
+        /// TextData を指定してテキストを描画する拡張メソッド。
+        /// TextData 内の文字列と座標を使用して描画する。
+        /// </summary>
+        /// <param name="canvas">描画先の <see cref="SKCanvas"/>。</param>
+        /// <param name="textData">描画内容と座標を持つ <see cref="TextData"/>。</param>
+        /// <param name="font">使用するフォント。</param>
+        /// <param name="paint">描画に使用するペイント。</param>
+        /// <param name="angle">回転角度（度）。</param>
         public static void DrawText2(this SKCanvas canvas, TextData textData, SKFont font, SKPaint paint, float angle = 0)
         {
             DrawText2(canvas, textData.Text, textData.TextPoint, font, paint, angle);
         }
 
+        /// <summary>
+        /// 複数の TextData をまとめて描画する拡張メソッド。
+        /// リスト内の各要素を順に描画する。
+        /// </summary>
+        /// <param name="canvas">描画先の <see cref="SKCanvas"/>。</param>
+        /// <param name="textData">描画対象の <see cref="TextData"/> のリスト。</param>
+        /// <param name="font">使用するフォント。</param>
+        /// <param name="paint">描画に使用するペイント。</param>
+        /// <param name="angle">回転角度（度）。</param>
         public static void DrawTexts(this SKCanvas canvas, List<TextData> textData, SKFont font, SKPaint paint, float angle = 0)
         {
             for (int i = 0; i < textData.Count; i++)
@@ -549,6 +604,63 @@ namespace graphicbox2d
                 default:
                     return SKFontStyle.Normal;
             }
+        }
+    }
+
+    public static class ImageExtensions
+    {
+        /// <summary>
+        /// <see cref="Image"/> を <see cref="SKBitmap"/> に変換する拡張メソッド。
+        /// Image を一度 PNG 形式としてメモリに書き出し、SkiaSharp でデコードする方式。
+        /// どんな Image でも確実に変換できるが、エンコード処理が入るためやや低速。
+        /// </summary>
+        /// <param name="image">変換対象の <see cref="Image"/>。</param>
+        /// <returns>変換された <see cref="SKBitmap"/>。</returns>
+        public static SKBitmap ToSKBitmap(this Image image)
+        {
+            if (image == null)
+            {
+                return null;
+            }
+
+            using (var ms = new MemoryStream())
+            {
+                // PNG 形式でメモリに保存
+                image.Save(ms, ImageFormat.Png);
+                ms.Seek(0, SeekOrigin.Begin);
+
+                // SkiaSharp で読み込み
+                return SKBitmap.Decode(ms);
+            }
+        }
+    }
+
+    public static class BitmapExtensions
+    {
+        /// <summary>
+        /// <see cref="Bitmap"/> を <see cref="SKBitmap"/> に高速変換する拡張メソッド。
+        /// ピクセルデータを直接コピーするため、画質劣化がなく非常に高速。
+        /// ただし <see cref="Bitmap"/> 専用であり、<see cref="Image"/> 全般には使用できない点に注意。
+        /// </summary>
+        /// <param name="bitmap">変換対象の <see cref="Bitmap"/>。</param>
+        /// <returns>変換された <see cref="SKBitmap"/>。</returns>
+        public static SKBitmap ToSKBitmap(this Bitmap bitmap)
+        {
+            var skBitmap = new SKBitmap(bitmap.Width, bitmap.Height, SKColorType.Bgra8888, SKAlphaType.Premul);
+
+            var data = bitmap.LockBits(
+                new Rectangle(0, 0, bitmap.Width, bitmap.Height),
+                ImageLockMode.ReadOnly,
+                PixelFormat.Format32bppPArgb);
+
+            skBitmap.InstallPixels(
+                new SKImageInfo(bitmap.Width, bitmap.Height, SKColorType.Bgra8888, SKAlphaType.Premul),
+                data.Scan0,
+                data.Stride);
+
+            bitmap.UnlockBits(data);
+
+            return skBitmap;
         }
     }
 }

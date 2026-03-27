@@ -1,4 +1,5 @@
-﻿using System;
+﻿using graphicbox2d.グラフィック計算;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -136,7 +137,7 @@ namespace graphicbox2d
         /// <returns></returns>
         internal override eMouseHitType IsHitMousePoint(PointF MousePoint, float MusePointRange)
         {
-            return GraphicCaluculate.IsHitMouseRangeLine(Start, End, Width, MousePoint, MusePointRange);
+            return CalIsHit.IsHitMouseRangeLine(Start, End, Width, MousePoint, MusePointRange);
         }
 
         /// <summary>
@@ -178,7 +179,7 @@ namespace graphicbox2d
         /// </summary>
         internal override PointF [] GetBoundingBox()
         {
-            return GraphicCaluculate.GetBoundingBoxLine(Start, End, Width, eCalculateType.Grid);
+            return CalBoundBox.GetBoundingBoxLine(Start, End, Width, eCalculateType.Grid);
         }
 
         /// <summary>

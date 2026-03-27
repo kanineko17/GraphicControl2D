@@ -82,39 +82,5 @@ namespace graphicbox2d
 
             return Result;
         }
-
-    public static SKBitmap ImageToSKBitmap(Image image)
-    {
-        using (var ms = new MemoryStream())
-        {
-            // PNG 形式でメモリに保存
-            image.Save(ms, ImageFormat.Png);
-            ms.Seek(0, SeekOrigin.Begin);
-
-            // SkiaSharp で読み込み
-            return SKBitmap.Decode(ms);
-        }
-    }
-
-        public static SKBitmap BitmapToSKBitmap(Bitmap bitmap)
-        {
-            var skBitmap = new SKBitmap(bitmap.Width, bitmap.Height, SKColorType.Bgra8888, SKAlphaType.Premul);
-
-            var data = bitmap.LockBits(
-                new Rectangle(0, 0, bitmap.Width, bitmap.Height),
-                ImageLockMode.ReadOnly,
-                PixelFormat.Format32bppPArgb);
-
-            skBitmap.InstallPixels(
-                new SKImageInfo(bitmap.Width, bitmap.Height, SKColorType.Bgra8888, SKAlphaType.Premul),
-                data.Scan0,
-                data.Stride);
-
-            bitmap.UnlockBits(data);
-
-            return skBitmap;
-        }
-
-
     }
 }
