@@ -586,6 +586,9 @@ namespace graphicbox2d
         }
     }
 
+    /// <summary>
+    /// FontStyle 拡張メソッドクラス
+    /// </summary>
     public static class FontStyleExtensions
     {
         /// <summary>
@@ -607,6 +610,9 @@ namespace graphicbox2d
         }
     }
 
+    /// <summary>
+    /// Image 拡張メソッドクラス
+    /// </summary>
     public static class ImageExtensions
     {
         /// <summary>
@@ -635,6 +641,9 @@ namespace graphicbox2d
         }
     }
 
+    /// <summary>
+    /// Bitmap 拡張メソッドクラス
+    /// </summary>
     public static class BitmapExtensions
     {
         /// <summary>

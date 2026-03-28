@@ -41,7 +41,6 @@ namespace graphicbox2d.グラフィック計算
         /// グリッド座標をクライアント座標に変換します。
         /// </summary>
         /// <param name="GridPoint">変換対象のグリッド座標 (X, Y)</param>
-        /// <param name="ClientCenterPoint">クライアント座標系の中心点</param>
         /// <returns>変換後のクライアント座標</returns>
         /// <remarks>
         /// Y座標はクライアント座標系に合わせて反転されます。
@@ -116,6 +115,13 @@ namespace graphicbox2d.グラフィック計算
             return cliGridV.ToSKPoint();
         }
 
+        /// <summary>
+        /// グリッド座標のテキスト描画位置をクライアント座標に変換する
+        /// </summary>
+        /// <param name="GridPoint">グリッド座標</param>
+        /// <param name="text">描画するテキスト</param>
+        /// <param name="font">使用するフォント</param>
+        /// <returns>クライアント座標のテキスト描画位置</returns>
         public static SKPoint ConvertGridTextPointToClientTextPoint(PointF GridPoint, string text, SKFont font)
         {
             SKPoint textPoint = ConvertGridPointToClientPoint(GridPoint);

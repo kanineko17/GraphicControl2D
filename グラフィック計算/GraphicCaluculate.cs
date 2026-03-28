@@ -769,6 +769,7 @@ namespace graphicbox2d.グラフィック計算
         /// <param name="StartAngle">円弧の開始角度（度数法）。</param>
         /// <param name="EndAngle">円弧の終了角度（度数法）。</param>
         /// <param name="LineWidth">円弧の線幅。</param>
+        /// <param name="IsDrawSideLines">円弧の側面線を描画するかどうかのフラグ。</param>
         /// <param name="Circle2Center">判定対象となる円の中心座標。</param>
         /// <param name="R2">判定対象となる円の半径。</param>
         /// <param name="Ret">
@@ -913,7 +914,7 @@ namespace graphicbox2d.グラフィック計算
         /// <summary>
         /// 点がポリゴン内に含まれるか判定する
         /// </summary>
-        /// <param name="polygon">ポリゴン</param>
+        /// <param name="Points">ポリゴン頂点リスト</param>
         /// <param name="point">点</param>
         /// <returns>true:含む false:含まない</returns>
         public static bool IsContainPointInPolygon(in List<PointF> Points, in PointF point)
@@ -1253,6 +1254,7 @@ namespace graphicbox2d.グラフィック計算
         /// <summary>
         /// ポリゴンの中心点と外接円の半径を同時に取得する
         /// </summary>
+        /// <param name="Points">ポリゴン頂点配列</param>
         /// <param name="centerPoint">ポリゴンの中心点</param>
         /// <param name="circumCircleR">外接円の半径</param>
         internal static void GetCenterPointAndCircumCircleR(PointF[] Points, out Vector2 centerPoint, out float circumCircleR)
@@ -1264,6 +1266,7 @@ namespace graphicbox2d.グラフィック計算
         /// <summary>
         /// ポリゴンの中心点と外接円の半径を同時に取得する
         /// </summary>
+        /// <param name="Points">ポリゴン頂点リスト</param>
         /// <param name="centerPoint">ポリゴンの中心点</param>
         /// <param name="circumCircleR">外接円の半径</param>
         internal static void GetCenterPointAndCircumCircleR(List<PointF> Points, out Vector2 centerPoint, out float circumCircleR)

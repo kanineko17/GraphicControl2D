@@ -9,6 +9,9 @@ using static System.Windows.Forms.LinkLabel;
 
 namespace graphicbox2d
 {
+    /// <summary>
+    /// 2Dグラフィックコントロールのレイヤークラス
+    /// </summary>
     public class Layer2D : IComparable<Layer2D>
     {
         /// <summary>
@@ -217,7 +220,7 @@ namespace graphicbox2d
         /// レイヤーのデータをインポートするメソッド。
         /// Layer2Dオブジェクトからデータを読み取り、Layer2D_Documentのプロパティに設定する。
         /// </summary>
-        /// <param name="layer2D">レイヤーデータ</param>
+        /// <param name="layer2D_Document">出力するレイヤードキュメント</param>
         internal void OutLayerDocument(out Layer2D_Document layer2D_Document)
         {
             layer2D_Document = new Layer2D_Document();
@@ -234,6 +237,7 @@ namespace graphicbox2d
         /// <summary>
         /// オブジェクトのデータをインポートするメソッド。
         /// </summary>
+        /// <param name="layer2D_Document">インポート先のレイヤードキュメント</param>
         /// <param name="objects">オブジェクトデータ</param>
         private void ImportObjectsToLayerDoc(ref Layer2D_Document layer2D_Document, in List<Object2D> objects)
         {

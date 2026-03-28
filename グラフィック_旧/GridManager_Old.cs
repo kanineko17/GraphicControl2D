@@ -48,7 +48,7 @@ namespace graphicbox2d
 
         /// <summary>
         /// グリッド線描画用ペン
-        /// <summary>
+        /// </summary>
         public  Pen GridPen { get { return GetGridPen(); } }
         private readonly Pen _GridPen = new Pen(Color.DimGray, 1);
 

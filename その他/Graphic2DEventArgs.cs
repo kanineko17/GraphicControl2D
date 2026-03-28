@@ -63,7 +63,7 @@ namespace graphicbox2d
         /// コンストラクタ。
         /// ドラッグ操作中のオブジェクト情報を取り込む。
         /// </summary>
-        /// <param name="_DraggingObject">削除されたオブジェクトリスト</param>
+        /// <param name="_DeleteObject">削除されたオブジェクトリスト</param>
         public Graphic2DObjectDeleteEventArgs(List<Object2D> _DeleteObject)
         {
             // 削除されたオブジェクトリストをコピー
@@ -108,6 +108,8 @@ namespace graphicbox2d
         /// ドラッグ操作中のオブジェクト情報を取り込む。
         /// </summary>
         /// <param name="_Object">ドラッグ操作中オブジェクト</param>
+        /// <param name="e">マウスイベント引数</param>
+        /// <param name="extensionData">イベントに付随するマウス拡張データ</param>
         public Graphic2DObjectDraggingEventArgs(MouseEventArgs e, in Graphic2DMouseEventExtensionData extensionData, Object2D _Object)
             : base(e , in extensionData)
         {

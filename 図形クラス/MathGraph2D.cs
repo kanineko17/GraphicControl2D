@@ -9,6 +9,9 @@ using System.Threading.Tasks;
 
 namespace graphicbox2d
 {
+    /// <summary>
+    /// 数式グラフ図形クラス
+    /// </summary>
     public class MathGraph2D : Graph2D
     {
         // ===============================================================================

@@ -85,7 +85,7 @@ namespace graphicbox2d
         /// Windows メッセージを基に、マウスイベント関連の拡張付きドラッグ操作中イベント引数を生成する。
         /// 内部で基本的な MouseEventArgs を生成し、拡張データを付加する。
         /// </summary>
-        /// <param name="m">処理対象の Windows メッセージ。</param>
+        /// <param name="baseArgs">処理対象の MouseEventArgs。</param>
         /// <param name="extensionData">イベントに付随するマウス拡張データ。</param>
         /// <param name="_Object">ドラッグ操作中オブジェクト</param>
         /// <returns></returns>
@@ -98,7 +98,7 @@ namespace graphicbox2d
         /// Windows メッセージを基に、マウスイベント関連の拡張付きイベント引数を生成する。
         /// 内部で基本的な MouseEventArgs を生成し、拡張データを付加する。
         /// </summary>
-        /// <param name="m">処理対象の Windows メッセージ。</param>
+        /// <param name="baseArgs">処理対象の MouseEventArgs。</param>
         /// <param name="extensionData">イベントに付随するマウス拡張データ。</param>
         /// <returns>生成された Graphic2DMouseEventArgs。</returns>
         public static Graphic2DMouseEventArgs Convert(MouseEventArgs baseArgs, in Graphic2DMouseEventExtensionData extensionData)

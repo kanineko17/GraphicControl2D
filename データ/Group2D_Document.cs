@@ -15,9 +15,7 @@ namespace graphicbox2d
     /// </summary>
     public class Group2D_Document : Object2D_Document
     {
-        // =======================================================================
-        // 公開プロパティ
-        // =======================================================================
+        /// <inheritdoc/>
         public override eObject2DType m_Type => eObject2DType.Group;
 
         /// <summary>

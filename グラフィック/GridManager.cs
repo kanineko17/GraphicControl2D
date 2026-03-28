@@ -45,7 +45,7 @@ namespace graphicbox2d
 
         /// <summary>
         /// グリッド線描画用ペン
-        /// <summary>
+        /// </summary>
         public SKPaint GridPaint { get { return GetGridPaint(); } }
         private readonly SKPaint _GridPaint = MakeLineSKPaint(SKColors.White, 1, false);
 
@@ -480,6 +480,7 @@ namespace graphicbox2d
         /// </summary>
         /// <param name="sKColor">カラー</param>
         /// <param name="width">線幅</param>
+        /// <param name="isAntialias">アンチエイリアスの有無</param>
         /// <returns></returns>
         private static SKPaint MakeLineSKPaint(SKColor sKColor, int width, bool isAntialias = true)
         {

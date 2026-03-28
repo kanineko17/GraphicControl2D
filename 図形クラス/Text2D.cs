@@ -142,8 +142,7 @@ namespace graphicbox2d
         /// マウスポイントがこの図形にヒットしているか判定する。
         /// 判定は「マウスポイントが判定半径以内にあるか」で行う。
         /// </summary>
-        /// <param name="X">マウスポイントX座標</param>
-        /// <param name="Y">マウスポイントY座標</param>
+        /// <param name="MousePoint">マウスポイント座標</param>
         /// <param name="MusePointRange">マウスの有効誤差範囲</param>
         /// <returns>true = ヒットしている</returns>
         internal override eMouseHitType IsHitMousePoint(PointF MousePoint, float MusePointRange)
@@ -206,6 +205,7 @@ namespace graphicbox2d
         /// <summary>
         /// ポリゴンの中心点と外接円の半径を同時に取得する
         /// </summary>
+        /// <param name="_BoundingBox">バウンディングボックスの頂点配列</param>
         /// <param name="_CenterPoint">ポリゴンの中心点</param>
         /// <param name="_CircumCircleR">外接円の半径</param>
         internal void GetBoundingBoxCenterPointAndCircumCircleR(out PointF[] _BoundingBox, out Vector2 _CenterPoint, out float _CircumCircleR)

@@ -63,6 +63,7 @@ namespace graphicbox2d.オブジェクトマネージャー_旧
         }
     }
 
+    /// <summary>
     /// ArrowCapKey 構造体は Dictionary のキーとして利用されるため、
     /// 値の等価比較とハッシュコード生成をオーバーライドしています。
     /// 幅と高さが同じ ArrowCapKey は同一キーとして扱われ、

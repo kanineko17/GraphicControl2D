@@ -90,7 +90,7 @@ namespace graphicbox2d.その他
 
         /// <summary>
         /// 単一データをXML要素文字列に変換する。
-        /// Color, PointF, List<PointF> は専用処理、それ以外は文字列化。
+        /// Color, PointF, List&lt;PointF&gt; は専用処理、それ以外は文字列化。
         /// </summary>
         /// <param name="Data">変換対象の単一データ</param>
         /// <returns>XML要素文字列</returns>
@@ -203,7 +203,7 @@ namespace graphicbox2d.その他
 
         /// <summary>
         /// 指定された型が配列なら要素型を返す。
-        /// List<T> など IEnumerable<T> の場合はジェネリック引数を返す。
+        /// List&lt;T&gt; など IEnumerable&lt;T&gt; の場合はジェネリック引数を返す。
         /// それ以外は null を返す。
         /// </summary>
         /// <param name="type">判定対象の型情報</param>

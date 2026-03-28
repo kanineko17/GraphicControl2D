@@ -101,7 +101,7 @@ namespace graphicbox2d
         /// 適切な描画メソッドを呼び出し Graphics オブジェクトに描画する。
         /// null が渡された場合は ArgumentNullException をスローする。
         /// </summary>
-        /// <param name="g">描画対象の Graphics オブジェクト。</param>
+        /// <param name="sKCanvas">描画対象の SKCanvas オブジェクト。</param>
         /// <param name="object2D">描画する Object2D インスタンス。種類に応じて内部で振り分けられる。</param>
         /// <exception cref="ArgumentNullException">
         /// object2D が null の場合、または未対応の種類が指定された場合にスローされる。
@@ -180,7 +180,7 @@ namespace graphicbox2d
         /// グリッド座標系で指定された点をクライアント座標に変換し、
         /// 半径をスケーリングして塗りつぶし円として描画する。
         /// </summary>
-        /// <param name="g">描画対象の Graphics オブジェクト。</param>
+        /// <param name="canvas">描画対象の SKCanvas オブジェクト。</param>
         /// <param name="point">グリッド座標系で定義された Point2D オブジェクト。</param>
         public void DrawPoint2D(SKCanvas canvas, Point2D point)
         {
@@ -192,7 +192,7 @@ namespace graphicbox2d
         /// グリッド座標系で指定された中心点と半径をクライアント座標に変換し、
         /// 塗りつぶし／非塗りつぶしの状態に応じて円を描画する。
         /// </summary>
-        /// <param name="g">描画対象の Graphics オブジェクト。</param>
+        /// <param name="canvas">描画対象の SKCanvas オブジェクト。</param>
         /// <param name="circle">グリッド座標系で定義された Circle2D オブジェクト。</param>
         public void DrawCircle2D(SKCanvas canvas, Circle2D circle)
         {
@@ -227,7 +227,7 @@ namespace graphicbox2d
         /// グリッド座標系で指定された頂点群をクライアント座標に変換し、
         /// 塗りつぶし／非塗りつぶしの状態に応じて多角形を描画する。
         /// </summary>
-        /// <param name="g">描画対象の Graphics オブジェクト。</param>
+        /// <param name="canvas">描画対象の SKCanvas オブジェクト。</param>
         /// <param name="polygon">グリッド座標系で定義された Polygon2D オブジェクト。</param>
         public void DrawPolygon2D(SKCanvas canvas, Polygon2D polygon)
         {
@@ -261,7 +261,7 @@ namespace graphicbox2d
         /// グリッド座標系で指定された始点・終点をクライアント座標に変換し、
         /// 矢印用のペンを用いて直線を描画する。
         /// </summary>
-        /// <param name="g">描画対象の Graphics オブジェクト。</param>
+        /// <param name="canvas">描画対象の SKCanvas オブジェクト。</param>
         /// <param name="arrow">グリッド座標系で定義された Arrow2D オブジェクト。</param>
         public void DrawArrow2D(SKCanvas canvas, Arrow2D arrow)
         {
@@ -337,7 +337,7 @@ namespace graphicbox2d
         /// 塗りつぶし指定がある場合は円弧を塗りつぶし＋アウトライン描画、
         /// 指定がない場合は輪郭線のみを描画する。
         /// </summary>
-        /// <param name="g">描画対象の Graphics オブジェクト。</param>
+        /// <param name="canvas">描画対象の SKCanvas オブジェクト。</param>
         /// <param name="arc">
         /// 描画対象の Arc2D オブジェクト。  
         /// - X, Y : グリッド座標  
@@ -378,7 +378,7 @@ namespace graphicbox2d
         /// <summary>
         /// グラフを描画する関数。
         /// </summary>
-        /// <param name="g">描画対象の Graphics オブジェクト。</param>
+        /// <param name="canvas">描画対象の SKCanvas オブジェクト。</param>
         /// <param name="graph">描画対象グラフ図形オブジェクト</param>
         public void DrawGraph2D(SKCanvas canvas, Graph2D graph)
         {
@@ -607,7 +607,7 @@ namespace graphicbox2d
         /// <summary>
         /// 背景のグリッド座標テキストを描画
         /// </summary>
-        /// <param name="g"></param>
+        /// <param name="canvas">描画対象の SKCanvas</param>
         public void DrawBackGroundGridText(SKCanvas canvas)
         {
             // グリッド座標テキストを描画
@@ -619,7 +619,7 @@ namespace graphicbox2d
         /// <summary>
         /// マウス位置・スケーリング情報テキストを描画
         /// </summary>
-        /// <param name="g"></param>
+        /// <param name="canvas">描画対象の SKCanvas</param>
         public void DrawInfoText(SKCanvas canvas)
         {
             SKFont font = DrawManager.ConvertFontToSKFont(m_Parent.InfoTextFont);
@@ -663,7 +663,8 @@ namespace graphicbox2d
         /// <summary>
         /// 情報テキストの表示位置データを更新
         /// </summary>
-        /// <param name="g"></param>
+        /// <param name="Text">テキスト文字列</param>
+        /// <param name="OutRecordNo">表示行番号</param>
         public PointF GetDrawInfoTextPosition(string Text, int OutRecordNo)
         {
             if (string.IsNullOrEmpty(Text) == true)
@@ -699,7 +700,7 @@ namespace graphicbox2d
         /// <summary>
         /// 指定された Graphics オブジェクトに中央線（縦・横両方）を描画する
         /// </summary>
-        /// <param name="g">描画対象の Graphics オブジェクト</param>
+        /// <param name="canvas">描画対象の SKCanvas オブジェクト</param>
         private void DrawCenterLine(SKCanvas canvas)
         {
             SKPoint Start;
@@ -719,7 +720,7 @@ namespace graphicbox2d
         /// <summary>
         /// 指定された Graphics オブジェクトに原点のテキストを描画する
         /// </summary>
-        /// <param name="g">描画対象の Graphics オブジェクト</param>
+        /// <param name="canvas">描画対象の SKCanvas オブジェクト</param>
         private void DrawCenterText(SKCanvas canvas)
         {
             // 原点の0テキストの描画
@@ -739,7 +740,7 @@ namespace graphicbox2d
         /// <summary>
         /// 指定された Graphics オブジェクトにグリッド座標テキストを描画する
         /// </summary>
-        /// <param name="g">描画対象の Graphics オブジェクト</param>
+        /// <param name="canvas">描画対象の SKCanvas オブジェクト</param>
         private void DrawGridText(SKCanvas canvas)
         {
             canvas.DrawTexts(m_GridManager.GridTexts, m_GridManager.GridSKFont, m_GridManager.GridFontPaint);

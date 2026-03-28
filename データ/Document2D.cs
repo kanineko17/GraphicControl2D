@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace graphicbox2d.データ
 {
+    /// <summary>
+    /// 2Dグラフィックコントロールのドキュメントクラス
+    /// </summary>
     public class Document2D
     {
         /// <summary>

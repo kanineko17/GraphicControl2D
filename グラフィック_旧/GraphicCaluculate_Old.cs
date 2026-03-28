@@ -772,6 +772,7 @@ namespace graphicbox2d
         /// <param name="StartAngle">円弧の開始角度（度数法）。</param>
         /// <param name="EndAngle">円弧の終了角度（度数法）。</param>
         /// <param name="LineWidth">円弧の線幅。</param>
+        /// <param name="IsDrawSideLines">円弧の側面線を描画するかどうかのフラグ。</param>
         /// <param name="Circle2Center">判定対象となる円の中心座標。</param>
         /// <param name="R2">判定対象となる円の半径。</param>
         /// <param name="Ret">
@@ -916,7 +917,7 @@ namespace graphicbox2d
         /// <summary>
         /// 点がポリゴン内に含まれるか判定する
         /// </summary>
-        /// <param name="polygon">ポリゴン</param>
+        /// <param name="Points">ポリゴン頂点リスト</param>
         /// <param name="point">点</param>
         /// <returns>true:含む false:含まない</returns>
         public static bool IsContainPointInPolygon(in List<PointF> Points, in PointF point)
@@ -1107,7 +1108,6 @@ namespace graphicbox2d
         /// <param name="lineWidth">ポリゴン輪郭線の太さ</param>
         /// <param name="MousePoint">マウス座標</param>
         /// <param name="MouseHitRange">マウスの当たり判定範囲（半径）</param>
-        /// <param name="IsConvertLineWidth">線の太さをグリッド座標サイズに変換するかどうかのフラグ。デフォルトは true。</param>
         /// <returns>
         /// eMouseHitType の判定結果：  
         /// ・None : ヒットしていない  
@@ -1388,6 +1388,7 @@ namespace graphicbox2d
         /// <param name="StartAngle">円弧の開始角度（度数法）。</param>
         /// <param name="EndAngle">円弧の終了角度（度数法）。</param>
         /// <param name="lineWidth">円弧の線幅。</param>
+        /// <param name="IsDrawSideLines">円弧の側面線を描画するかどうかのフラグ。</param>
         /// <param name="MousePoint">判定対象となるマウスポイント座標。</param>
         /// <param name="MouseHitRange">マウス判定の許容範囲（半径）。</param>
         /// <returns>
@@ -1897,7 +1898,6 @@ namespace graphicbox2d
         /// グリッド座標をクライアント座標に変換します。
         /// </summary>
         /// <param name="GridPoint">変換対象のグリッド座標 (X, Y)</param>
-        /// <param name="ClientCenterPoint">クライアント座標系の中心点</param>
         /// <returns>変換後のクライアント座標</returns>
         /// <remarks>
         /// Y座標はクライアント座標系に合わせて反転されます。
@@ -2122,7 +2122,6 @@ namespace graphicbox2d
         /// <summary>
         /// テキストを囲むバウンディングボックス（四角形の頂点）を計算して返す
         /// </summary>
-        /// <param name="g">描画対象のGraphicsオブジェクト</param>
         /// <param name="X">テキスト描画位置のX座標</param>
         /// <param name="Y">テキスト描画位置のY座標</param>
         /// <param name="Text">描画する文字列</param>
