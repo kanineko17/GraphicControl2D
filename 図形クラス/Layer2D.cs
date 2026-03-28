@@ -77,6 +77,11 @@ namespace graphicbox2d
         public List<Group2D> Groups { get; set; }
 
         /// <summary>
+        /// イメージオブジェクトリスト
+        /// </summary>
+        public List<Image2D> Images { get; set; }
+
+        /// <summary>
         /// コンストラクタ
         /// </summary>
         public Layer2D()
@@ -141,6 +146,7 @@ namespace graphicbox2d
             Graphs = new List<Graph2D>();
             MathGraphs = new List<MathGraph2D>();
             Groups = new List<Group2D>();
+            Images = new List<Image2D>();
         }
 
         /// <summary>
@@ -161,6 +167,7 @@ namespace graphicbox2d
             allObjects.AddRange(Graphs);
             allObjects.AddRange(MathGraphs);
             allObjects.AddRange(Groups);
+            allObjects.AddRange(Images);
 
             return allObjects;
         }
@@ -199,6 +206,9 @@ namespace graphicbox2d
 
             if (Groups != null)
                 Groups.RemoveAll(grop => grop.IsSelect);
+
+            if (Images != null)
+                Images.RemoveAll(image => image.IsSelect);
         }
 
         /// <summary>
@@ -303,6 +313,7 @@ namespace graphicbox2d
             ImportDocumets<Graph2D, Graph2D_Document>(Graphs, layerDoc.Graphs);
             ImportDocumets<MathGraph2D, MathGraph2D_Document>(MathGraphs, layerDoc.MathGraphs);
             ImportDocumets<Group2D, Group2D_Document>(Groups, layerDoc.Groups);
+            //ImportDocumets<Image2D, Image2D_Dobument>(Images, layerDoc.Images);
         }
 
         internal void ImportDocumets<ObjectList, DocumetList>(List<ObjectList> objectList, List<DocumetList> documentList)

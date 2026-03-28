@@ -23,7 +23,7 @@ namespace graphicbox2d
     /// <summary>
     /// 全図形の基底クラス
     /// </summary>
-    public class Object2D : IComparable<Object2D>, IXmlSerializable
+    public class Object2D : IComparable<Object2D>, IXmlSerializable, IDisposable
     {
         // ===============================================================================
         // 公開プロパティ
@@ -45,6 +45,11 @@ namespace graphicbox2d
         /// 値が大きいほど手前に描画される
         /// </summary>
         public float ZOrder { get; set; } = 0f;
+
+        /// <summary>
+        /// Disposeフラグ
+        /// </summary>
+        public bool IsDisposed { get; set; } = false;
 
         // ===============================================================================
         // 非公開プロパティ
@@ -125,6 +130,14 @@ namespace graphicbox2d
 
             // ZOrder が一致している場合、IDで比較を行う
             return this._ID.CompareTo(other._ID);
+        }
+
+        /// <summary>
+        /// /Dispose
+        /// </summary>
+        public virtual void Dispose()
+        {
+            IsDisposed = true;
         }
 
         // ===============================================================================

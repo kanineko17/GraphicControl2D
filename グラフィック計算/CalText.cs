@@ -38,8 +38,8 @@ namespace graphicbox2d.グラフィック計算
 
             if (calculateType == eCalculateType.Grid)
             {
-                width = ConvertClientLengthToGridLength((int)width);
-                height = ConvertClientLengthToGridLength((int)height);
+                width = ConvertClientLengthToDisplayGridLength((int)width);
+                height = ConvertClientLengthToDisplayGridLength((int)height);
             }
 
             SizeF size = new SizeF(width, height);

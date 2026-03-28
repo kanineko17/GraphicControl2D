@@ -889,7 +889,7 @@ namespace graphicbox2d
             if (IsDraggingObject == true)
             {
                 // マウスカーソルに合わせてオブジェクトを移動する
-                PointF GridMouseMovement = CalConvert.ConvertClientMouseMovementToGridMouseMovement(new Point(MouseMovement.X, MouseMovement.Y));
+                PointF GridMouseMovement = CalConvert.ConvertClientMouseMovementToDisplayGridMouseMovement(new Point(MouseMovement.X, MouseMovement.Y));
 
                 if (HitClientObject != null)
                 {
@@ -971,6 +971,9 @@ namespace graphicbox2d
                     Object2D HitObject = HitClientObject.GetHitObject();
 
                     _DRAW_ENGINE.DrawObject2D(e.Surface.Canvas, HitObject);
+
+                    // 描画後にオブジェクトを解放する
+                    HitObject.Dispose();
                 }
             }
         }
@@ -1064,7 +1067,7 @@ namespace graphicbox2d
         {
             Point MousePosition = new Point(X, Y);
 
-            PointF GridMousePoint = CalConvert.ConvertClientPointToGridPoint(MousePosition);
+            PointF GridMousePoint = CalConvert.ConvertClientPointToDisplayGridPoint(MousePosition);
 
             Object2D Old_HitClientObject = HitClientObject;
 
@@ -1194,6 +1197,7 @@ namespace graphicbox2d
                 layer2D.Graphs.Clear();
                 layer2D.MathGraphs.Clear();
                 layer2D.Groups.Clear();
+                layer2D.Images.Clear();
             }
 
             Layers.Clear();
@@ -1755,7 +1759,7 @@ namespace graphicbox2d
         /// <param name="sender">イベント発生元</param>
         /// <param name="e">MouseEventArgs</param>
         /// <remarks>
-        /// ・e.Delta > 0 で拡大、< 0 で縮小  
+        /// ・e.Delta ＞ 0 で拡大、＜ 0 で縮小  
         /// ・UserZoom を乗算してズーム値を更新  
         /// ・Invalidate により再描画を要求  
         /// </remarks>
@@ -1847,7 +1851,7 @@ namespace graphicbox2d
             }
 
             // 1px移動量（グリッド座標系）
-            float moveAmount = CalConvert.ConvertClientLengthToGridLength(1);
+            float moveAmount = CalConvert.ConvertClientLengthToDisplayGridLength(1);
 
             switch (e.KeyCode)
             {

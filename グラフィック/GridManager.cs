@@ -45,7 +45,7 @@ namespace graphicbox2d
 
         /// <summary>
         /// グリッド線描画用ペン
-        /// <summary>
+        /// </summary>
         public SKPaint GridPaint { get { return GetGridPaint(); } }
         private readonly SKPaint _GridPaint = MakeLineSKPaint(SKColors.White, 1, false);
 

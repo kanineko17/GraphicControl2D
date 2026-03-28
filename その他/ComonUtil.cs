@@ -62,7 +62,7 @@ namespace graphicbox2d
         /// 32ビット値の下位16ビットを取得する
         /// </summary>
         /// <param name="Target">32bit値</param>
-        /// <returns>下位16ビット/returns>
+        /// <returns>下位16ビット</returns>
         public static int GetLower16Bit(int Target)
         {
             // 上位16ビットを削除して返す
@@ -75,7 +75,7 @@ namespace graphicbox2d
         /// 32ビット値の下位8ビットを取得する
         /// </summary>
         /// <param name="Target">32bit値</param>
-        /// <returns>下位8ビット/returns>
+        /// <returns>下位8ビット</returns>
         public static int GetLower8Bit(int Target)
         {
             int Result = Target & 0x78;

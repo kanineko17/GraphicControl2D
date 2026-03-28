@@ -1,5 +1,6 @@
 ﻿using graphicbox2d;
 using graphicbox2d.グローバル変数;
+using Newtonsoft.Json.Linq;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
@@ -38,15 +39,15 @@ namespace graphicbox2d.グラフィック計算
         // ===============================================================================
 
         /// <summary>
-        /// グリッド座標をクライアント座標に変換します。
+        /// 表示グリッド座標をクライアント座標に変換します。
         /// </summary>
-        /// <param name="GridPoint">変換対象のグリッド座標 (X, Y)</param>
+        /// <param name="GridPoint">変換対象の表示グリッド座標 (X, Y)</param>
         /// <param name="ClientCenterPoint">クライアント座標系の中心点</param>
         /// <returns>変換後のクライアント座標</returns>
         /// <remarks>
         /// Y座標はクライアント座標系に合わせて反転されます。
         /// </remarks>
-        public static Point ConvertGridPointToClientPoint(in PointF GridPoint)
+        public static Point ConvertDisplayGridPointToClientPoint(in PointF GridPoint)
         {
             Vector2 ClientPointV = new Vector2();
 
@@ -60,14 +61,14 @@ namespace graphicbox2d.グラフィック計算
         }
 
         /// <summary>
-        /// クライアント座標をグリッド座標に変換します。
+        /// クライアント座標を表示グリッド座標に変換します。
         /// </summary>
         /// <param name="ClientPoint">変換対象のクライアント座標</param>
-        /// <returns>変換後のグリッド座標。</returns>
+        /// <returns>変換後の表示グリッド座標。</returns>
         /// <remarks>
-        /// Y座標はグリッド座標系に合わせて反転されます。
+        /// Y座標は表示グリッド座標系に合わせて反転されます。
         /// </remarks>
-        public static PointF ConvertClientPointToGridPoint(in Point ClientPoint)
+        public static PointF ConvertClientPointToDisplayGridPoint(in Point ClientPoint)
         {
             Vector2 GridV = new Vector2();
 
@@ -78,63 +79,62 @@ namespace graphicbox2d.グラフィック計算
         }
 
         /// <summary>
-        /// クライアント座標のマウス移動量をグリッド座標のマウス移動量に変換します。
+        /// クライアント座標のマウス移動量を表示グリッド座標のマウス移動量に変換します。
         /// </summary>
         /// <param name="ClientPoint">マウス移動量（クライアント座標）</param>
-        /// <returns>マウス移動量（グリッド座標）</returns>
-        public static PointF ConvertClientMouseMovementToGridMouseMovement(in Point ClientPoint)
+        /// <returns>マウス移動量（表示グリッド座標）</returns>
+        public static PointF ConvertClientMouseMovementToDisplayGridMouseMovement(in Point ClientPoint)
         {
             Vector2 GridV = new Vector2();
 
-            GridV.X = ConvertClientLengthToGridLength(ClientPoint.X);
-            GridV.Y = -1 * ConvertClientLengthToGridLength(ClientPoint.Y);
+            GridV.X = ConvertClientLengthToDisplayGridLength(ClientPoint.X);
+            GridV.Y = -1 * ConvertClientLengthToDisplayGridLength(ClientPoint.Y);
 
             return GridV.ToPointF();
         }
 
         /// <summary>
-        /// クライアント座標の長さをグリッド座標の長さに変換します。
+        /// クライアント座標の長さを表示グリッド座標の長さに変換します。
         /// </summary>
         /// <param name="Length">クライアント座標の長さ</param>
-        /// <returns>グリッド座標の長さ</returns>
-        public static float ConvertClientLengthToGridLength(int Length)
+        /// <returns>表示グリッド座標の長さ</returns>
+        public static float ConvertClientLengthToDisplayGridLength(int Length)
         {
             return Length / (float)Global.Graphic2DControl.DisplayGridWidth;
         }
 
         /// <summary>
+        /// 表示グリッド座標の長さをクライアント座標の長さに変換します。
+        /// </summary>
+        /// <param name="Length">表示グリッド座標の長さ</param>
+        /// <returns>クライアント座標の長さ</returns>
+        public static int ConvertDisplayGridLengthToClientLength(float Length)
+        {
+            return (int)(Length * (float)Global.Graphic2DControl.DisplayGridWidth);
+        }
+
+        /// <summary>
         /// グリッド座標の PointF をクライアント座標の PointF に変換
         /// </summary>
-        /// <param name="GridPoint">グリッド座標の点（PointF）</param>
+        /// <param name="DisplayGridPoint">表示グリッド座標の点（PointF）</param>
         /// <returns>クライアント座標に変換された PointF</returns>
-        public static SKPoint ConvertGridPointToClientPoint(PointF GridPoint)
+        public static SKPoint ConvertDisplayGridPointToClientPoint(PointF DisplayGridPoint)
         {
             Vector2 cliGridV = new Vector2();
-            cliGridV.X = GridPoint.X * Global.Graphic2DControl.DisplayGridWidth;
-            cliGridV.Y = -1 * GridPoint.Y * Global.Graphic2DControl.DisplayGridWidth;
+            cliGridV.X = DisplayGridPoint.X * Global.Graphic2DControl.DisplayGridWidth;
+            cliGridV.Y = -1 * DisplayGridPoint.Y * Global.Graphic2DControl.DisplayGridWidth;
             cliGridV += Global.Graphic2DControl.DisplayCenterPoint.ToVector2();
             return cliGridV.ToSKPoint();
         }
 
-        public static SKPoint ConvertGridTextPointToClientTextPoint(PointF GridPoint, string text, SKFont font)
-        {
-            SKPoint textPoint = ConvertGridPointToClientPoint(GridPoint);
-
-            SizeF sizeF = CalText.GetTextSize(text, font, eCalculateType.Client);
-
-            textPoint.Y += sizeF.Height;
-
-            return textPoint;
-        }
-
         /// <summary>
-        /// グリッド座標 (x, y) をクライアント座標 (outX, outY) に変換
+        /// 表示グリッド座標 (x, y) をクライアント座標 (outX, outY) に変換
         /// </summary>
-        /// <param name="x">グリッド座標 X</param>
-        /// <param name="y">グリッド座標 Y</param>
+        /// <param name="x">表示グリッド座標 X</param>
+        /// <param name="y">表示グリッド座標 Y</param>
         /// <param name="outX">クライアント座標 X 出力</param>
         /// <param name="outY">クライアント座標 Y 出力</param>
-        public static void ConvertGridPointToClientPoint(float x, float y, out float outX, out float outY)
+        public static void ConvertDisplayGridPointToClientPoint(float x, float y, out float outX, out float outY)
         {
             outX = x * Global.Graphic2DControl.DisplayGridWidth;
             outY = -1 * y * Global.Graphic2DControl.DisplayGridWidth;
@@ -145,18 +145,38 @@ namespace graphicbox2d.グラフィック計算
         /// <summary>
         /// グリッド座標の PointF をクライアント座標の PointF に変換
         /// </summary>
-        /// <param name="GridPoints">グリッド座標の点リスト（PointF）</param>
+        /// <param name="GridPoints">表示グリッド座標の点リスト（PointF）</param>
         /// <returns>クライアント座標に変換された PointFリスト</returns>
-        public static SKPoint[] ConvertGridPointToClientPoint(PointF[] GridPoints)
+        public static SKPoint[] ConvertDisplayGridPointToClientPoint(PointF[] GridPoints)
         {
             SKPoint[] ClientPoints = new SKPoint[GridPoints.Length];
 
             for (int i = 0; i < GridPoints.Length; i++)
             {
-                ClientPoints[i] = ConvertGridPointToClientPoint(GridPoints[i]);
+                ClientPoints[i] = ConvertDisplayGridPointToClientPoint(GridPoints[i]);
             }
 
             return ClientPoints;
+        }
+
+        /// <summary>
+        /// クライアント座標の長さをグリッド座標の長さに変換します。
+        /// </summary>
+        /// <param name="Length">クライアント座標の長さ</param>
+        /// <returns>グリッド座標の長さ</returns>
+        public static float ConvertClientLengthToGridLength(int Length)
+        {
+            return Length / (float)Global.Graphic2DControl.GridWidth;
+        }
+
+        /// <summary>
+        /// グリッド座標の長さをクライアント座標の長さに変換します。
+        /// </summary>
+        /// <param name="Length">グリッド座標の長さ</param>
+        /// <returns>クライアント座標の長さ</returns>
+        public static int ConvertGridLengthToClientLength(float Length)
+        {
+            return (int)(Length * (float)Global.Graphic2DControl.GridWidth);
         }
 
         /// <summary>

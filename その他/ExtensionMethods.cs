@@ -574,6 +574,56 @@ namespace graphicbox2d
         }
 
         /// <summary>
+        /// SKBitmap を回転付きで描画する拡張メソッド
+        /// </summary>
+        /// <param name="canvas">描画先キャンバス</param>
+        /// <param name="bitmap">描画するビットマップ</param>
+        /// <param name="x">描画位置X（左上基準）</param>
+        /// <param name="y">描画位置Y（左上基準）</param>
+        /// <param name="angle">回転角度（度数法・反時計回り）</param>
+        /// <param name="paint">ペイント（null可）</param>
+        public static void DrawBitmap2(this SKCanvas canvas,
+                                       SKBitmap bitmap,
+                                       float x,
+                                       float y,
+                                       float angle = 0,
+                                       SKPaint paint = null)
+        {
+            if (bitmap == null)
+                return;
+
+            // ビットマップサイズ
+            float w = bitmap.Width;
+            float h = bitmap.Height;
+
+            // 回転中心を「ビットマップの中心」にする場合
+            float cx = x + w / 2f;
+            float cy = y + h / 2f;
+
+            if (Comp.IsEqual(angle, 0.0) == true)
+            {
+                // 回転なし
+                canvas.DrawBitmap(bitmap, x, y, paint);
+            }
+            else
+            {
+                canvas.Save();
+
+                // 回転中心まで移動
+                canvas.Translate(cx, cy);
+
+                // SkiaSharp は時計回りが正 → 反時計回りにしたいので符号反転
+                canvas.RotateDegrees(-angle);
+
+                // 原点(0,0) にビットマップ中心が来ているので、
+                // 左上が (-w/2, -h/2) になるように描画
+                canvas.DrawBitmap(bitmap, -w / 2f, -h / 2f, paint);
+
+                canvas.Restore();
+            }
+        }
+
+        /// <summary>
         /// 円弧の端点座標を計算する補助関数。
         /// </summary>
         private static SKPoint GetArcSideLinePoint(SKPoint center, float radius, float angle)

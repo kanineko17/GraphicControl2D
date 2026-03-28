@@ -73,7 +73,7 @@ namespace graphicbox2d.グラフィック計算
 
             if (calculateType == eCalculateType.Grid)
             {
-                length = ConvertClientLengthToGridLength(Width + LINE_BOUNDING_BOX_WITDH);
+                length = ConvertClientLengthToDisplayGridLength(Width + LINE_BOUNDING_BOX_WITDH);
             }
             else
             {
