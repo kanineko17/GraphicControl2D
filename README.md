@@ -123,6 +123,28 @@ this.graphic2dControl1.Invalidate();
 ```
 ![GraphicBox2D Demo](https://raw.githubusercontent.com/kanineko17/GraphicControl2D/main/README_PNG/README3.png)
 
+### Image2D
+
+You can display images on the canvas using `Image2D`.
+
+![GraphicBox2D Demo](https://raw.githubusercontent.com/kanineko17/GraphicControl2D/main/README_PNG/README7.png)
+
+```csharp
+// image
+Image2D img = new Image2D();
+img.LoadImage("C:\\Users\\kani\\Desktop\\a\\icon.png");
+img.X = 2.0f;
+img.Y = 2.0f;
+img.Width = 2.0f;
+img.Height = 2.0f;
+img.Angle = 30.0f;
+
+this.graphic2dControl1.Layers[0].Images.Add(img);
+
+// Redraw
+this.graphic2dControl1.Invalidate();
+```
+
 ### Mode
 You can switch between a simple drawing mode and an interactive mode that allows mouse operations.
 
@@ -155,28 +177,6 @@ https://raw.githubusercontent.com/kanineko17/GraphicControl2D/main/BACKGROUND.pn
 Then, set it to the BackgroundImage property of graphicBox2d.
 ![GraphicBox2D Demo](https://raw.githubusercontent.com/kanineko17/GraphicControl2D/main/README_PNG/README6.png)
 
-
-### Image2D
-
-You can display images on the canvas using `Image2D`.
-
-![GraphicBox2D Demo](https://raw.githubusercontent.com/kanineko17/GraphicControl2D/main/README_PNG/README7.png)
-
-```csharp
-// image
-Image2D img = new Image2D();
-img.LoadImage("C:\\Users\\kani\\Desktop\\a\\icon.png");
-img.X = 2.0f;
-img.Y = 2.0f;
-img.Width = 2.0f;
-img.Height = 2.0f;
-img.Angle = 30.0f;
-
-this.graphic2dControl1.Layers[0].Images.Add(img);
-
-// Redraw
-this.graphic2dControl1.Invalidate();
-```
 
 ### How to Create a Math Graph
 
