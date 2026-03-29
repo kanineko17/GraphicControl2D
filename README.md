@@ -9,6 +9,7 @@ https://github.com/kanineko17/GraphicControl2D
 If you find any bugs or have feature requests, please feel free to contact me here! 「info@kanineko.com」
 
 ## What's New Version
+-  (v3.2.7) Added Image Objects.
 -  (v3.2.3) Added Group Shape Objects and Layer functionality.
 -  (v3.2.2)Fixed an issue where the Y-axis grid labels had inverted signs.
 -  (v3.2.0)Fixed minor bugs and Updated README
