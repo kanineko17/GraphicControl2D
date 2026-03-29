@@ -47,5 +47,47 @@ namespace graphicbox2d.その他
 
             return resized;
         }
+
+        /// <summary>
+        /// ビットマップをBase64エンコードされたPNG文字列に変換する。
+        /// </summary>
+        /// <param name="bitmap">変換対象のSKBitmap</param>
+        /// <returns>Base64エンコードされたPNG文字列。bitmapがnullの場合は空文字列。</returns>
+        public static string SKBitmapToBase64(SKBitmap bitmap)
+        {
+            if (bitmap == null)
+            {
+                return string.Empty;
+            }
+
+            using (var image = SKImage.FromBitmap(bitmap))
+            using (var data = image.Encode(SKEncodedImageFormat.Png, 100))
+            {
+                return Convert.ToBase64String(data.ToArray());
+            }
+        }
+
+        /// <summary>
+        /// Base64エンコードされたPNG文字列をSKBitmapに変換する。
+        /// </summary>
+        /// <param name="base64">Base64エンコードされたPNG文字列</param>
+        /// <returns>デコードされたSKBitmap。base64が空または無効な場合はnull。</returns>
+        public static SKBitmap Base64ToSKBitmap(string base64)
+        {
+            if (string.IsNullOrEmpty(base64))
+            {
+                return null;
+            }
+
+            try
+            {
+                byte[] bytes = Convert.FromBase64String(base64);
+                return SKBitmap.Decode(bytes);
+            }
+            catch
+            {
+                return null;
+            }
+        }
     }
 }

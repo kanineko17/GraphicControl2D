@@ -38,11 +38,16 @@ namespace graphicbox2d
         /// <summary>
         /// スケール
         /// </summary>
-        public float Scale { get; set; } = 1.0f;
+        public float _Scale { get; set; } = 1.0f;
+
+        /// <summary>
+        /// ビットマップのBase64エンコードされたPNG画像データ
+        /// </summary>
+        public string _BitmapBase64 { get; set; } = string.Empty;
 
         /// <summary>
         /// オリジナルビットマップのBase64エンコードされたPNG画像データ
         /// </summary>
-        public string BitmapBase64 { get; set; } = string.Empty;
+        public string OriginalBitmapBase64 { get; set; } = string.Empty;
     }
 }

@@ -400,48 +400,6 @@ namespace graphicbox2d
         }
 
         /// <summary>
-        /// ビットマップをBase64エンコードされたPNG文字列に変換する。
-        /// </summary>
-        /// <param name="bitmap">変換対象のSKBitmap</param>
-        /// <returns>Base64エンコードされたPNG文字列。bitmapがnullの場合は空文字列。</returns>
-        private static string BitmapToBase64(SKBitmap bitmap)
-        {
-            if (bitmap == null)
-            {
-                return string.Empty;
-            }
-
-            using (var image = SKImage.FromBitmap(bitmap))
-            using (var data = image.Encode(SKEncodedImageFormat.Png, 100))
-            {
-                return Convert.ToBase64String(data.ToArray());
-            }
-        }
-
-        /// <summary>
-        /// Base64エンコードされたPNG文字列をSKBitmapに変換する。
-        /// </summary>
-        /// <param name="base64">Base64エンコードされたPNG文字列</param>
-        /// <returns>デコードされたSKBitmap。base64が空または無効な場合はnull。</returns>
-        private static SKBitmap Base64ToBitmap(string base64)
-        {
-            if (string.IsNullOrEmpty(base64))
-            {
-                return null;
-            }
-
-            try
-            {
-                byte[] bytes = Convert.FromBase64String(base64);
-                return SKBitmap.Decode(bytes);
-            }
-            catch
-            {
-                return null;
-            }
-        }
-
-        /// <summary>
         /// ドキュメントデータを書き出す
         /// </summary>
         /// <param name="doc">出力先ドキュメント</param>
@@ -456,9 +414,10 @@ namespace graphicbox2d
             imageDoc.X     = this.X;
             imageDoc.Y     = this.Y;
             imageDoc.Angle = this.Angle;
-            imageDoc.Scale = this._Scale;
+            imageDoc._Scale = this._Scale;
 
-            imageDoc.BitmapBase64 = BitmapToBase64(this.OriginalBitmap);
+            imageDoc._BitmapBase64 = SKBitmapUtil.SKBitmapToBase64(this._Bitmap);
+            imageDoc.OriginalBitmapBase64 = SKBitmapUtil.SKBitmapToBase64(this.OriginalBitmap);
 
             doc = imageDoc;
         }
@@ -478,16 +437,10 @@ namespace graphicbox2d
             this.X     = imageDoc.X;
             this.Y     = imageDoc.Y;
             this.Angle = imageDoc.Angle;
+            this._Scale = imageDoc._Scale;
 
-            SKBitmap bitmap = Base64ToBitmap(imageDoc.BitmapBase64);
-            if (bitmap != null)
-            {
-                // Bitmap セッターは OriginalBitmap をセットし _Scale を 1.0 に初期化する。
-                // その後 _Scale と _Bitmap を保存値で上書きして元のスケールを復元する。
-                this.Bitmap = bitmap;
-                this._Scale = imageDoc.Scale;
-                this._Bitmap = SKBitmapUtil.MakeScaleBitMap(this.OriginalBitmap, this._Scale);
-            }
+            this._Bitmap = SKBitmapUtil.Base64ToSKBitmap(imageDoc._BitmapBase64);
+            this.OriginalBitmap = SKBitmapUtil.Base64ToSKBitmap(imageDoc.OriginalBitmapBase64);
         }
     }
 }
