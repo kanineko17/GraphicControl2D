@@ -153,14 +153,14 @@ namespace graphicbox2d
         // ===============================================================================
 
         /// <summary>
+        /// マウスヒット中の拡大率
+        /// </summary>
+        private float MouseHitBitmapOffset = 1.05f;
+
+        /// <summary>
         /// オリジナルのビットマップ
         /// </summary>
         private SKBitmap OriginalBitmap = null;
-
-        /// <summary>
-        /// マウスヒット中の拡大率
-        /// </summary>
-        private float MouseHitBitmapOffset = 1.2f;
 
         /// <summary>
         /// 図形の中心点
