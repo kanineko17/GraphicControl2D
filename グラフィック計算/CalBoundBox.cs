@@ -230,35 +230,27 @@ namespace graphicbox2d.グラフィック計算
             eCalculateType calculateType,
             eRotateType rotateType = eRotateType.TopLeft)
         {
-            // 4頂点（原点基準）
-            PointF[] boundingBoxPoints = null;
-
-            if (calculateType == eCalculateType.Grid)
-            {
-                boundingBoxPoints = new PointF[]
-                {
-                    new PointF(0, 0),
-                    new PointF(Width, 0),
-                    new PointF(Width, -Height),
-                    new PointF(0, -Height)
-                };
-            }
-            else if (calculateType == eCalculateType.Client)
-            {
-                boundingBoxPoints = new PointF[]
-                {
-                    new PointF(0, 0),
-                    new PointF(Width, 0),
-                    new PointF(Width, Height),
-                    new PointF(0, Height)
-                };
-            }
-
             // Client座標系では角度を反転
             if (calculateType == eCalculateType.Client)
             {
                 Angle = -Angle;
             }
+            // Grid座標系では高さを反転
+            else if (calculateType == eCalculateType.Grid)
+            {
+                Height = -Height;
+            }
+
+            // 4頂点（原点基準）
+            PointF[] boundingBoxPoints = new PointF[]
+            {
+                new PointF(0, 0),
+                new PointF(Width, 0),
+                new PointF(Width, Height),
+                new PointF(0, Height)
+            };
+
+
             // --- 回転処理 ---
             if (!Comp.IsEqual(Angle, 0f))
             {
@@ -323,35 +315,25 @@ namespace graphicbox2d.グラフィック計算
             eCalculateType calculateType,
             eRotateType rotateType = eRotateType.TopLeft)
         {
-            // 4頂点（原点基準）
-            SKPoint[] boundingBoxPoints = null;
-
-            if (calculateType == eCalculateType.Grid)
-            {
-                boundingBoxPoints = new SKPoint[]
-                {
-                    new SKPoint(0, 0),
-                    new SKPoint(Width, 0),
-                    new SKPoint(Width, -Height),
-                    new SKPoint(0, -Height)
-                };
-            }
-            else if (calculateType == eCalculateType.Client)
-            {
-                boundingBoxPoints = new SKPoint[]
-                {
-                    new SKPoint(0, 0),
-                    new SKPoint(Width, 0),
-                    new SKPoint(Width, Height),
-                    new SKPoint(0, Height)
-                };
-            }
-
             // Client座標系では角度を反転
             if (calculateType == eCalculateType.Client)
             {
                 Angle = -Angle;
             }
+            // Grid座標系では高さを反転
+            else if (calculateType == eCalculateType.Grid)
+            {
+                Height = -Height;
+            }
+
+            // 4頂点（原点基準）
+            SKPoint[] boundingBoxPoints = new SKPoint[]
+            {
+                new SKPoint(0, 0),
+                new SKPoint(Width, 0),
+                new SKPoint(Width, Height),
+                new SKPoint(0, Height)
+            };
 
             // --- 回転処理 ---
             if (!Comp.IsEqual(Angle, 0f))

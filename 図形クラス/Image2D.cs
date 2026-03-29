@@ -63,7 +63,7 @@ namespace graphicbox2d
                 }
 
                 _Scale = value;
-                _Bitmap = SKBitmapUtil.MakeScaleBitMap(OriginalBitmap, _Scale);
+                _Bitmap = SKBitmapUtil.MakeResizeBitMap(OriginalBitmap, ClientWidth, ClientHeight, _Scale);
             }
         }
         private float _Scale = 1.0f;
@@ -92,7 +92,7 @@ namespace graphicbox2d
 
                 int clientWidth = CalConvert.ConvertGridLengthToClientLength(value);
 
-                _Bitmap = SKBitmapUtil.MakeResizeBitMap(OriginalBitmap, clientWidth, _Bitmap.Height);
+                _Bitmap = SKBitmapUtil.MakeResizeBitMap(OriginalBitmap, clientWidth, _Bitmap.Height, Scale);
             }
         }
 
@@ -119,7 +119,7 @@ namespace graphicbox2d
 
                 int clientHeight = CalConvert.ConvertGridLengthToClientLength(value);
 
-                _Bitmap = SKBitmapUtil.MakeResizeBitMap(OriginalBitmap, _Bitmap.Width, clientHeight);
+                _Bitmap = SKBitmapUtil.MakeResizeBitMap(OriginalBitmap, ClientWidth, clientHeight, Scale);
             }
         }
 
@@ -250,6 +250,8 @@ namespace graphicbox2d
 
         /// <summary>
         /// 画像ファイルを読み込む
+        /// 以下の形式に対応している
+        /// PNG / JPEG / WEBP / GIF / BMP / ICO / WBMP
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>

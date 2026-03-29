@@ -23,6 +23,16 @@ namespace graphicbox2d.その他
             return MakeResizeBitMap(src, width, height);
         }
 
+        public static SKBitmap MakeResizeBitMap(SKBitmap src, int width, int height, float scale)
+        {
+            int swidth = (int)Math.Round(width * scale);
+            int sheight = (int)Math.Round(height * scale);
+
+            SKBitmap resized = MakeResizeBitMap(src, swidth, sheight);
+
+            return resized;
+        }
+
         public static SKBitmap MakeResizeBitMap(SKBitmap src, int width, int height)
         {
             if (src == null)
