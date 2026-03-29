@@ -35,6 +35,11 @@ namespace graphicbox2d
         public virtual eObject2DType m_Type => eObject2DType.None;
 
         /// <summary>
+        /// 図形の表示フラグ
+        /// </summary>
+        public bool IsVisible { get; set; } = true;
+
+        /// <summary>
         /// 選択フラグ
         /// true:選択中　false:未選択
         /// </summary>
@@ -59,6 +64,11 @@ namespace graphicbox2d
         /// 図形の中心点
         /// </summary>
         internal virtual Vector2 CenterPoint { get { return new Vector2(float.NaN, float.NaN); } }
+
+        /// <summary>
+        /// 図形の選択ポイント
+        /// </summary>
+        internal virtual PointF[] SnapPoints { get { return null; } }
 
         /// <summary>
         /// マウスヒット中の図形の線の太さの加算量

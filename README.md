@@ -9,7 +9,7 @@ https://github.com/kanineko17/GraphicControl2D
 If you find any bugs or have feature requests, please feel free to contact me here! 「info@kanineko.com」
 
 ## What's New Version
--  (v3.2.7) Added Image Objects.
+-  (v3.3.7) Added Image Objects.
 -  (v3.2.3) Added Group Shape Objects and Layer functionality.
 -  (v3.2.2)Fixed an issue where the Y-axis grid labels had inverted signs.
 -  (v3.2.0)Fixed minor bugs and Updated README
@@ -124,28 +124,6 @@ this.graphic2dControl1.Invalidate();
 ```
 ![GraphicBox2D Demo](https://raw.githubusercontent.com/kanineko17/GraphicControl2D/main/README_PNG/README3.png)
 
-### Image2D
-
-You can display images on the canvas using `Image2D`.
-
-![GraphicBox2D Demo](https://raw.githubusercontent.com/kanineko17/GraphicControl2D/main/README_PNG/README7.png)
-
-```csharp
-// image
-Image2D img = new Image2D();
-img.LoadImage("C:\\Users\\kani\\Desktop\\a\\icon.png");
-img.X = 2.0f;
-img.Y = 2.0f;
-img.Width = 2.0f;
-img.Height = 2.0f;
-img.Angle = 30.0f;
-
-this.graphic2dControl1.Layers[0].Images.Add(img);
-
-// Redraw
-this.graphic2dControl1.Invalidate();
-```
-
 ### Mode
 You can switch between a simple drawing mode and an interactive mode that allows mouse operations.
 
@@ -178,6 +156,27 @@ https://raw.githubusercontent.com/kanineko17/GraphicControl2D/main/BACKGROUND.pn
 Then, set it to the BackgroundImage property of graphicBox2d.
 ![GraphicBox2D Demo](https://raw.githubusercontent.com/kanineko17/GraphicControl2D/main/README_PNG/README6.png)
 
+### Image2D
+
+You can display images on the canvas using `Image2D`.
+
+![GraphicBox2D Demo](https://raw.githubusercontent.com/kanineko17/GraphicControl2D/main/README_PNG/README7.png)
+
+```csharp
+// image
+Image2D img = new Image2D();
+img.LoadImage("C:\\Users\\kani\\Desktop\\a\\icon.png");
+img.X = 2.0f;
+img.Y = 2.0f;
+img.Width = 2.0f;
+img.Height = 2.0f;
+img.Angle = 30.0f;
+
+this.graphic2dControl1.Layers[0].Images.Add(img);
+
+// Redraw
+this.graphic2dControl1.Invalidate();
+```
 
 ### How to Create a Math Graph
 

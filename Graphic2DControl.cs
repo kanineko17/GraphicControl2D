@@ -644,6 +644,9 @@ namespace graphicbox2d
                 case eGraphic2DControlMode.Select:
                     OnExMouseMove_SelectMode(e);
                     break;
+                case eGraphic2DControlMode.Snap:
+                    OnExMouseMove_SnapMode(e);
+                    break;
                 default:
                     break;
             }
@@ -690,6 +693,9 @@ namespace graphicbox2d
                     break;
                 case eGraphic2DControlMode.Select:
                     OnMouseClick_SelectMode(e);
+                    break;
+                case eGraphic2DControlMode.Snap:
+                    OnMouseClick_SnapMode(e);
                     break;
                 default:
                     break;
@@ -895,6 +901,15 @@ namespace graphicbox2d
         }
 
         /// <summary>
+        /// マウス移動イベント（GridSelectモード）
+        /// </summary>
+        /// <param name="e"></param>
+        protected virtual void OnExMouseMove_SnapMode(Graphic2DMouseEventArgs e)
+        {
+
+        }
+
+        /// <summary>
         /// 描画イベント（デフォルトモード）
         /// </summary>
         /// <param name="e"></param>
@@ -917,6 +932,12 @@ namespace graphicbox2d
 
                 foreach (Object2D object2D in allObjects)
                 {
+                    // オブジェクトが非表示の場合はスキップする
+                    if (object2D.IsVisible == false)
+                    {
+                        continue;
+                    }
+
                     _DRAW_ENGINE.DrawObject2D(e.Surface.Canvas, object2D);
                 }
             }
@@ -945,6 +966,12 @@ namespace graphicbox2d
 
                 foreach (Object2D object2D in allObjects)
                 {
+                    // オブジェクトが非表示の場合はスキップする
+                    if (object2D.IsVisible == false)
+                    {
+                        continue;
+                    }
+
                     // マウスにヒットしているオブジェクトは後で強調表示するため、ここでは描画しない
                     if (object2D == HitClientObject)
                     {
@@ -969,6 +996,14 @@ namespace graphicbox2d
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="e"></param>
+        private void OnPaint_SnapMode(SKPaintSurfaceEventArgs e)
+        {
+        }
+
+        /// <summary>
         /// マウスクリックイベント時の処理（セレクトモード）
         /// </summary>
         /// <param name="e"></param>
@@ -982,6 +1017,14 @@ namespace graphicbox2d
                 // 再描画
                 Invalidate();
             }
+        }
+
+        /// <summary>
+        /// マウスクリックイベント時の処理（GridSelectモード）
+        /// </summary>
+        /// <param name="e"></param>
+        private void OnMouseClick_SnapMode(Graphic2DMouseEventArgs e)
+        {
         }
 
         /// <summary>
@@ -1068,6 +1111,12 @@ namespace graphicbox2d
 
             for (int i = 0; i < allObjects.Count; i++)
             {
+                // オブジェクトが非表示の場合はスキップする
+                if (allObjects[i].IsVisible == false)
+                {
+                    continue;
+                }
+
                 eMouseHitType hitType = allObjects[i].IsHitMousePoint(GridMousePoint, MOUSE_HIT_RANGE);
 
                 if (hitType == eMouseHitType.CrossMouseRange)
@@ -1160,6 +1209,9 @@ namespace graphicbox2d
                 case eGraphic2DControlMode.Select:
                     //選択中のオブジェクトを削除する
                     RemoveSelectedObjects();
+                    break;
+                case eGraphic2DControlMode.Snap:
+                    //何もしない
                     break;
                 default:
                     break;
@@ -1501,6 +1553,9 @@ namespace graphicbox2d
                     break;
                 case eGraphic2DControlMode.Select:
                     OnPaint_SelectMode(e);
+                    break;
+                case eGraphic2DControlMode.Snap:
+                    OnPaint_SnapMode(e);
                     break;
                 default:
                     break;

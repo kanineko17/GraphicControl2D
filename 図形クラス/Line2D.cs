@@ -71,6 +71,11 @@ namespace graphicbox2d
         /// </summary>
         internal override Vector2 CenterPoint { get { return GeCentertPoint(); } }
 
+        /// <summary>
+        /// 図形の選択ポイント
+        /// </summary>
+        internal override PointF[] SnapPoints { get { return new PointF[] { Start, End }; } }
+
         // ===============================================================================
         // 公開メソッド
         // ===============================================================================

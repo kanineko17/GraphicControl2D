@@ -45,26 +45,8 @@ namespace graphicbox2d
         /// </summary>
         public float Scale 
         {
-            get
-            {
-                return _Scale;
-            }
-            set
-            {
-                if (_Bitmap == null)
-                {
-                    return;
-                }
-
-                if (value <= 0)
-                {
-                    ShowWarningMessage("スケールは0より大きい値を指定してください。");
-                    return;
-                }
-
-                _Scale = value;
-                _Bitmap = SKBitmapUtil.MakeResizeBitMap(OriginalBitmap, ClientWidth, ClientHeight, _Scale);
-            }
+            get { return GetBitmapValue(eGetValueType.Scale); }
+            set { SetBitmapValue(eSetValueType.Scale, value); }
         }
         private float _Scale = 1.0f;
 
@@ -73,27 +55,9 @@ namespace graphicbox2d
         /// 幅
         /// </summary>
         public float Width 
-        {  
-            get
-            {
-                if (_Bitmap == null)
-                {
-                    return 0;
-                }
-
-                return CalConvert.ConvertClientLengthToGridLength(_Bitmap.Width);
-            } 
-            set
-            {
-                if (_Bitmap == null)
-                {
-                    return;
-                }
-
-                int clientWidth = CalConvert.ConvertGridLengthToClientLength(value);
-
-                _Bitmap = SKBitmapUtil.MakeResizeBitMap(OriginalBitmap, clientWidth, _Bitmap.Height, Scale);
-            }
+        {
+            get { return GetBitmapValue(eGetValueType.Width); }
+            set {SetBitmapValue(eSetValueType.Width, value); }
         }
 
         /// <summary>
@@ -101,26 +65,8 @@ namespace graphicbox2d
         /// </summary>
         public float Height
         {
-            get
-            {
-                if (_Bitmap == null)
-                {
-                    return 0;
-                }
-
-                return CalConvert.ConvertClientLengthToGridLength(_Bitmap.Height);
-            }
-            set
-            {
-                if (_Bitmap == null)
-                {
-                    return;
-                }
-
-                int clientHeight = CalConvert.ConvertGridLengthToClientLength(value);
-
-                _Bitmap = SKBitmapUtil.MakeResizeBitMap(OriginalBitmap, ClientWidth, clientHeight, Scale);
-            }
+            get { return GetBitmapValue(eGetValueType.Height); }
+            set { SetBitmapValue(eSetValueType.Height, value); }
         }
 
         /// <summary>
@@ -137,6 +83,7 @@ namespace graphicbox2d
                 if(OriginalBitmap != null)
                 {
                     OriginalBitmap.Dispose();
+                    _Bitmap.Dispose();
                 }
 
                 OriginalBitmap = value;
@@ -152,6 +99,22 @@ namespace graphicbox2d
         // 非公開プロパティ
         // ===============================================================================
 
+        enum eSetValueType
+        {
+            Scale,
+            Width,
+            Height,
+        }
+
+        enum eGetValueType
+        {
+            Scale,
+            Width,
+            Height,
+            ClientWidth,
+            ClientHeight,
+        }
+
         /// <summary>
         /// マウスヒット中の拡大率
         /// </summary>
@@ -165,41 +128,16 @@ namespace graphicbox2d
         /// <summary>
         /// 図形の中心点
         /// </summary>
-        internal override Vector2 CenterPoint
-        {
-            get
-            {
-                if (Bitmap == null)
-                {
-                    return default;
-                }
-
-                return new Vector2(X + Bitmap.Width / 2f, Y + Bitmap.Height / 2f);
-            }
-        }
+        internal override Vector2 CenterPoint => GetCenterPoint();
 
         internal int ClientWidth
         {
-            get
-            {
-                if (_Bitmap == null)
-                {
-                    return 0;
-                }
-                return _Bitmap.Width;
-            }
+            get { return (int)GetBitmapValue(eGetValueType.ClientWidth);}
         }
 
         internal int ClientHeight
         {
-            get
-            {
-                if (_Bitmap == null)
-                {
-                    return 0;
-                }
-                return _Bitmap.Height;
-            }
+            get { return (int)GetBitmapValue(eGetValueType.ClientHeight);}
         }
 
         // ===============================================================================
@@ -295,9 +233,9 @@ namespace graphicbox2d
             if (OriginalBitmap != null)
             {
                 OriginalBitmap.Dispose();
+                _Bitmap.Dispose();
             }
         }
-
 
         // ===============================================================================
         // 非公開メソッド
@@ -390,6 +328,22 @@ namespace graphicbox2d
             img.OriginalBitmap = this.OriginalBitmap.Copy();
         }
 
+        /// <summary>
+        /// 中心点を取得する
+        /// </summary>
+        /// <returns></returns>
+        internal Vector2 GetCenterPoint()
+        {
+            if (Bitmap == null)
+            {
+                return default;
+            }
+
+            PointF[] Points = GetBoundingBox();
+
+            return GraphicCaluculate.CaluculateCenterPoint(Points);
+        }
+
         private void ShowWarningMessage(string text)
         {
             MessageBox.Show(
@@ -399,6 +353,60 @@ namespace graphicbox2d
                 MessageBoxIcon.Warning
             );
             return;
+        }
+
+        private void SetBitmapValue(eSetValueType type, float value)
+        {
+            if (_Bitmap == null)
+            {
+                return;
+            }
+
+            switch (type)
+            {
+                case eSetValueType.Scale:
+                    _Scale = value;
+                    _Bitmap = SKBitmapUtil.MakeResizeBitMap(OriginalBitmap, ClientWidth, ClientHeight, _Scale);
+                    break;
+                case eSetValueType.Width:
+                    int clientWidth = CalConvert.ConvertGridLengthToClientLength(value);
+                    _Bitmap = SKBitmapUtil.MakeResizeBitMap(OriginalBitmap, clientWidth, ClientHeight, Scale);
+                    break;
+                case eSetValueType.Height:
+                    int clientHeight = CalConvert.ConvertGridLengthToClientLength(value);
+                    _Bitmap = SKBitmapUtil.MakeResizeBitMap(OriginalBitmap, ClientWidth, clientHeight, Scale);
+                    break;
+            }
+        }
+
+        private float GetBitmapValue(eGetValueType type)
+        {
+            float value = 0;
+            if (_Bitmap == null)
+            {
+                return value;
+            }
+
+            switch (type)
+            {
+                case eGetValueType.Scale:
+                    value = _Scale;
+                    break;
+                case eGetValueType.Width:
+                    value = CalConvert.ConvertClientLengthToGridLength(_Bitmap.Width);
+                    break;
+                case eGetValueType.Height:
+                    value = CalConvert.ConvertClientLengthToGridLength(_Bitmap.Height);
+                    break;
+                case eGetValueType.ClientWidth:
+                    value = _Bitmap.Width;
+                    break;
+                case eGetValueType.ClientHeight:
+                    value = _Bitmap.Height;
+                    break;
+            }
+
+            return value;
         }
 
         /// <summary>

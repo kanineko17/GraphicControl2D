@@ -221,6 +221,9 @@ namespace graphicbox2d
                 case eGraphic2DControlMode.Select:
                     DefaultCuror = MouseCursors.SelectModeCursor;
                     break;
+                case eGraphic2DControlMode.Snap:
+                    DefaultCuror = MouseCursors.SelectModeCursor;
+                    break;
                 default:
                     DefaultCuror = MouseCursors.NoneModeCursor;
                     break;
