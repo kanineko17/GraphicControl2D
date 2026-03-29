@@ -370,6 +370,9 @@ namespace graphicbox2d
                 case eObject2DType.Group:
                     doc = new Group2D_Document();
                     break;
+                case eObject2DType.Image:
+                    doc = new Image2D_Document();
+                    break;
                 default:
                     doc = null;
                     break;

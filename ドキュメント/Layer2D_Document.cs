@@ -77,6 +77,11 @@ namespace graphicbox2d
         public List<Group2D_Document> Groups { get; set; }
 
         /// <summary>
+        /// 画像オブジェクトのリスト
+        /// </summary>
+        public List<Image2D_Document> Images { get; set; }
+
+        /// <summary>
         /// コンストラクタ
         /// </summary>
         public Layer2D_Document()
@@ -91,6 +96,7 @@ namespace graphicbox2d
             Graphs = new List<Graph2D_Document>();
             MathGraphs = new List<MathGraph2D_Document>();
             Groups = new List<Group2D_Document>();
+            Images = new List<Image2D_Document>();
         }
     }
 }

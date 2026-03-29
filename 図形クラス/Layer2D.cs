@@ -288,6 +288,9 @@ namespace graphicbox2d
                     case eObject2DType.Group:
                         layer2D_Document.Groups.Add((Group2D_Document)doc);
                         break;
+                    case eObject2DType.Image:
+                        layer2D_Document.Images.Add((Image2D_Document)doc);
+                        break;
                 }
             }
         }
@@ -317,7 +320,7 @@ namespace graphicbox2d
             ImportDocumets<Graph2D, Graph2D_Document>(Graphs, layerDoc.Graphs);
             ImportDocumets<MathGraph2D, MathGraph2D_Document>(MathGraphs, layerDoc.MathGraphs);
             ImportDocumets<Group2D, Group2D_Document>(Groups, layerDoc.Groups);
-            //ImportDocumets<Image2D, Image2D_Dobument>(Images, layerDoc.Images);
+            ImportDocumets<Image2D, Image2D_Document>(Images, layerDoc.Images);
         }
 
         internal void ImportDocumets<ObjectList, DocumetList>(List<ObjectList> objectList, List<DocumetList> documentList)
