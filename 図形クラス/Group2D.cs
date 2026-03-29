@@ -22,6 +22,9 @@ namespace graphicbox2d
         // =======================================================================
         // 公開プロパティ
         // =======================================================================
+        /// <summary>
+        /// 図形の種類
+        /// </summary>
         public override eObject2DType m_Type => eObject2DType.Group;
 
         /// <summary>
@@ -119,8 +122,7 @@ namespace graphicbox2d
         /// <summary>
         /// マウスポイントがこの図形にヒットしているかどうかを判定する。
         /// </summary>
-        /// <param name="X">マウス座標の X 値</param>
-        /// <param name="Y">マウス座標の Y 値</param>
+        /// <param name="MousePoint">マウス座標</param>
         /// <param name="MusePointRange">ヒット判定の許容範囲（半径などに利用）</param>
         /// <returns>ヒットしていれば true、そうでなければ false</returns>
         internal override eMouseHitType IsHitMousePoint(PointF MousePoint, float MusePointRange)

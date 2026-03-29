@@ -120,10 +120,12 @@ namespace graphicbox2d.オブジェクトマネージャー
         }
 
         /// <summary>
-        /// 指定した色で文字描画用の SKPaint を生成します。
+        /// 指定したフォント名・サイズ・スタイルで SKFont を生成します。
         /// </summary>
-        /// <param name="color">文字色。</param>
-        /// <returns>設定済みの SKPaint オブジェクト。</returns>
+        /// <param name="FontName">フォント名。</param>
+        /// <param name="FontSize">フォントサイズ。</param>
+        /// <param name="sKFontStyle">フォントスタイル。</param>
+        /// <returns>設定済みの SKFont オブジェクト。</returns>
         internal static SKFont GetSKFont(string FontName, float FontSize, SKFontStyle sKFontStyle = null)
         {
             SKTypeface typeface = SKTypeface.GetSKTypeface(FontName, sKFontStyle);

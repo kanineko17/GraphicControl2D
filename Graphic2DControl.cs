@@ -633,7 +633,6 @@ namespace graphicbox2d
         /// <summary>
         /// マウス移動イベント
         /// </summary>
-        /// <param name="sender"></param>
         /// <param name="e"></param>
         protected virtual void OnExMouseMove(Graphic2DMouseEventArgs e)
         {
@@ -653,7 +652,6 @@ namespace graphicbox2d
         /// <summary>
         /// マウスダウンイベント
         /// </summary>
-        /// <param name="sender"></param>
         /// <param name="e"></param>
         protected virtual void OnExMouseDown(Graphic2DMouseEventArgs e)
         {
@@ -669,7 +667,6 @@ namespace graphicbox2d
         /// <summary>
         /// マウスアップイベント
         /// </summary>
-        /// <param name="sender"></param>
         /// <param name="e"></param>
         protected virtual void OnExMouseUp(Graphic2DMouseEventArgs e)
         {
@@ -683,7 +680,6 @@ namespace graphicbox2d
         /// マウスクリックイベント
         /// ※マウスを押した位置とマウスを離した位置が一致しているときのみ発生します。
         /// </summary>
-        /// <param name="sender"></param>
         /// <param name="e"></param>
         protected virtual void OnExMouseClick(Graphic2DMouseEventArgs e)
         {
@@ -703,7 +699,6 @@ namespace graphicbox2d
         /// <summary>
         /// オブジェクト削除イベント
         /// </summary>
-        /// <param name="sender"></param>
         /// <param name="e"></param>
         protected virtual void OnDeleteObject(Graphic2DObjectDeleteEventArgs e)
         {
@@ -744,7 +739,6 @@ namespace graphicbox2d
         /// <summary>
         /// オブジェクト選択イベント
         /// </summary>
-        /// <param name="sender"></param>
         /// <param name="e"></param>
         protected virtual void OnObjectSelected(Graphic2DObjectEventArgs e)
         {
@@ -753,7 +747,6 @@ namespace graphicbox2d
         /// <summary>
         /// オブジェクト選択解除イベント
         /// </summary>
-        /// <param name="sender"></param>
         /// <param name="e"></param>
         protected virtual void OnObjectUnSelected(Graphic2DObjectEventArgs e)
         {
@@ -762,7 +755,6 @@ namespace graphicbox2d
         /// <summary>
         /// オブジェクトホバーイベント
         /// </summary>
-        /// <param name="sender"></param>
         /// <param name="e"></param>
         protected virtual void OnObjectHovered(Graphic2DObjectEventArgs e)
         {
@@ -771,7 +763,6 @@ namespace graphicbox2d
         /// <summary>
         /// オブジェクトドラッグ操作イベント
         /// </summary>
-        /// <param name="sender"></param>
         /// <param name="e"></param>
         protected virtual void OnObjectDragging(Graphic2DObjectDraggingEventArgs e)
         {
@@ -879,7 +870,6 @@ namespace graphicbox2d
         /// <summary>
         /// マウス移動イベント(セレクトモード)
         /// </summary>
-        /// <param name="sender"></param>
         /// <param name="e"></param>
         protected virtual void OnExMouseMove_SelectMode(Graphic2DMouseEventArgs e)
         {
@@ -981,7 +971,6 @@ namespace graphicbox2d
         /// <summary>
         /// マウスクリックイベント時の処理（セレクトモード）
         /// </summary>
-        /// <param name="sender"></param>
         /// <param name="e"></param>
         private void OnMouseClick_SelectMode(Graphic2DMouseEventArgs e)
         {
@@ -1154,7 +1143,6 @@ namespace graphicbox2d
         /// <summary>
         /// オブジェクト削除実行
         /// </summary>
-        /// <param name="sender"></param>
         /// <param name="e"></param>
         protected virtual void DeleteObject(Graphic2DObjectDeleteEventArgs e)
         {
@@ -1485,7 +1473,7 @@ namespace graphicbox2d
             var canvas = e.Surface.Canvas;
             canvas.Clear(BackColor.ToSKColor());
 
-            /// 背景画像が設定されている場合、背景画像を描画する
+            // 背景画像が設定されている場合、背景画像を描画する
             if (BackgroundImage != null)
             {
                 _DRAW_ENGINE.DrawBackgroundImage(e.Surface.Canvas, e.Info.Width, e.Info.Height);

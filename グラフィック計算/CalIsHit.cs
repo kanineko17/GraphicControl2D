@@ -95,7 +95,6 @@ namespace graphicbox2d.グラフィック計算
         /// <param name="lineWidth">ポリゴン輪郭線の太さ</param>
         /// <param name="MousePoint">マウス座標</param>
         /// <param name="MouseHitRange">マウスの当たり判定範囲（半径）</param>
-        /// <param name="IsConvertLineWidth">線の太さをグリッド座標サイズに変換するかどうかのフラグ。デフォルトは true。</param>
         /// <returns>
         /// eMouseHitType の判定結果：  
         /// ・None : ヒットしていない  
@@ -374,6 +373,7 @@ namespace graphicbox2d.グラフィック計算
         /// <param name="StartAngle">円弧の開始角度（度数法）。</param>
         /// <param name="EndAngle">円弧の終了角度（度数法）。</param>
         /// <param name="lineWidth">円弧の線幅。</param>
+        /// <param name="IsDrawSideLines">円弧の端線を描画するかどうか。</param>
         /// <param name="MousePoint">判定対象となるマウスポイント座標。</param>
         /// <param name="MouseHitRange">マウス判定の許容範囲（半径）。</param>
         /// <returns>

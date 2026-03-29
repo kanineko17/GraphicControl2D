@@ -21,6 +21,7 @@ namespace graphicbox2d.グラフィック計算
         /// </summary>
         /// <param name="text">計測対象の文字列</param>
         /// <param name="font">使用する SKFont（呼び出し元で生成済み）</param>
+        /// <param name="calculateType">座標系の種類（Client または Grid）</param>
         /// <returns>テキストの描画領域を表す SKRect</returns>
         /// <remarks>
         /// ・SKTextBlob を生成して Bounds から矩形を取得  
@@ -52,8 +53,8 @@ namespace graphicbox2d.グラフィック計算
         /// テキストの描画領域（バウンディングボックス）を取得する。
         /// </summary>
         /// <param name="text">計測対象の文字列</param>
-        /// <param name="fontSize">フォントサイズ（px）</param>
-        /// <param name="fontName">フォント名</param>
+        /// <param name="font">使用する Font</param>
+        /// <param name="calculateType">座標系の種類（Client または Grid）</param>
         /// <returns>テキストの描画領域を表す SKRect</returns>
         /// <remarks>
         /// ・DrawManager.GetSKFont により SKFont を生成  

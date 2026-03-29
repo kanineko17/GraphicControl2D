@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace graphicbox2d.データ
 {
+    /// <summary>
+    /// データ変換ユーティリティクラス。
+    /// </summary>
     public static class DataConverter
     {
     }
