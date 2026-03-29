@@ -567,7 +567,9 @@ namespace graphicbox2d
         /// <summary>
         /// 情報テキストの表示位置データを更新
         /// </summary>
-        /// <param name="g"></param>
+        /// <param name="g">描画対象の Graphics オブジェクト。</param>
+        /// <param name="Text">表示するテキスト文字列。</param>
+        /// <param name="OutRecordNo">表示行番号（下から何行目か）。</param>
         public PointF GetDrawInfoTextPosition(Graphics g, string Text, int OutRecordNo)
         {
             if (string.IsNullOrEmpty(Text) == true)

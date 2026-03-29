@@ -111,7 +111,6 @@ namespace graphicbox2d.グラフィック計算
         /// <summary>
         /// 円を囲むバウンディングボックス（四角形の頂点）を計算して返す
         /// </summary>
-        /// <typeparam name="T">PointF または SKPoint</typeparam>
         /// <param name="X">円の中心X座標</param>
         /// <param name="Y">円の中心Y座標</param>
         /// <param name="R">円の半径</param>
@@ -130,7 +129,6 @@ namespace graphicbox2d.グラフィック計算
         /// <summary>
         /// 円を囲むバウンディングボックス（四角形の頂点）を計算して返す
         /// </summary>
-        /// <typeparam name="T">PointF または SKPoint</typeparam>
         /// <param name="X">円の中心X座標</param>
         /// <param name="Y">円の中心Y座標</param>
         /// <param name="R">円の半径</param>
@@ -445,6 +443,9 @@ namespace graphicbox2d.グラフィック計算
         /// </summary>
         /// <param name="X">テキスト描画位置のX座標</param>
         /// <param name="Y">テキスト描画位置のY座標</param>
+        /// <param name="text">描画する文字列</param>
+        /// <param name="fontSize">フォントサイズ</param>
+        /// <param name="fontName">フォント名</param>
         /// <param name="Angle">回転角度（度数法）</param>
         /// <param name="calculateType">座標系の種類（Client または Grid）</param>
         /// <returns>バウンディングボックスの4頂点座標</returns>
@@ -476,7 +477,8 @@ namespace graphicbox2d.グラフィック計算
         /// </summary>
         /// <param name="X">テキスト描画位置のX座標</param>
         /// <param name="Y">テキスト描画位置のY座標</param>
-        /// <param name="sKTextBlob">描画対象の SKTextBlob</param>
+        /// <param name="font">使用する SKFont</param>
+        /// <param name="text">描画する文字列</param>
         /// <param name="Angle">回転角度（度数法）</param>
         /// <param name="calculateType">座標系の種類（Client または Grid）</param>
         /// <returns>バウンディングボックスの4頂点座標</returns>

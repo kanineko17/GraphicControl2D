@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace graphicbox2d
 {
+    /// <summary>
+    /// 数式グラフ図形のドキュメントデータを表すクラス。
+    /// </summary>
     public class MathGraph2D_Document : Graph2D_Document
     {
         // ===============================================================================

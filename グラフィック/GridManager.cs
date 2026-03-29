@@ -480,6 +480,7 @@ namespace graphicbox2d
         /// </summary>
         /// <param name="sKColor">カラー</param>
         /// <param name="width">線幅</param>
+        /// <param name="isAntialias">アンチエイリアスの有効・無効</param>
         /// <returns></returns>
         private static SKPaint MakeLineSKPaint(SKColor sKColor, int width, bool isAntialias = true)
         {

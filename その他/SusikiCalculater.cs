@@ -334,6 +334,7 @@ namespace graphicbox2d
         /// <param name="input">対象の文字列</param>
         /// <param name="pattern">正規表現パターン</param>
         /// <param name="replacement">置換文字列（正規表現のグループ参照可）</param>
+        /// <param name="regexOptions">正規表現のオプション</param>
         /// <returns>置換後の文字列</returns>
         private static string ReplaceByRegex(string input, string pattern, string replacement, RegexOptions regexOptions = RegexOptions.None)
         {

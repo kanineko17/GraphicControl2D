@@ -18,6 +18,9 @@ namespace graphicbox2d
         // =======================================================================
         // 公開プロパティ
         // =======================================================================
+        /// <summary>
+        /// 図形の種類
+        /// </summary>
         public override eObject2DType m_Type => eObject2DType.Group;
 
         /// <summary>

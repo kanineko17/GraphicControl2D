@@ -42,7 +42,6 @@ namespace graphicbox2d.グラフィック計算
         /// 表示グリッド座標をクライアント座標に変換します。
         /// </summary>
         /// <param name="GridPoint">変換対象の表示グリッド座標 (X, Y)</param>
-        /// <param name="ClientCenterPoint">クライアント座標系の中心点</param>
         /// <returns>変換後のクライアント座標</returns>
         /// <remarks>
         /// Y座標はクライアント座標系に合わせて反転されます。
