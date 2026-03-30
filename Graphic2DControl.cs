@@ -901,7 +901,7 @@ namespace graphicbox2d
         }
 
         /// <summary>
-        /// マウス移動イベント（GridSelectモード）
+        /// マウス移動イベント（スナップモードモード）
         /// </summary>
         /// <param name="e"></param>
         protected virtual void OnExMouseMove_SnapMode(Graphic2DMouseEventArgs e)
@@ -984,13 +984,7 @@ namespace graphicbox2d
                 // マウスにヒットしているオブジェクトを強調表示する
                 if (HitClientObject != null)
                 {
-                    // マウスにヒットしている状態の図形を取得
-                    Object2D HitObject = HitClientObject.GetHitObject();
-
-                    _DRAW_ENGINE.DrawObject2D(e.Surface.Canvas, HitObject);
-
-                    // 描画後にオブジェクトを解放する
-                    HitObject.Dispose();
+                    _DRAW_ENGINE.DrawHitObject2D(e.Surface.Canvas, HitClientObject);
                 }
             }
         }
@@ -1020,7 +1014,7 @@ namespace graphicbox2d
         }
 
         /// <summary>
-        /// マウスクリックイベント時の処理（GridSelectモード）
+        /// マウスクリックイベント時の処理（スナップモードモード）
         /// </summary>
         /// <param name="e"></param>
         private void OnMouseClick_SnapMode(Graphic2DMouseEventArgs e)
@@ -1302,6 +1296,8 @@ namespace graphicbox2d
 
                 this.Layers.Add(layer);
             }
+
+            document.Dispose();
         }
 
         /// <summary>

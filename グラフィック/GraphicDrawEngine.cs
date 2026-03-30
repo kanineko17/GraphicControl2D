@@ -144,7 +144,43 @@ namespace graphicbox2d
                     DrawGroup2D(sKCanvas, object2D as Group2D);
                     break;
                 case eObject2DType.Image:
-                    DrawImage2D(sKCanvas, object2D as Image2D);
+                    DrawImage2D(sKCanvas, object2D as Image2D, eDrawImageType.Normal);
+                    break;
+                default:
+                    throw new ArgumentNullException(nameof(object2D));
+            }
+        }
+
+        public void DrawHitObject2D(SKCanvas sKCanvas, Object2D object2D)
+        {
+            if (object2D == null)
+            {
+                throw new ArgumentNullException(nameof(object2D));
+            }
+
+            switch (object2D.m_Type)
+            {
+                case eObject2DType.Line:
+                case eObject2DType.Point:
+                case eObject2DType.Circle:
+                case eObject2DType.Polygon:
+                case eObject2DType.Arrow:
+                case eObject2DType.Text:
+                case eObject2DType.Arc:
+                case eObject2DType.Graph:
+                case eObject2DType.MathGraph:
+                case eObject2DType.Group:
+                    // マウスにヒットしている状態の図形を取得
+                    Object2D HitObject = object2D.GetHitObject();
+
+                    DrawObject2D(sKCanvas, HitObject);
+
+                    HitObject.Dispose();
+
+                    break;
+
+                case eObject2DType.Image:
+                    DrawImage2D(sKCanvas, object2D as Image2D, eDrawImageType.Hit);
                     break;
                 default:
                     throw new ArgumentNullException(nameof(object2D));
@@ -429,14 +465,22 @@ namespace graphicbox2d
             }
         }
 
-
-        public void DrawImage2D(SKCanvas canvas, Image2D image)
+        public void DrawImage2D(SKCanvas canvas, Image2D image, eDrawImageType drawType)
         {
             PointF point = new PointF(image.X, image.Y);
 
             SKPoint clientPoint = CalConvert.ConvertDisplayGridPointToClientPoint(point);
 
-            SKBitmap bitmap = SKBitmapUtil.MakeScaleBitMap(image.Bitmap, Graphic2DControl.UserZoom);
+            SKBitmap bitmap = null;
+
+            if (drawType == eDrawImageType.Normal)
+            {
+                bitmap = image.GetDrawBitmap();
+            }
+            else if(drawType == eDrawImageType.Hit)
+            {
+                bitmap = image.GetDrawHitBitmap();
+            }
 
             canvas.DrawBitmap2(bitmap, clientPoint.X, clientPoint.Y, image.Angle);
 

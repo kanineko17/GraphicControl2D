@@ -9,6 +9,7 @@ https://github.com/kanineko17/GraphicControl2D
 If you find any bugs or have feature requests, please feel free to contact me here! 「info@kanineko.com」
 
 ## What's New Version
+-  (v3.3.8) Add visibility control for each shape Object (introduce an IsVisible property).
 -  (v3.3.7) Added Image Objects.
 -  (v3.2.3) Added Group Shape Objects and Layer functionality.
 -  (v3.2.2)Fixed an issue where the Y-axis grid labels had inverted signs.
@@ -160,8 +161,6 @@ Then, set it to the BackgroundImage property of graphicBox2d.
 
 You can display images on the canvas using `Image2D`.
 
-![GraphicBox2D Demo](https://raw.githubusercontent.com/kanineko17/GraphicControl2D/main/README_PNG/README7.png)
-
 ```csharp
 // image
 Image2D img = new Image2D();
@@ -177,6 +176,10 @@ this.graphic2dControl1.Layers[0].Images.Add(img);
 // Redraw
 this.graphic2dControl1.Invalidate();
 ```
+
+![GraphicBox2D Demo](https://raw.githubusercontent.com/kanineko17/GraphicControl2D/main/README_PNG/README7.png)
+
+
 
 ### How to Create a Math Graph
 

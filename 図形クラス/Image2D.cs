@@ -1,5 +1,7 @@
 ﻿using graphicbox2d.グラフィック計算;
+using graphicbox2d.グローバル変数;
 using graphicbox2d.その他;
+using Newtonsoft.Json.Linq;
 using SkiaSharp;
 using System;
 using System.Drawing;
@@ -43,10 +45,10 @@ namespace graphicbox2d
         /// <summary>
         /// スケール
         /// </summary>
-        public float Scale 
+        public float Scale
         {
-            get { return GetBitmapValue(eGetValueType.Scale); }
-            set { SetBitmapValue(eSetValueType.Scale, value); }
+            get { return _Scale; }
+            set { _Scale = value; UpdateDrawBitmap(); }
         }
         private float _Scale = 1.0f;
 
@@ -54,20 +56,22 @@ namespace graphicbox2d
         /// <summary>
         /// 幅
         /// </summary>
-        public float Width 
+        public float Width
         {
-            get { return GetBitmapValue(eGetValueType.Width); }
-            set {SetBitmapValue(eSetValueType.Width, value); }
+            get { return _Width; }
+            set { _Width = value; UpdateDrawBitmap(); }
         }
+        private float _Width = 1.0f;
 
         /// <summary>
         /// 高さ
         /// </summary>
         public float Height
         {
-            get { return GetBitmapValue(eGetValueType.Height); }
-            set { SetBitmapValue(eSetValueType.Height, value); }
+            get { return _Height; }
+            set { _Height = value; UpdateDrawBitmap(); }
         }
+        private float _Height = 1.0f;
 
         /// <summary>
         /// 描画する画像
@@ -80,17 +84,23 @@ namespace graphicbox2d
             }
             set
             {
-                if(OriginalBitmap != null)
+                if (_OriginalBitmap != null)
                 {
-                    OriginalBitmap.Dispose();
+                    _OriginalBitmap.Dispose();
                     _Bitmap.Dispose();
+                    _HitBitmap.Dispose();
                 }
 
-                OriginalBitmap = value;
-                _Bitmap = OriginalBitmap.Copy();
+                if (value == null)
+                {
+                    _OriginalBitmap = null;
+                    _Bitmap = null;
+                    _HitBitmap = null;
+                    return;
+                }
 
-                // 初期化
-                Scale = 1.0f;
+                _OriginalBitmap = value;
+                UpdateDrawBitmap();
             }
         }
         private SKBitmap _Bitmap = null;
@@ -123,22 +133,26 @@ namespace graphicbox2d
         /// <summary>
         /// オリジナルのビットマップ
         /// </summary>
-        private SKBitmap OriginalBitmap = null;
+        private SKBitmap _OriginalBitmap = null;
+
+        /// <summary>
+        /// ヒット中ビットマップ
+        /// </summary>
+        private SKBitmap _HitBitmap = null;
+
+        /// <summary>
+        /// ユーザーズーム
+        /// </summary>
+        internal float CashUserZoom = Graphic2DControl.UserZoom;
 
         /// <summary>
         /// 図形の中心点
         /// </summary>
         internal override Vector2 CenterPoint => GetCenterPoint();
 
-        internal int ClientWidth
-        {
-            get { return (int)GetBitmapValue(eGetValueType.ClientWidth);}
-        }
+        internal int ClientWidth => (int)CalConvert.ConvertGridLengthToClientLength(_Width);
 
-        internal int ClientHeight
-        {
-            get { return (int)GetBitmapValue(eGetValueType.ClientHeight);}
-        }
+        internal int ClientHeight => (int)CalConvert.ConvertGridLengthToClientLength(_Height);
 
         // ===============================================================================
         // 公開メソッド
@@ -156,9 +170,9 @@ namespace graphicbox2d
         /// </summary>
         ~Image2D()
         {
-            if (OriginalBitmap != null)
+            if (_OriginalBitmap != null)
             {
-                OriginalBitmap.Dispose();
+                _OriginalBitmap.Dispose();
             }
         }
 
@@ -181,7 +195,8 @@ namespace graphicbox2d
 
             // Bitmap は参照コピー（必要なら DeepCopy に変更）
             clone._Bitmap = this._Bitmap.Copy();
-            clone.OriginalBitmap = this.OriginalBitmap.Copy();
+            clone._OriginalBitmap = this._OriginalBitmap.Copy();
+            clone._HitBitmap = this._HitBitmap.Copy();
 
             return clone;
         }
@@ -230,10 +245,11 @@ namespace graphicbox2d
         {
             IsDisposed = true;
 
-            if (OriginalBitmap != null)
+            if (_OriginalBitmap != null)
             {
-                OriginalBitmap.Dispose();
+                _OriginalBitmap.Dispose();
                 _Bitmap.Dispose();
+                _HitBitmap.Dispose();
             }
         }
 
@@ -241,16 +257,45 @@ namespace graphicbox2d
         // 非公開メソッド
         // ===============================================================================
 
-        /// <summary>
-        /// マウスヒット中の図形（拡大した図形）を返す。
-        /// </summary>
-        internal override Object2D GetHitObject()
+        internal SKBitmap GetDrawBitmap()
         {
-            Image2D img = (Image2D)this.Clone();
+            if (_Bitmap == null)
+            {
+                return null;
+            }
 
-            img.Scale = this.Scale * MouseHitBitmapOffset;
+            if (Graphic2DControl.UserZoom == CashUserZoom)
+            {
+                return _Bitmap;
+            }
+            else
+            {
+                // ユーザーズームが変わっている場合はビットマップを更新してから返す
+                CashUserZoom = Graphic2DControl.UserZoom;
 
-            return img;
+                UpdateDrawBitmap();
+                return _Bitmap;
+            }
+        }
+
+        internal SKBitmap GetDrawHitBitmap()
+        {
+            if (_HitBitmap == null)
+            {
+                return null;
+            }
+            if (Graphic2DControl.UserZoom == CashUserZoom)
+            {
+                return _HitBitmap;
+            }
+            else
+            {
+                // ユーザーズームが変わっている場合はビットマップを更新してから返す
+                CashUserZoom = Graphic2DControl.UserZoom;
+
+                UpdateDrawBitmap();
+                return _HitBitmap;
+            }
         }
 
         /// <summary>
@@ -322,10 +367,13 @@ namespace graphicbox2d
             img.Y = this.Y;
             img.Angle = this.Angle;
             img._Scale = this._Scale;
+            img._Width = this._Width;
+            img._Height = this._Height;
 
             // Bitmap は参照コピー（必要なら DeepCopy に変更）
             img._Bitmap = this._Bitmap.Copy();
-            img.OriginalBitmap = this.OriginalBitmap.Copy();
+            img._OriginalBitmap = this._OriginalBitmap.Copy();
+            img._HitBitmap = this._HitBitmap.Copy();
         }
 
         /// <summary>
@@ -355,58 +403,28 @@ namespace graphicbox2d
             return;
         }
 
-        private void SetBitmapValue(eSetValueType type, float value)
+        private void UpdateDrawBitmap()
         {
-            if (_Bitmap == null)
+
+            if (_Bitmap != null)
+            {
+                _Bitmap.Dispose();
+                _Bitmap = null;
+            }
+
+            if (_HitBitmap != null)
+            {
+                _HitBitmap.Dispose();
+                _HitBitmap = null;
+            }
+
+            if(_OriginalBitmap == null)
             {
                 return;
             }
 
-            switch (type)
-            {
-                case eSetValueType.Scale:
-                    _Scale = value;
-                    _Bitmap = SKBitmapUtil.MakeResizeBitMap(OriginalBitmap, ClientWidth, ClientHeight, _Scale);
-                    break;
-                case eSetValueType.Width:
-                    int clientWidth = CalConvert.ConvertGridLengthToClientLength(value);
-                    _Bitmap = SKBitmapUtil.MakeResizeBitMap(OriginalBitmap, clientWidth, ClientHeight, Scale);
-                    break;
-                case eSetValueType.Height:
-                    int clientHeight = CalConvert.ConvertGridLengthToClientLength(value);
-                    _Bitmap = SKBitmapUtil.MakeResizeBitMap(OriginalBitmap, ClientWidth, clientHeight, Scale);
-                    break;
-            }
-        }
-
-        private float GetBitmapValue(eGetValueType type)
-        {
-            float value = 0;
-            if (_Bitmap == null)
-            {
-                return value;
-            }
-
-            switch (type)
-            {
-                case eGetValueType.Scale:
-                    value = _Scale;
-                    break;
-                case eGetValueType.Width:
-                    value = CalConvert.ConvertClientLengthToGridLength(_Bitmap.Width);
-                    break;
-                case eGetValueType.Height:
-                    value = CalConvert.ConvertClientLengthToGridLength(_Bitmap.Height);
-                    break;
-                case eGetValueType.ClientWidth:
-                    value = _Bitmap.Width;
-                    break;
-                case eGetValueType.ClientHeight:
-                    value = _Bitmap.Height;
-                    break;
-            }
-
-            return value;
+            _Bitmap = SKBitmapUtil.MakeResizeBitMap(_OriginalBitmap, ClientWidth, ClientHeight, Graphic2DControl.UserZoom * _Scale);
+            _HitBitmap = SKBitmapUtil.MakeScaleBitMap(_Bitmap, MouseHitBitmapOffset);
         }
 
         /// <summary>
@@ -418,16 +436,17 @@ namespace graphicbox2d
             Image2D_Document imageDoc = new Image2D_Document();
 
             imageDoc.IsSelect = this.IsSelect;
-            imageDoc.ZOrder   = this.ZOrder;
-            imageDoc._ID      = this._ID;
+            imageDoc.ZOrder = this.ZOrder;
+            imageDoc._ID = this._ID;
 
-            imageDoc.X     = this.X;
-            imageDoc.Y     = this.Y;
+            imageDoc.X = this.X;
+            imageDoc.Y = this.Y;
             imageDoc.Angle = this.Angle;
             imageDoc._Scale = this._Scale;
+            imageDoc.Width = this._Width;
+            imageDoc.Height = this._Height;
 
-            imageDoc._BitmapBase64 = SKBitmapUtil.SKBitmapToBase64(this._Bitmap);
-            imageDoc.OriginalBitmapBase64 = SKBitmapUtil.SKBitmapToBase64(this.OriginalBitmap);
+            imageDoc.OriginalBitmapBase64 = SKBitmapUtil.SKBitmapToBase64(this._OriginalBitmap);
 
             doc = imageDoc;
         }
@@ -441,16 +460,22 @@ namespace graphicbox2d
             Image2D_Document imageDoc = (Image2D_Document)doc;
 
             this.IsSelect = imageDoc.IsSelect;
-            this.ZOrder   = imageDoc.ZOrder;
-            this._ID      = imageDoc._ID;
+            this.ZOrder = imageDoc.ZOrder;
+            this._ID = imageDoc._ID;
 
-            this.X     = imageDoc.X;
-            this.Y     = imageDoc.Y;
+            this.X = imageDoc.X;
+            this.Y = imageDoc.Y;
             this.Angle = imageDoc.Angle;
             this._Scale = imageDoc._Scale;
+            this._Width = imageDoc.Width;
+            this._Height = imageDoc.Height;
 
-            this._Bitmap = SKBitmapUtil.Base64ToSKBitmap(imageDoc._BitmapBase64);
-            this.OriginalBitmap = SKBitmapUtil.Base64ToSKBitmap(imageDoc.OriginalBitmapBase64);
+            this._OriginalBitmap = SKBitmapUtil.Base64ToSKBitmap(imageDoc.OriginalBitmapBase64);
+
+            if (this._OriginalBitmap != null)
+            {
+                UpdateDrawBitmap();
+            }
         }
     }
 }

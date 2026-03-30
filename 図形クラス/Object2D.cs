@@ -3,6 +3,7 @@ using SkiaSharp;
 using System;
 using System.CodeDom;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
@@ -81,6 +82,11 @@ namespace graphicbox2d
         /// マウスヒット中はこの値の分だけ図形を拡大する
         /// </summary>
         internal virtual float MouseHitPolyOffset { get; set; } = 1.05f;
+
+        /// <summary>
+        /// スナップポイントを表示するかどうかのフラグ
+        /// </summary>
+        internal bool IsShowSnapPoints { get; set; } = false;
 
         /// <summary>
         /// 格オブジェクトのインデックス番号

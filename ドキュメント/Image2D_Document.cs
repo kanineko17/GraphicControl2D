@@ -41,9 +41,15 @@ namespace graphicbox2d
         public float _Scale { get; set; } = 1.0f;
 
         /// <summary>
-        /// ビットマップのBase64エンコードされたPNG画像データ
+        /// ビットマップの幅
         /// </summary>
-        public string _BitmapBase64 { get; set; } = string.Empty;
+        public float Width { get; set; } = 0;
+
+        /// <summary>
+        /// ビットマップの高さ
+        /// </summary>
+        public float Height { get; set; } = 0;
+
 
         /// <summary>
         /// オリジナルビットマップのBase64エンコードされたPNG画像データ

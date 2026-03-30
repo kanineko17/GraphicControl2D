@@ -9,7 +9,7 @@ using static System.Windows.Forms.LinkLabel;
 
 namespace graphicbox2d
 {
-    internal class Layer2D_Document
+    internal class Layer2D_Document : IDisposable
     {
         /// <summary>
         /// レイヤーのZオーダーを表すプロパティ。数値が大きいほど手前に表示される。
@@ -97,6 +97,81 @@ namespace graphicbox2d
             MathGraphs = new List<MathGraph2D_Document>();
             Groups = new List<Group2D_Document>();
             Images = new List<Image2D_Document>();
+        }
+
+        /// <summary>
+        /// デストラクタ
+        /// </summary>
+        ~Layer2D_Document()
+        {
+            Dispose();
+        }
+
+        /// <summary>
+        /// IDisposableインターフェイスの実装。レイヤーが使用しているリソースを解放するためのメソッド。
+        /// </summary>
+        public void Dispose()
+        {
+                // ここでリソースの解放処理を行う
+                // 例えば、リスト内のオブジェクトがIDisposableを実装している場合は、それらをDisposeする
+                foreach (var line in Lines)
+                {
+                    line.Dispose();
+                }
+                foreach (var point in Points)
+                {
+                    point.Dispose();
+                }
+                foreach (var circle in Circles)
+                {
+                    circle.Dispose();
+                }
+                foreach (var polygon in Polygons)
+                {
+                    polygon.Dispose();
+                }
+                foreach (var arrow in Arrows)
+                {
+                    arrow.Dispose();
+                }
+                foreach (var text in Texts)
+                {
+                    text.Dispose();
+                }
+                foreach (var arc in Arcs)
+                {
+                    arc.Dispose();
+                }
+                foreach (var graph in Graphs)
+                {
+                    graph.Dispose();
+                }
+                foreach (var mathGraph in MathGraphs)
+                {
+                    mathGraph.Dispose();
+                }
+                foreach (var group in Groups)
+                {
+                    group.Dispose();
+                }
+                foreach (var image in Images)
+                {
+                    image.Dispose();
+                }
+
+            // その他、必要なクリーンアップ処理をここに追加する
+            // 全リストをクリア
+            Lines.Clear();
+            Points.Clear();
+            Circles.Clear();
+            Polygons.Clear();
+            Arrows.Clear();
+            Texts.Clear();
+            Arcs.Clear();
+            Graphs.Clear();
+            MathGraphs.Clear();
+            Groups.Clear();
+            Images.Clear();
         }
     }
 }

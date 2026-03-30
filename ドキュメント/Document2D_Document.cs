@@ -9,7 +9,7 @@ namespace graphicbox2d
     /// <summary>
     /// ドキュメントクラス
     /// </summary>
-    internal class Document2D
+    internal class Document2D : IDisposable
     {
         /// <summary>
         /// バージョン
@@ -25,5 +25,18 @@ namespace graphicbox2d
         /// レイヤーリスト
         /// </summary>
         public List<Layer2D_Document> Layers { get; set; } = new List<Layer2D_Document>();
+
+        /// <summary>
+        /// Disposeメソッド
+        /// </summary>
+        public void Dispose()
+        {
+            foreach (var layer in Layers)
+            {
+                layer.Dispose();
+            }
+
+            Layers.Clear();
+        }
     }
 }
