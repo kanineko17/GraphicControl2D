@@ -13,7 +13,7 @@ namespace graphicbox2d
     /// <summary>
     /// グループ図形クラス。複数の図形をまとめてグループ化するためのクラス。
     /// </summary>
-    public class Group2D_Document : Object2D_Document
+    public class Group2D_Document : Object2D_Document, IDisposable
     {
         // =======================================================================
         // 公開プロパティ
@@ -27,6 +27,21 @@ namespace graphicbox2d
         /// グループ化する図形のリスト
         /// </summary>
         public List<Group2DItem_Document> ObjectList { get; set; } = new List<Group2DItem_Document>();
+
+        /// <summary>
+        /// Disposeメソッド。リストをクリアしてリソースを解放する。
+        /// </summary>
+        public new void Dispose()
+        {
+            foreach (Group2DItem_Document item in ObjectList)
+            {
+                item.Object.Dispose();
+            }
+
+            ObjectList.Clear();
+
+            base.Dispose();
+        }
     }
 
     /// <summary>

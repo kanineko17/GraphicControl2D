@@ -20,7 +20,7 @@ namespace graphicbox2d
     /// <summary>
     /// 全図形の基底クラス
     /// </summary>
-    public class Object2D_Document
+    public class Object2D_Document : IDisposable
     {
         // ===============================================================================
         // 公開プロパティ
@@ -48,5 +48,12 @@ namespace graphicbox2d
         /// 比較の時に使用する
         /// </summary>
         public int _ID;
+
+        /// <summary>
+        /// Disposeメソッド。リソースを解放するための処理を実装する。
+        /// </summary>
+        public void Dispose()
+        {
+        }
     }
 }

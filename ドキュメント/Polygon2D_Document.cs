@@ -17,7 +17,7 @@ namespace graphicbox2d
     /// <summary>
     /// ポリゴン図形クラス
     /// </summary>
-    public class Polygon2D_Document : FillObject2D_Document
+    public class Polygon2D_Document : FillObject2D_Document, IDisposable
     {
         // ===============================================================================
         // 公開プロパティ
@@ -32,5 +32,14 @@ namespace graphicbox2d
         /// ポリゴンの頂点リスト
         /// </summary>
         public List<PointF> Points { get; set; } = new List<PointF>();
+
+        /// <summary>
+        /// Disposeメソッド。リストをクリアしてリソースを解放する。
+        /// </summary>
+        public new void Dispose()
+        {
+            Points.Clear();
+            base.Dispose();
+        }
     }
 }

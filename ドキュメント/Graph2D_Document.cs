@@ -12,7 +12,7 @@ namespace graphicbox2d
     /// <summary>
     /// グラフ図形クラス
     /// </summary>
-    public class Graph2D_Document : Object2D_Document, ILineProperty
+    public class Graph2D_Document : Object2D_Document, ILineProperty, IDisposable
     {
         // ===============================================================================
         // 公開プロパティ
@@ -54,5 +54,14 @@ namespace graphicbox2d
         /// 線の色
         /// </summary>
         public Color Color { get; set; } = Color.White;
+
+        /// <summary>
+        /// Disposeメソッド。リストをクリアしてリソースを解放する。
+        /// </summary>
+        public new void Dispose()
+        {
+            Points.Clear();
+            base.Dispose();
+        }
     }
 }

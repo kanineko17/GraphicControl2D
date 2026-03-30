@@ -11,7 +11,7 @@ namespace graphicbox2d
     /// <summary>
     /// 数式グラフ図形のドキュメントデータを表すクラス。
     /// </summary>
-    public class MathGraph2D_Document : Graph2D_Document
+    public class MathGraph2D_Document : Graph2D_Document, IDisposable
     {
         // ===============================================================================
         // 公開プロパティ
@@ -43,5 +43,14 @@ namespace graphicbox2d
         /// 小さくするほど滑らかになりますが、計算に時間がかかります。
         /// </summary>
         public float CalculateInterval { get; set; } = 0.05f;
+
+        /// <summary>
+        /// Disposeメソッド。リストをクリアしてリソースを解放する。
+        /// </summary>
+        public new void Dispose()
+        {
+            Points.Clear();
+            base.Dispose();
+        }
     }
 }
