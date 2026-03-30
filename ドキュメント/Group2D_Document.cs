@@ -27,6 +27,18 @@ namespace graphicbox2d
         /// グループ化する図形のリスト
         /// </summary>
         public List<Group2DItem_Document> ObjectList { get; set; } = new List<Group2DItem_Document>();
+
+        /// <summary>
+        /// IDisposableインターフェイスの実装。グループ内の各オブジェクトを解放するメソッド。
+        /// </summary>
+        public override void Dispose()
+        {
+            foreach (var item in ObjectList)
+            {
+                item.Object?.Dispose();
+            }
+            ObjectList.Clear();
+        }
     }
 
     /// <summary>
