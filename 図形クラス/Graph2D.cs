@@ -1,4 +1,6 @@
 ﻿using graphicbox2d.グラフィック計算;
+using graphicbox2d.描画図形クラス;
+using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -211,6 +213,25 @@ namespace graphicbox2d
             }
 
             return Points[ZeroXPointIndex].ToVector2();
+        }
+
+        /// <summary>
+        /// 描画に必要な情報をまとめたクラスを返す。
+        /// </summary>
+        /// <param name="type">描画タイプ</param>
+        /// <returns>描画用のデータをまとめたクラス</returns>
+        internal override object GetDrawFigure(eDrawFigureType type)
+        {
+            if (Points.Count == 0)
+            {
+                return null;
+            }
+
+            Graph2D_DrawFigure figure = new Graph2D_DrawFigure();
+
+            figure.Points = Points.Select(pt => CalConvert.ConvertDisplayGridPointToClientPoint(pt)).ToArray();
+
+            return figure;
         }
     }
 }
