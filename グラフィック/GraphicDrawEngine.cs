@@ -1,6 +1,8 @@
 ﻿using graphicbox2d.オブジェクトマネージャー;
 using graphicbox2d.グラフィック計算;
+using graphicbox2d.グローバル変数;
 using graphicbox2d.その他;
+using graphicbox2d.描画図形クラス;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
@@ -103,10 +105,11 @@ namespace graphicbox2d
         /// </summary>
         /// <param name="sKCanvas">描画対象の SKCanvas オブジェクト。</param>
         /// <param name="object2D">描画する Object2D インスタンス。種類に応じて内部で振り分けられる。</param>
+        /// <param name="drawType">描画タイプ(通常: Normal, マウスヒット時: Hit)</param>
         /// <exception cref="ArgumentNullException">
         /// object2D が null の場合、または未対応の種類が指定された場合にスローされる。
         /// </exception>
-        public void DrawObject2D(SKCanvas sKCanvas, Object2D object2D)
+        public void DrawObject2D(SKCanvas sKCanvas, Object2D object2D, eDrawFigureType drawType)
         {
             if (object2D == null)
             {
@@ -116,71 +119,35 @@ namespace graphicbox2d
             switch (object2D.m_Type)
             {
                 case eObject2DType.Line:
-                    DrawLine2D(sKCanvas, object2D as Line2D);
+                    DrawLine2D(sKCanvas, object2D as Line2D, drawType);
                     break;
                 case eObject2DType.Point:
-                    DrawPoint2D(sKCanvas, object2D as Point2D);
+                    DrawPoint2D(sKCanvas, object2D as Point2D, drawType);
                     break;
                 case eObject2DType.Circle:
-                    DrawCircle2D(sKCanvas, object2D as Circle2D);
+                    DrawCircle2D(sKCanvas, object2D as Circle2D, drawType);
                     break;
                 case eObject2DType.Polygon:
-                    DrawPolygon2D(sKCanvas, object2D as Polygon2D);
+                    DrawPolygon2D(sKCanvas, object2D as Polygon2D, drawType);
                     break;
                 case eObject2DType.Arrow:
-                    DrawArrow2D(sKCanvas, object2D as Arrow2D);
+                    DrawArrow2D(sKCanvas, object2D as Arrow2D, drawType);
                     break;
                 case eObject2DType.Text:
-                    DrawText2D(sKCanvas, object2D as Text2D);
+                    DrawText2D(sKCanvas, object2D as Text2D, drawType);
                     break;
                 case eObject2DType.Arc:
-                    DrawArc2D(sKCanvas, object2D as Arc2D);
+                    DrawArc2D(sKCanvas, object2D as Arc2D, drawType);
                     break;
                 case eObject2DType.Graph:
                 case eObject2DType.MathGraph:
-                    DrawGraph2D(sKCanvas, object2D as Graph2D);
+                    DrawGraph2D(sKCanvas, object2D as Graph2D, drawType);
                     break;
                 case eObject2DType.Group:
-                    DrawGroup2D(sKCanvas, object2D as Group2D);
+                    DrawGroup2D(sKCanvas, object2D as Group2D, drawType);
                     break;
                 case eObject2DType.Image:
-                    DrawImage2D(sKCanvas, object2D as Image2D, eDrawImageType.Normal);
-                    break;
-                default:
-                    throw new ArgumentNullException(nameof(object2D));
-            }
-        }
-
-        public void DrawHitObject2D(SKCanvas sKCanvas, Object2D object2D)
-        {
-            if (object2D == null)
-            {
-                throw new ArgumentNullException(nameof(object2D));
-            }
-
-            switch (object2D.m_Type)
-            {
-                case eObject2DType.Line:
-                case eObject2DType.Point:
-                case eObject2DType.Circle:
-                case eObject2DType.Polygon:
-                case eObject2DType.Arrow:
-                case eObject2DType.Text:
-                case eObject2DType.Arc:
-                case eObject2DType.Graph:
-                case eObject2DType.MathGraph:
-                case eObject2DType.Group:
-                    // マウスにヒットしている状態の図形を取得
-                    Object2D HitObject = object2D.GetHitObject();
-
-                    DrawObject2D(sKCanvas, HitObject);
-
-                    HitObject.Dispose();
-
-                    break;
-
-                case eObject2DType.Image:
-                    DrawImage2D(sKCanvas, object2D as Image2D, eDrawImageType.Hit);
+                    DrawImage2D(sKCanvas, object2D as Image2D, drawType);
                     break;
                 default:
                     throw new ArgumentNullException(nameof(object2D));
@@ -194,21 +161,21 @@ namespace graphicbox2d
         /// </summary>
         /// <param name="canvas">描画対象の SKCanvas。</param>
         /// <param name="line">グリッド座標系で定義された Line2D オブジェクト。</param>
-        public void DrawLine2D(SKCanvas canvas, Line2D line)
+        /// <param name="drawType">描画タイプ(通常: Normal, マウスヒット時: MouseHit)</param>
+        public void DrawLine2D(SKCanvas canvas, Line2D line, eDrawFigureType drawType)
         {
             // グリッド座標をクライアント座標に変換
-            SKPoint ClientStart = CalConvert.ConvertDisplayGridPointToClientPoint(line.Start);
-            SKPoint ClientEnd = CalConvert.ConvertDisplayGridPointToClientPoint(line.End);
+            Line2D_DrawFigure figure = line.GetDrawFigure(drawType) as Line2D_DrawFigure;
 
-            SKPaint paint = GetLineSKPaint(line);
+            SKPaint paint = GetLineSKPaint(line, drawType);
 
             // 直線描画
-            canvas.DrawLine(ClientStart, ClientEnd, paint);
+            canvas.DrawLine(figure.Start, figure.End, paint);
 
             // 選択状態なら選択ボックスを描画
             if (line.IsSelect == true)
             {
-                SKPoint[] points = CalBoundBox.GetBoundingBoxLineSK(ClientStart, ClientEnd, line.Width);
+                SKPoint[] points = CalBoundBox.GetBoundingBoxLineSK(figure.Start, figure.End, line.Width);
 
                 canvas.DrawPolygon(points, m_SelectBoxPaint);
             }
@@ -221,9 +188,10 @@ namespace graphicbox2d
         /// </summary>
         /// <param name="canvas">描画対象の SKCanvas オブジェクト。</param>
         /// <param name="point">グリッド座標系で定義された Point2D オブジェクト。</param>
-        public void DrawPoint2D(SKCanvas canvas, Point2D point)
+        /// <param name="drawType">描画タイプ(通常: Normal, マウスヒット時: Hit)</param>
+        public void DrawPoint2D(SKCanvas canvas, Point2D point, eDrawFigureType drawType)
         {
-            DrawCircle2D(canvas, point);
+            DrawCircle2D(canvas, point, drawType);
         }
 
         /// <summary>
@@ -233,7 +201,8 @@ namespace graphicbox2d
         /// </summary>
         /// <param name="canvas">描画対象の SKCanvas オブジェクト。</param>
         /// <param name="circle">グリッド座標系で定義された Circle2D オブジェクト。</param>
-        public void DrawCircle2D(SKCanvas canvas, Circle2D circle)
+        /// <param name="drawType">描画タイプ(通常: Normal, マウスヒット時: Hit)</param>
+        public void DrawCircle2D(SKCanvas canvas, Circle2D circle, eDrawFigureType drawType)
         {
             // グリッド座標をクライアント座標に変換
             PointF PointF       = new PointF(circle.X, circle.Y);
@@ -249,7 +218,7 @@ namespace graphicbox2d
 
             if (circle.IsDrawLine == true)
             {
-                SKPaint paint = GetLineSKPaint(circle);
+                SKPaint paint = GetLineSKPaint(circle, drawType);
 
                 canvas.DrawCircle(ClientPointF.X, ClientPointF.Y, ClientR, paint);
             }
@@ -268,7 +237,8 @@ namespace graphicbox2d
         /// </summary>
         /// <param name="canvas">描画対象の SKCanvas オブジェクト。</param>
         /// <param name="polygon">グリッド座標系で定義された Polygon2D オブジェクト。</param>
-        public void DrawPolygon2D(SKCanvas canvas, Polygon2D polygon)
+        /// <param name="drawType">描画タイプ(通常: Normal, マウスヒット時: Hit)</param>
+        public void DrawPolygon2D(SKCanvas canvas, Polygon2D polygon, eDrawFigureType drawType)
         {
             // グリッド座標をクライアント座標に変換
             SKPoint[] ClientPoints = polygon.Points.Select(pt => CalConvert.ConvertDisplayGridPointToClientPoint(pt)).ToArray();
@@ -283,7 +253,7 @@ namespace graphicbox2d
 
             if (polygon.IsDrawLine == true)
             {
-                SKPaint paint = GetLineSKPaint(polygon);
+                SKPaint paint = GetLineSKPaint(polygon, drawType);
 
                 canvas.DrawPolygon(ClientPoints, paint);
             }
@@ -302,13 +272,14 @@ namespace graphicbox2d
         /// </summary>
         /// <param name="canvas">描画対象の SKCanvas オブジェクト。</param>
         /// <param name="arrow">グリッド座標系で定義された Arrow2D オブジェクト。</param>
-        public void DrawArrow2D(SKCanvas canvas, Arrow2D arrow)
+        /// <param name="drawType">描画タイプ(通常: Normal, マウスヒット時: Hit)</param>
+        public void DrawArrow2D(SKCanvas canvas, Arrow2D arrow, eDrawFigureType drawType)
         {
             // グリッド座標をクライアント座標に変換
             SKPoint ClientStart = CalConvert.ConvertDisplayGridPointToClientPoint(arrow.Start);
             SKPoint ClientEnd   = CalConvert.ConvertDisplayGridPointToClientPoint(arrow.End);
 
-            SKPaint paint = GetLineSKPaint(arrow);
+            SKPaint paint = GetLineSKPaint(arrow, drawType);
             canvas.DrawLine(ClientStart, ClientEnd, paint);
 
             // 選択中の場合はハイライト描画
@@ -324,7 +295,8 @@ namespace graphicbox2d
         /// </summary>
         /// <param name="canvas">描画対象の SKCanvas オブジェクト。</param>
         /// <param name="text">描画する文字列情報を保持する Text2D オブジェクト。</param>
-        public void DrawText2D(SKCanvas canvas, Text2D text)
+        /// <param name="drawType">描画タイプ(通常: Normal, マウスヒット時: Hit)</param>
+        public void DrawText2D(SKCanvas canvas, Text2D text, eDrawFigureType drawType)
         {
             // グリッド座標をクライアント座標に変換
             PointF PointF = new PointF(text.X, text.Y);
@@ -385,7 +357,8 @@ namespace graphicbox2d
         /// - IsFilled : 塗りつぶし有無  
         /// - その他、ペンやブラシ情報を保持  
         /// </param>
-        public void DrawArc2D(SKCanvas canvas, Arc2D arc)
+        /// <param name="drawType">描画タイプ(通常: Normal, マウスヒット時: Hit)</param>
+        public void DrawArc2D(SKCanvas canvas, Arc2D arc, eDrawFigureType drawType)
         {
             // グリッド座標をクライアント座標に変換
             PointF PointF       = new PointF(arc.X, arc.Y);
@@ -402,7 +375,7 @@ namespace graphicbox2d
 
             if (arc.IsDrawLine == true)
             {
-                SKPaint paint = GetLineSKPaint(arc);
+                SKPaint paint = GetLineSKPaint(arc, drawType);
 
                 canvas.DrawArc(paint, ClientPointF, ClientR, -arc.StartAngle, -arc.EndAngle, arc.IsDrawSideLines);
             }
@@ -419,7 +392,8 @@ namespace graphicbox2d
         /// </summary>
         /// <param name="canvas">描画対象の SKCanvas オブジェクト。</param>
         /// <param name="graph">描画対象グラフ図形オブジェクト</param>
-        public void DrawGraph2D(SKCanvas canvas, Graph2D graph)
+        /// <param name="drawType">描画タイプ(通常: Normal, マウスヒット時: Hit)</param>
+        public void DrawGraph2D(SKCanvas canvas, Graph2D graph, eDrawFigureType drawType)
         {
             // 点が無い場合は描画しない
             if (graph.Points.Count == 0)
@@ -430,7 +404,7 @@ namespace graphicbox2d
             // グリッド座標をクライアント座標に変換
             SKPoint[] ClientPoints = graph.Points.Select(pt => CalConvert.ConvertDisplayGridPointToClientPoint(pt)).ToArray();
 
-            SKPaint paint = GetLineSKPaint(graph);
+            SKPaint paint = GetLineSKPaint(graph, drawType);
 
             canvas.DrawSmoothCurve(paint, ClientPoints);
 
@@ -446,13 +420,14 @@ namespace graphicbox2d
         /// </summary>
         /// <param name="canvas"></param>
         /// <param name="group"></param>
-        public void DrawGroup2D(SKCanvas canvas, Group2D group)
+        /// <param name="drawType">描画タイプ(通常: Normal, マウスヒット時: Hit)</param>
+        public void DrawGroup2D(SKCanvas canvas, Group2D group, eDrawFigureType drawType)
         {
             group.ObjectList.Sort();
 
             foreach (var objectItem in group.ObjectList)
             {
-                DrawObject2D(canvas, objectItem.Object);
+                DrawObject2D(canvas, objectItem.Object, drawType);
             }
 
             if (group.IsSelect == true)
@@ -465,29 +440,21 @@ namespace graphicbox2d
             }
         }
 
-        public void DrawImage2D(SKCanvas canvas, Image2D image, eDrawImageType drawType)
+        /// <summary>
+        /// イメージ図形を描画する関数。
+        /// </summary>
+        /// <param name="canvas">描画対象の SKCanvas。</param>
+        /// <param name="image">グリッド座標系で定義された Image2D オブジェクト。</param>
+        /// <param name="drawType">描画タイプ(通常: Normal, マウスヒット時: MouseHit)</param>
+        public void DrawImage2D(SKCanvas canvas, Image2D image, eDrawFigureType drawType)
         {
-            PointF point = new PointF(image.X, image.Y);
+            Image2D_DrawFigure figure = image.GetDrawFigure(drawType) as Image2D_DrawFigure;
 
-            SKPoint clientPoint = CalConvert.ConvertDisplayGridPointToClientPoint(point);
-
-            SKBitmap bitmap = null;
-
-            if (drawType == eDrawImageType.Normal)
-            {
-                bitmap = image.GetDrawBitmap();
-            }
-            else if(drawType == eDrawImageType.Hit)
-            {
-                bitmap = image.GetDrawHitBitmap();
-            }
-
-            canvas.DrawBitmap2(bitmap, clientPoint.X, clientPoint.Y, image.Angle);
+            canvas.DrawBitmap2(figure.Bitmap, figure.X, figure.Y, figure.Angle);
 
             if (image.IsSelect == true)
             {
-                SKPoint[] ClientBoundingBox = CalBoundBox.GetBoundingBoxSK(clientPoint.X, clientPoint.Y, bitmap.Width, bitmap.Height, image.Angle, eCalculateType.Client, eRotateType.Center);
-
+                SKPoint[] ClientBoundingBox = CalBoundBox.GetBoundingBoxSK(figure.X, figure.Y, figure.Bitmap.Width, figure.Bitmap.Height, figure.Angle, eCalculateType.Client, eRotateType.Center);
                 canvas.DrawPolygon(ClientBoundingBox, m_SelectBoxPaint);
             }
         }
@@ -496,9 +463,10 @@ namespace graphicbox2d
         /// オブジェクトに合わせたSKPaintオブジェクトを自動取得
         /// </summary>
         /// <param name="object2D">オブジェクト</param>
+        /// <param name="drawType">描画タイプ(通常: Normal, マウスヒット時: Hit)</param>
         /// <returns>線描画用SKPaintオブジェクト</returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public SKPaint GetLineSKPaint(Object2D object2D)
+        public SKPaint GetLineSKPaint(Object2D object2D, eDrawFigureType drawType)
         {
             if (object2D == null)
             {
@@ -528,6 +496,11 @@ namespace graphicbox2d
                 lineColor = fill.LineColor;
                 customLineStylePattern = fill.LineCustomLineStyle;
                 customDashPhase = fill.LineCustomDashPhase;
+            }
+
+            if (drawType == eDrawFigureType.Hit)
+            {
+                lineWidth += object2D.MouseHitLineOffset;
             }
 
             SKPaint sKPaint = DrawManager.GetLineSkPaint(lineColor, lineWidth, isAntiAlias, lineStyle, customLineStylePattern, customDashPhase);

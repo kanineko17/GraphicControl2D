@@ -1,4 +1,5 @@
 ﻿using graphicbox2d.その他;
+using graphicbox2d.描画図形クラス;
 using SkiaSharp;
 using System;
 using System.CodeDom;
@@ -231,6 +232,16 @@ namespace graphicbox2d
         {
             // 基底クラスでは何もしない。
 
+            return null;
+        }
+
+        /// <summary>
+        /// 描画に必要な情報をまとめたクラスを返す。
+        /// </summary>
+        /// <param name="type">描画タイプ</param>
+        /// <returns>描画用のデータをまとめたクラス</returns>
+        internal virtual object GetDrawFigure(eDrawFigureType type)
+        {
             return null;
         }
 

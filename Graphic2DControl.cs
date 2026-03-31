@@ -62,19 +62,11 @@ namespace graphicbox2d
         public static float UserZoom { get; set; } = 1.0f;
 
         /// <summary>
-        /// ユーザー操作によって、中心座標を移動した量 X方向
+        /// ユーザー操作によって、中心座標を移動した量（クライアント座標系）
         /// </summary>
         [Browsable(false)]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public int UserMoveCenterX { get; set; } = 0;
-
-        /// <summary>
-        /// ユーザー操作によって、中心座標を移動した量 Y方向
-        /// </summary>
-        [Browsable(false)]
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public int UserMoveCenterY { get; set; } = 0;
-
+        public static Point UserMoveClientCenterPoint = new Point(0, 0);
 
         // ===============================================================================
         //
@@ -402,9 +394,9 @@ namespace graphicbox2d
         internal Point DisplayCenterPoint => GetDisplayCenterPoint();
 
         /// <summary>
-        /// オリジナルの画面中央座標（コントロールの幅・高さの中心点）
+        /// オリジナルの画面中央クライアント座標（コントロールの幅・高さの中心点）
         /// </summary>
-        internal Point OriginalCenterPoint = new Point(0, 0);
+        internal Point OriginalClientCenterPoint = new Point(0, 0);
 
         /// <summary>
         /// 全オブジェクトを取得する
@@ -490,8 +482,8 @@ namespace graphicbox2d
 
             HitClientObject = null;
 
-            OriginalCenterPoint.X = (int)this.Width / 2;
-            OriginalCenterPoint.Y = (int)this.Height / 2;
+            OriginalClientCenterPoint.X = (int)this.Width / 2;
+            OriginalClientCenterPoint.Y = (int)this.Height / 2;
 
             this.SetStyle(ControlStyles.UserPaint |
                           ControlStyles.OptimizedDoubleBuffer, true);
@@ -837,8 +829,8 @@ namespace graphicbox2d
         private Point GetDisplayCenterPoint()
         {
             Point point = new Point();
-            point.X = OriginalCenterPoint.X + UserMoveCenterX;
-            point.Y = OriginalCenterPoint.Y + UserMoveCenterY;
+            point.X = OriginalClientCenterPoint.X + UserMoveClientCenterPoint.X;
+            point.Y = OriginalClientCenterPoint.Y + UserMoveClientCenterPoint.Y;
 
             return point;
         }
@@ -862,8 +854,8 @@ namespace graphicbox2d
             // マウスホイールが押されている場合、画面移動を実行
             if (IsDraggingObject == false && MouseDownButton == MouseButtons.Middle)
             {
-                UserMoveCenterX += MouseMovement.X;
-                UserMoveCenterY += MouseMovement.Y;
+                UserMoveClientCenterPoint.X += MouseMovement.X;
+                UserMoveClientCenterPoint.Y += MouseMovement.Y;
             }
 
             if (IsInvalidate == true)
@@ -938,7 +930,7 @@ namespace graphicbox2d
                         continue;
                     }
 
-                    _DRAW_ENGINE.DrawObject2D(e.Surface.Canvas, object2D);
+                    _DRAW_ENGINE.DrawObject2D(e.Surface.Canvas, object2D, eDrawFigureType.Normal);
                 }
             }
         }
@@ -978,13 +970,13 @@ namespace graphicbox2d
                         continue;
                     }
 
-                    _DRAW_ENGINE.DrawObject2D(e.Surface.Canvas, object2D);
+                    _DRAW_ENGINE.DrawObject2D(e.Surface.Canvas, object2D, eDrawFigureType.Normal);
                 }
 
                 // マウスにヒットしているオブジェクトを強調表示する
                 if (HitClientObject != null)
                 {
-                    _DRAW_ENGINE.DrawHitObject2D(e.Surface.Canvas, HitClientObject);
+                    _DRAW_ENGINE.DrawObject2D(e.Surface.Canvas, HitClientObject, eDrawFigureType.Hit);
                 }
             }
         }
@@ -1298,6 +1290,7 @@ namespace graphicbox2d
             }
 
             document.Dispose();
+            document = null;
         }
 
         /// <summary>
@@ -1840,8 +1833,8 @@ namespace graphicbox2d
         {
             base.OnResize(e);
 
-            OriginalCenterPoint.X = (int)this.Width / 2;
-            OriginalCenterPoint.Y = (int)this.Height / 2;
+            OriginalClientCenterPoint.X = (int)this.Width / 2;
+            OriginalClientCenterPoint.Y = (int)this.Height / 2;
         }
 
         /// <summary>

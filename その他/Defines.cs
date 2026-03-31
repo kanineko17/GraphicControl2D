@@ -241,15 +241,25 @@ namespace graphicbox2d
         Grid
     }
 
+    /// <summary>
+    /// 図形回転の基準点の種類を表す列挙体。
+    /// </summary>
     internal enum eRotateType
     {
+        /// <summary> 図形の中心を基準点とする回転 </summary>
         TopLeft,
+        /// <summary> 図形の左上を基準点とする回転 </summary>
         Center
     }
 
-    internal enum eDrawImageType
+    /// <summary>
+    /// 図形の描画タイプを表す列挙体。
+    /// </summary>
+    internal enum eDrawFigureType
     {
+        /// <summary> 通常の描画 </summary>
         Normal,
+        /// <summary> マウスヒット時用の描画 </summary>
         Hit,
     }
 

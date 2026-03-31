@@ -50,8 +50,10 @@ namespace graphicbox2d.グラフィック計算
         {
             Vector2 ClientPointV = new Vector2();
 
-            ClientPointV.X = GridPoint.X * Global.Graphic2DControl.DisplayGridWidth;
-            ClientPointV.Y = -1 * GridPoint.Y * Global.Graphic2DControl.DisplayGridWidth;
+            float displayGridWidth = Global.Graphic2DControl.DisplayGridWidth;
+
+            ClientPointV.X = GridPoint.X * displayGridWidth;
+            ClientPointV.Y = -1 * GridPoint.Y * displayGridWidth;
 
             // 更に始点座標を足す
             ClientPointV = ClientPointV + Global.Graphic2DControl.DisplayCenterPoint.ToVector2();
@@ -120,8 +122,11 @@ namespace graphicbox2d.グラフィック計算
         public static SKPoint ConvertDisplayGridPointToClientPoint(PointF DisplayGridPoint)
         {
             Vector2 cliGridV = new Vector2();
-            cliGridV.X = DisplayGridPoint.X * Global.Graphic2DControl.DisplayGridWidth;
-            cliGridV.Y = -1 * DisplayGridPoint.Y * Global.Graphic2DControl.DisplayGridWidth;
+
+            float displayGridWidth = Global.Graphic2DControl.DisplayGridWidth;
+
+            cliGridV.X = DisplayGridPoint.X * displayGridWidth;
+            cliGridV.Y = -1 * DisplayGridPoint.Y * displayGridWidth;
             cliGridV += Global.Graphic2DControl.DisplayCenterPoint.ToVector2();
             return cliGridV.ToSKPoint();
         }
@@ -135,8 +140,10 @@ namespace graphicbox2d.グラフィック計算
         /// <param name="outY">クライアント座標 Y 出力</param>
         public static void ConvertDisplayGridPointToClientPoint(float x, float y, out float outX, out float outY)
         {
-            outX = x * Global.Graphic2DControl.DisplayGridWidth;
-            outY = -1 * y * Global.Graphic2DControl.DisplayGridWidth;
+            float displayGridWidth = Global.Graphic2DControl.DisplayGridWidth;
+
+            outX = x * displayGridWidth;
+            outY = -1 * y * displayGridWidth;
             outX += Global.Graphic2DControl.DisplayCenterPoint.X;
             outY += Global.Graphic2DControl.DisplayCenterPoint.Y;
         }

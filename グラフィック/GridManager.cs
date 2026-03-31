@@ -1,5 +1,6 @@
 ﻿using graphicbox2d.オブジェクトマネージャー;
 using graphicbox2d.グラフィック計算;
+using graphicbox2d.グローバル変数;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
@@ -302,7 +303,7 @@ namespace graphicbox2d
             int yAxisLineNum = (int)(bounds.Width / m_Graphic2DControl.DisplayGridWidth);
 
             // 現在、最も中央に近いグリッド線のインデックスを計算
-            int startIndex = -m_Graphic2DControl.UserMoveCenterX / m_Graphic2DControl.DisplayGridWidth;
+            int startIndex = -Graphic2DControl.UserMoveClientCenterPoint.X / m_Graphic2DControl.DisplayGridWidth;
 
             // 中心線より右側
             for (int i = startIndex; i <= startIndex + (yAxisLineNum / 2) + 1; i++)
@@ -354,7 +355,7 @@ namespace graphicbox2d
             int xAxisLineNum = (int)(bounds.Height / m_Graphic2DControl.DisplayGridWidth);
 
             // 現在、最も中央に近いグリッド線のインデックスを計算
-            startIndex = -m_Graphic2DControl.UserMoveCenterY / m_Graphic2DControl.DisplayGridWidth;
+            startIndex = -Graphic2DControl.UserMoveClientCenterPoint.Y / m_Graphic2DControl.DisplayGridWidth;
 
             // 下側
             for (int i = startIndex; i <= startIndex + (xAxisLineNum / 2) + 1; i++)

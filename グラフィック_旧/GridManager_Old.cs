@@ -310,7 +310,7 @@ namespace graphicbox2d
 
                 int YAxisLineNum = Bounds.Width / m_Graphic2DControl.DisplayGridWidth;
 
-                int StartIndex = - m_Graphic2DControl.UserMoveCenterX / m_Graphic2DControl.DisplayGridWidth;
+                int StartIndex = - Graphic2DControl.UserMoveClientCenterPoint.X / m_Graphic2DControl.DisplayGridWidth;
 
                 // 中心線より右側のグリッド線を作成
                 for (int i = StartIndex; i <= StartIndex + (YAxisLineNum / 2) + 1; i++)
@@ -339,7 +339,7 @@ namespace graphicbox2d
                     _GridTexts.Add(textData);
                 }
 
-                StartIndex = (-m_Graphic2DControl.DisplayGridWidth - m_Graphic2DControl.UserMoveCenterX) / m_Graphic2DControl.DisplayGridWidth;
+                StartIndex = (-m_Graphic2DControl.DisplayGridWidth - Graphic2DControl.UserMoveClientCenterPoint.X) / m_Graphic2DControl.DisplayGridWidth;
 
                 // 中心線より右側のグリッド線を作成
                 for (int i = StartIndex; Math.Abs(i) <= Math.Abs(StartIndex) + (YAxisLineNum / 2) + 1; i--)
@@ -369,7 +369,7 @@ namespace graphicbox2d
 
                 int XAxisLineNum = Bounds.Height / m_Graphic2DControl.DisplayGridWidth;
 
-                StartIndex = -m_Graphic2DControl.UserMoveCenterY / m_Graphic2DControl.DisplayGridWidth;
+                StartIndex = -Graphic2DControl.UserMoveClientCenterPoint.Y / m_Graphic2DControl.DisplayGridWidth;
 
                 // 中心線より下側のグリッド線を作成
                 for (int i = StartIndex; i <= StartIndex + (XAxisLineNum / 2) + 1; i++)
@@ -398,7 +398,7 @@ namespace graphicbox2d
                     _GridTexts.Add(textData);
                 }
 
-                StartIndex = (-m_Graphic2DControl.DisplayGridWidth - m_Graphic2DControl.UserMoveCenterY) / m_Graphic2DControl.DisplayGridWidth;
+                StartIndex = (-m_Graphic2DControl.DisplayGridWidth - Graphic2DControl.UserMoveClientCenterPoint.Y) / m_Graphic2DControl.DisplayGridWidth;
 
                 // 中心線より上側のグリッド線を作成
                 for (int i = StartIndex; Math.Abs(i) <= Math.Abs(StartIndex) + (XAxisLineNum / 2) + 1; i--)

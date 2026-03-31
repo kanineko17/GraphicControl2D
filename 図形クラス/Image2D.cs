@@ -1,6 +1,7 @@
 ﻿using graphicbox2d.グラフィック計算;
 using graphicbox2d.グローバル変数;
 using graphicbox2d.その他;
+using graphicbox2d.描画図形クラス;
 using Newtonsoft.Json.Linq;
 using SkiaSharp;
 using System;
@@ -257,47 +258,6 @@ namespace graphicbox2d
         // 非公開メソッド
         // ===============================================================================
 
-        internal SKBitmap GetDrawBitmap()
-        {
-            if (_Bitmap == null)
-            {
-                return null;
-            }
-
-            if (Graphic2DControl.UserZoom == CashUserZoom)
-            {
-                return _Bitmap;
-            }
-            else
-            {
-                // ユーザーズームが変わっている場合はビットマップを更新してから返す
-                CashUserZoom = Graphic2DControl.UserZoom;
-
-                UpdateDrawBitmap();
-                return _Bitmap;
-            }
-        }
-
-        internal SKBitmap GetDrawHitBitmap()
-        {
-            if (_HitBitmap == null)
-            {
-                return null;
-            }
-            if (Graphic2DControl.UserZoom == CashUserZoom)
-            {
-                return _HitBitmap;
-            }
-            else
-            {
-                // ユーザーズームが変わっている場合はビットマップを更新してから返す
-                CashUserZoom = Graphic2DControl.UserZoom;
-
-                UpdateDrawBitmap();
-                return _HitBitmap;
-            }
-        }
-
         /// <summary>
         /// マウスポイントがこの図形にヒットしているか判定する。
         /// </summary>
@@ -403,6 +363,9 @@ namespace graphicbox2d
             return;
         }
 
+        /// <summary>
+        /// 描画に使用するビットマップを更新する
+        /// </summary>
         private void UpdateDrawBitmap()
         {
 
@@ -425,6 +388,47 @@ namespace graphicbox2d
 
             _Bitmap = SKBitmapUtil.MakeResizeBitMap(_OriginalBitmap, ClientWidth, ClientHeight, Graphic2DControl.UserZoom * _Scale);
             _HitBitmap = SKBitmapUtil.MakeScaleBitMap(_Bitmap, MouseHitBitmapOffset);
+        }
+
+        /// <summary>
+        /// 描画に必要な情報をまとめたクラスを返す。
+        /// </summary>
+        /// <param name="type">描画タイプ</param>
+        /// <returns>描画用のデータをまとめたクラス</returns>
+        internal override object GetDrawFigure(eDrawFigureType type)
+        {
+            if (_Bitmap == null)
+            {
+                return null;
+            }
+
+            if (Graphic2DControl.UserZoom != CashUserZoom)
+            {
+                // ユーザーズームが変わっている場合はビットマップを更新してから返す
+                CashUserZoom = Graphic2DControl.UserZoom;
+
+                UpdateDrawBitmap();
+            }
+
+            // 描画用のデータを作成して返す
+            Image2D_DrawFigure figure = new Image2D_DrawFigure();
+
+            SKPoint clientPoint = CalConvert.ConvertDisplayGridPointToClientPoint(new PointF(X, Y));
+
+            figure.X = clientPoint.X;
+            figure.Y = clientPoint.Y;
+            figure.Angle = Angle;
+
+            if (type == eDrawFigureType.Normal)
+            {
+                figure.Bitmap = _Bitmap;
+            }
+            else if (type == eDrawFigureType.Hit)
+            {
+                figure.Bitmap = _HitBitmap;
+            }
+
+            return figure;
         }
 
         /// <summary>
