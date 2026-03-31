@@ -204,28 +204,25 @@ namespace graphicbox2d
         /// <param name="drawType">描画タイプ(通常: Normal, マウスヒット時: Hit)</param>
         public void DrawCircle2D(SKCanvas canvas, Circle2D circle, eDrawFigureType drawType)
         {
-            // グリッド座標をクライアント座標に変換
-            PointF PointF       = new PointF(circle.X, circle.Y);
-            SKPoint ClientPointF = CalConvert.ConvertDisplayGridPointToClientPoint(PointF);
-            float ClientR       = circle.R * m_Parent.DisplayGridWidth;
+            Circle2D_DrawFigure figure = circle.GetDrawFigure(drawType) as Circle2D_DrawFigure;
 
             if (circle.IsFilled == true)
             {
                 SKPaint paint = GetFillSKPaint(circle);
 
-                canvas.DrawCircle(ClientPointF.X, ClientPointF.Y, ClientR, paint);
+                canvas.DrawCircle(figure.X, figure.Y, figure.R, paint);
             }
 
             if (circle.IsDrawLine == true)
             {
                 SKPaint paint = GetLineSKPaint(circle, drawType);
 
-                canvas.DrawCircle(ClientPointF.X, ClientPointF.Y, ClientR, paint);
+                canvas.DrawCircle(figure.X, figure.Y, figure.R, paint);
             }
 
             if (circle.IsSelect == true)
             {
-                SKPoint[] points = CalBoundBox.GetBoundingBoxCircleSK(ClientPointF.X, ClientPointF.Y, ClientR);
+                SKPoint[] points = CalBoundBox.GetBoundingBoxCircleSK(figure.X, figure.Y, figure.R);
                 canvas.DrawPolygon(points, m_SelectBoxPaint);
             }
         }
@@ -240,27 +237,25 @@ namespace graphicbox2d
         /// <param name="drawType">描画タイプ(通常: Normal, マウスヒット時: Hit)</param>
         public void DrawPolygon2D(SKCanvas canvas, Polygon2D polygon, eDrawFigureType drawType)
         {
-            // グリッド座標をクライアント座標に変換
-            SKPoint[] ClientPoints = polygon.Points.Select(pt => CalConvert.ConvertDisplayGridPointToClientPoint(pt)).ToArray();
-
+            Polygon2D_DrawFigure figure = polygon.GetDrawFigure(drawType) as Polygon2D_DrawFigure;
 
             if (polygon.IsFilled == true)
             {
                 SKPaint paint = GetFillSKPaint(polygon);
 
-                canvas.DrawPolygon(ClientPoints, paint);
+                canvas.DrawPolygon(figure.Points, paint);
             }
 
             if (polygon.IsDrawLine == true)
             {
                 SKPaint paint = GetLineSKPaint(polygon, drawType);
 
-                canvas.DrawPolygon(ClientPoints, paint);
+                canvas.DrawPolygon(figure.Points, paint);
             }
 
             if (polygon.IsSelect == true)
             {
-                SKPoint[] points = CalBoundBox.GetBoundingBoxPolygonSK(ClientPoints);
+                SKPoint[] points = CalBoundBox.GetBoundingBoxPolygonSK(figure.Points);
                 canvas.DrawPolygon(points, m_SelectBoxPaint);
             }
         }
@@ -275,17 +270,15 @@ namespace graphicbox2d
         /// <param name="drawType">描画タイプ(通常: Normal, マウスヒット時: Hit)</param>
         public void DrawArrow2D(SKCanvas canvas, Arrow2D arrow, eDrawFigureType drawType)
         {
-            // グリッド座標をクライアント座標に変換
-            SKPoint ClientStart = CalConvert.ConvertDisplayGridPointToClientPoint(arrow.Start);
-            SKPoint ClientEnd   = CalConvert.ConvertDisplayGridPointToClientPoint(arrow.End);
+            Arrow2D_DrawFigure figure = arrow.GetDrawFigure(drawType) as Arrow2D_DrawFigure;
 
             SKPaint paint = GetLineSKPaint(arrow, drawType);
-            canvas.DrawLine(ClientStart, ClientEnd, paint);
+            canvas.DrawLine(figure.Start, figure.End, paint);
 
             // 選択中の場合はハイライト描画
             if (arrow.IsSelect == true)
             {
-                SKPoint[] points = CalBoundBox.GetBoundingBoxLineSK(ClientStart, ClientEnd, arrow.Width);
+                SKPoint[] points = CalBoundBox.GetBoundingBoxLineSK(figure.Start, figure.End, arrow.Width);
                 canvas.DrawPolygon(points, m_SelectBoxPaint);
             }
         }
@@ -298,31 +291,30 @@ namespace graphicbox2d
         /// <param name="drawType">描画タイプ(通常: Normal, マウスヒット時: Hit)</param>
         public void DrawText2D(SKCanvas canvas, Text2D text, eDrawFigureType drawType)
         {
-            // グリッド座標をクライアント座標に変換
-            PointF PointF = new PointF(text.X, text.Y);
+            Text2D_DrawFigure figure = text.GetDrawFigure(drawType) as Text2D_DrawFigure;
+
             SKPaint paint = GetTextSKPaint(text);
 
-            SKFont font = DrawManager.GetSKFont(text.FontName, text.DrawFontSize);
+            SKFont font = DrawManager.GetSKFont(figure.FontName, figure.DrawFontSize);
 
-            SKPoint ClientPoint = CalConvert.ConvertDisplayGridPointToClientPoint(PointF);
             try
             {
-                if (Comp.IsEqual(text.Angle, 0))
+                if (Comp.IsEqual(figure.Angle, 0))
                 {
                     // 回転が無い場合はそのまま描画
-                    canvas.DrawText2(text.Text, ClientPoint, font, paint);
+                    canvas.DrawText2(figure.Text, figure.ClientPoint, font, paint);
                 }
                 else
                 {
                     // 回転の中心を決める
                     canvas.Save();
-                    canvas.Translate(ClientPoint.X, ClientPoint.Y);
+                    canvas.Translate(figure.ClientPoint.X, figure.ClientPoint.Y);
 
                     // SkiaSharpは時計回りが正なので、必要なら符号調整
-                    canvas.RotateDegrees(-text.Angle);
+                    canvas.RotateDegrees(-figure.Angle);
 
                     // 描画（座標は回転後の原点からの位置）
-                    canvas.DrawText2(text.Text, 0, 0, font, paint);
+                    canvas.DrawText2(figure.Text, 0, 0, font, paint);
 
                     // 変換をリセット
                     canvas.Restore();
@@ -331,8 +323,8 @@ namespace graphicbox2d
                 if (text.IsSelect)
                 {
                     var points = CalBoundBox.GetBoundingBoxTextSK(
-                        ClientPoint.X, ClientPoint.Y,
-                        font, text.Text, text.Angle, eCalculateType.Client);
+                        figure.ClientPoint.X, figure.ClientPoint.Y,
+                        font, figure.Text, figure.Angle, eCalculateType.Client);
 
                     canvas.DrawPolygon(points, m_SelectBoxPaint);
                 }
@@ -360,29 +352,27 @@ namespace graphicbox2d
         /// <param name="drawType">描画タイプ(通常: Normal, マウスヒット時: Hit)</param>
         public void DrawArc2D(SKCanvas canvas, Arc2D arc, eDrawFigureType drawType)
         {
-            // グリッド座標をクライアント座標に変換
-            PointF PointF       = new PointF(arc.X, arc.Y);
-            SKPoint ClientPointF = CalConvert.ConvertDisplayGridPointToClientPoint(PointF);
-            float ClientR       = arc.R * m_Parent.DisplayGridWidth;
+            Arc2D_DrawFigure figure = arc.GetDrawFigure(drawType) as Arc2D_DrawFigure;
 
+            SKPoint ClientPointF = new SKPoint(figure.X, figure.Y);
 
             if (arc.IsFilled == true)
             {
                 SKPaint paint = GetFillSKPaint(arc);
 
-                canvas.DrawArc(paint, ClientPointF, ClientR, -arc.StartAngle, -arc.EndAngle);
+                canvas.DrawArc(paint, ClientPointF, figure.R, -figure.StartAngle, -figure.EndAngle);
             }
 
             if (arc.IsDrawLine == true)
             {
                 SKPaint paint = GetLineSKPaint(arc, drawType);
 
-                canvas.DrawArc(paint, ClientPointF, ClientR, -arc.StartAngle, -arc.EndAngle, arc.IsDrawSideLines);
+                canvas.DrawArc(paint, ClientPointF, figure.R, -figure.StartAngle, -figure.EndAngle, figure.IsDrawSideLines);
             }
 
             if (arc.IsSelect == true)
             {
-                SKPoint[] points = CalBoundBox.GetBoundingBoxCircleSK(ClientPointF.X, ClientPointF.Y, ClientR);
+                SKPoint[] points = CalBoundBox.GetBoundingBoxCircleSK(figure.X, figure.Y, figure.R);
                 canvas.DrawPolygon(points, m_SelectBoxPaint);
             }
         }
@@ -395,22 +385,21 @@ namespace graphicbox2d
         /// <param name="drawType">描画タイプ(通常: Normal, マウスヒット時: Hit)</param>
         public void DrawGraph2D(SKCanvas canvas, Graph2D graph, eDrawFigureType drawType)
         {
+            Graph2D_DrawFigure figure = graph.GetDrawFigure(drawType) as Graph2D_DrawFigure;
+
             // 点が無い場合は描画しない
-            if (graph.Points.Count == 0)
+            if (figure == null)
             {
                 return;
             }
 
-            // グリッド座標をクライアント座標に変換
-            SKPoint[] ClientPoints = graph.Points.Select(pt => CalConvert.ConvertDisplayGridPointToClientPoint(pt)).ToArray();
-
             SKPaint paint = GetLineSKPaint(graph, drawType);
 
-            canvas.DrawSmoothCurve(paint, ClientPoints);
+            canvas.DrawSmoothCurve(paint, figure.Points);
 
             if (graph.IsSelect == true)
             {
-                SKPoint[] points = CalBoundBox.GetBoundingBoxPolygonSK(ClientPoints);
+                SKPoint[] points = CalBoundBox.GetBoundingBoxPolygonSK(figure.Points);
                 canvas.DrawPolygon(points, m_SelectBoxPaint);
             }
         }
@@ -432,11 +421,8 @@ namespace graphicbox2d
 
             if (group.IsSelect == true)
             {
-                // グリッド座標をクライアント座標に変換
-                SKPoint[] ClientPoints = group.AllBoundingBoxPoints.Select(pt => CalConvert.ConvertDisplayGridPointToClientPoint(pt)).ToArray();
-
-                SKPoint[] points = CalBoundBox.GetBoundingBoxPolygonSK(ClientPoints);
-                canvas.DrawPolygon(points, m_SelectBoxPaint);
+                Group2D_DrawFigure figure = group.GetDrawFigure(drawType) as Group2D_DrawFigure;
+                canvas.DrawPolygon(figure.BoundingBoxPoints, m_SelectBoxPaint);
             }
         }
 

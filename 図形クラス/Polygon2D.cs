@@ -1,4 +1,6 @@
 ﻿using graphicbox2d.グラフィック計算;
+using graphicbox2d.描画図形クラス;
+using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -216,6 +218,20 @@ namespace graphicbox2d
             Vector2 centerPoint = GraphicCaluculate.CaluculateCenterPoint(Points);
 
             return GraphicCaluculate.CaluculateCircumCircleR(centerPoint, Points);
+        }
+
+        /// <summary>
+        /// 描画に必要な情報をまとめたクラスを返す。
+        /// </summary>
+        /// <param name="type">描画タイプ</param>
+        /// <returns>描画用のデータをまとめたクラス</returns>
+        internal override object GetDrawFigure(eDrawFigureType type)
+        {
+            Polygon2D_DrawFigure figure = new Polygon2D_DrawFigure();
+
+            figure.Points = Points.Select(pt => CalConvert.ConvertDisplayGridPointToClientPoint(pt)).ToArray();
+
+            return figure;
         }
     }
 }

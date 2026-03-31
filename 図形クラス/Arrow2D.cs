@@ -1,4 +1,7 @@
-﻿using System;
+﻿using graphicbox2d.グラフィック計算;
+using graphicbox2d.描画図形クラス;
+using SkiaSharp;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -86,6 +89,30 @@ namespace graphicbox2d
             arrow2D.Width += MouseHitLineOffset;
 
             return arrow2D;
+        }
+
+        /// <summary>
+        /// 描画に必要な情報をまとめたクラスを返す。
+        /// </summary>
+        /// <param name="type">描画タイプ</param>
+        /// <returns>描画用のデータをまとめたクラス</returns>
+        internal override object GetDrawFigure(eDrawFigureType type)
+        {
+            Arrow2D_DrawFigure figure = new Arrow2D_DrawFigure();
+
+            figure.Start = CalConvert.ConvertDisplayGridPointToClientPoint(Start);
+            figure.End = CalConvert.ConvertDisplayGridPointToClientPoint(End);
+
+            if (type == eDrawFigureType.Normal)
+            {
+                figure.Width = Width;
+            }
+            else if (type == eDrawFigureType.Hit)
+            {
+                figure.Width = Width + MouseHitLineOffset;
+            }
+
+            return figure;
         }
     }
 

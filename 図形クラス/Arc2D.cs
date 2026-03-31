@@ -1,4 +1,7 @@
 ﻿using graphicbox2d.グラフィック計算;
+using graphicbox2d.グローバル変数;
+using graphicbox2d.描画図形クラス;
+using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -135,6 +138,27 @@ namespace graphicbox2d
             Vector2 MousePoint = new Vector2(X, Y);
 
             return Vector2.Distance(MousePoint, CenterPoint);
+        }
+
+        /// <summary>
+        /// 描画に必要な情報をまとめたクラスを返す。
+        /// </summary>
+        /// <param name="type">描画タイプ</param>
+        /// <returns>描画用のデータをまとめたクラス</returns>
+        internal override object GetDrawFigure(eDrawFigureType type)
+        {
+            Arc2D_DrawFigure figure = new Arc2D_DrawFigure();
+
+            SKPoint clientPoint = CalConvert.ConvertDisplayGridPointToClientPoint(new PointF(X, Y));
+
+            figure.X = clientPoint.X;
+            figure.Y = clientPoint.Y;
+            figure.R = R * Global.Graphic2DControl.DisplayGridWidth;
+            figure.StartAngle = StartAngle;
+            figure.EndAngle = EndAngle;
+            figure.IsDrawSideLines = IsDrawSideLines;
+
+            return figure;
         }
 
         /// <summary>
