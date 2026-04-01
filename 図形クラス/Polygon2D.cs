@@ -110,24 +110,6 @@ namespace graphicbox2d
         }
 
         /// <summary>
-        /// マウスヒット中の図形（拡大した図形）を返す。
-        /// </summary>
-        /// <returns>拡大された図形</returns>
-        internal override Object2D GetHitObject()
-        {
-            List<PointF>  OutPoints;
-            GraphicCaluculate.GetScalingPolygon(this.Points, CenterPoint.ToPointF(), MouseHitPolyOffset, out OutPoints);
-
-            // ポイントを除いたポリゴンをコピーする
-            Polygon2D out_polygon = (Polygon2D)this.CloneWithoutPoints();
-
-            // 拡大したポイントを設定する
-            out_polygon.Points.AddRange(OutPoints);
-
-            return out_polygon;
-        }
-
-        /// <summary>
         /// マウスポイントがこの図形にヒットしているか判定する。
         /// </summary>
         /// <param name="MousePoint">マウスポイント</param>
@@ -229,7 +211,17 @@ namespace graphicbox2d
         {
             Polygon2D_DrawFigure figure = new Polygon2D_DrawFigure();
 
-            figure.Points = Points.Select(pt => CalConvert.ConvertDisplayGridPointToClientPoint(pt)).ToArray();
+            if (type == eDrawFigureType.Hit && IsFilled == true)
+            {
+                List<PointF> OutPoints;
+                GraphicCaluculate.GetScalingPolygon(this.Points, CenterPoint.ToPointF(), MouseHitPolyOffset, out OutPoints);
+
+                figure.Points = OutPoints.Select(pt => CalConvert.ConvertDisplayGridPointToClientPoint(pt)).ToArray();
+            }
+            else
+            {
+                figure.Points = Points.Select(pt => CalConvert.ConvertDisplayGridPointToClientPoint(pt)).ToArray();
+            }
 
             return figure;
         }

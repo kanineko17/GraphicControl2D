@@ -117,6 +117,7 @@ namespace graphicbox2d
         {
             return new Object2D()
             {
+                IsVisible = this.IsVisible,
                 IsSelect = this.IsSelect,
                 ZOrder = this.ZOrder,
                 MouseHitLineOffset = this.MouseHitLineOffset,
@@ -167,19 +168,11 @@ namespace graphicbox2d
         /// <param name="target">コピー先</param>
         protected void BaseCopyDataTo(Object2D target)
         {
+            target.IsVisible = this.IsVisible;
             target.IsSelect = this.IsSelect;
             target.ZOrder = this.ZOrder;
             target.MouseHitLineOffset = this.MouseHitLineOffset;
             target.MouseHitPolyOffset = this.MouseHitPolyOffset;
-        }
-
-        /// <summary>
-        /// マウスヒット中の図形（拡大した図形）を返す。
-        /// </summary>
-        /// <returns>拡大された図形</returns>
-        internal virtual Object2D GetHitObject()
-        {
-            return null;
         }
 
         /// <summary>

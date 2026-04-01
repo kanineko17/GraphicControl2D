@@ -32,6 +32,11 @@ namespace graphicbox2d
         public virtual eObject2DType m_Type => eObject2DType.None;
 
         /// <summary>
+        /// 図形の表示フラグ
+        /// </summary>
+        public bool IsVisible { get; set; } = true;
+
+        /// <summary>
         /// 選択フラグ
         /// true:選択中　false:未選択
         /// </summary>

@@ -86,26 +86,6 @@ namespace graphicbox2d
         // ===============================================================================
 
         /// <summary>
-        /// マウスヒット中の図形（拡大した図形）を返す。
-        /// </summary>
-        /// <returns>拡張された図形</returns>
-        internal override Object2D GetHitObject()
-        {
-            Arc2D circle = (Arc2D)this.Clone();
-
-            if (circle.IsFilled == true)
-            {
-                circle.R *= MouseHitPolyOffset;
-            }
-            else
-            {
-                circle.LineWidth += MouseHitLineOffset;
-            }
-
-            return circle;
-        }
-
-        /// <summary>
         /// マウスポイントがこの図形にヒットしているか判定する。
         /// </summary>
         /// <param name="MousePoint">マウスポイント</param>

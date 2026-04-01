@@ -116,19 +116,6 @@ namespace graphicbox2d
         // ===============================================================================
 
         /// <summary>
-        /// マウスヒット中の図形（拡大した図形）を返す。
-        /// </summary>
-        /// <returns>拡張された図形</returns>
-        internal override Object2D GetHitObject()
-        {
-            Line2D line2D = (Line2D)this.Clone();
-
-            line2D.Width += MouseHitLineOffset;
-
-            return line2D;
-        }
-
-        /// <summary>
         /// 線の中心点を更新する
         /// </summary>
         protected Vector2 GeCentertPoint()

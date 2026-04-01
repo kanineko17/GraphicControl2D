@@ -102,26 +102,6 @@ namespace graphicbox2d
         }
 
         /// <summary>
-        /// マウスヒット中の図形（拡大した図形）を返す。
-        /// </summary>
-        /// <returns>拡大された図形</returns>
-        internal override Object2D GetHitObject()
-        {
-            Group2D HitGroup = CloneWithoutObjectList() as Group2D;
-
-            foreach (var item in ObjectList)
-            {
-                Object2D HitObject = item.Object.GetHitObject();
-
-                Group2DItem HitGroupItem = new Group2DItem { Object = HitObject, ZOrder = item.ZOrder };
-
-                HitGroup.ObjectList.Add(HitGroupItem);
-            }
-
-            return HitGroup;
-        }
-
-        /// <summary>
         /// マウスポイントがこの図形にヒットしているかどうかを判定する。
         /// </summary>
         /// <param name="MousePoint">マウス座標</param>

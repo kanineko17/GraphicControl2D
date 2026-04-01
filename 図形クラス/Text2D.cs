@@ -127,20 +127,6 @@ namespace graphicbox2d
         // ===============================================================================
 
         /// <summary>
-        /// マウスヒット中の図形（拡大した図形）を返す。
-        /// </summary>
-        /// <returns>拡張された図形</returns>
-        internal override Object2D GetHitObject()
-        {
-            Text2D text = (Text2D)this.Clone();
-
-            // マウスヒット用に半径を拡大
-            text.FontSize += MouseHitFontSizeOffset;
-
-            return text;
-        }
-
-        /// <summary>
         /// マウスポイントがこの図形にヒットしているか判定する。
         /// 判定は「マウスポイントが判定半径以内にあるか」で行う。
         /// </summary>
@@ -262,7 +248,15 @@ namespace graphicbox2d
             figure.Text = Text;
             figure.Angle = Angle;
             figure.FontName = FontName;
-            figure.DrawFontSize = DrawFontSize;
+
+            if (type == eDrawFigureType.Normal)
+            {
+                figure.FontSize = DrawFontSize;
+            }
+            else if (type == eDrawFigureType.Hit)
+            {
+                figure.FontSize = DrawFontSize + MouseHitFontSizeOffset;
+            }
 
             return figure;
         }

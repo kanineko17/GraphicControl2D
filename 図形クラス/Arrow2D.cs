@@ -79,19 +79,6 @@ namespace graphicbox2d
         // ===============================================================================
 
         /// <summary>
-        /// マウスヒット中の図形（拡大した図形）を返す。
-        /// </summary>
-        /// <returns>拡張された図形</returns>
-        internal override Object2D GetHitObject()
-        {
-            Arrow2D arrow2D = (Arrow2D)this.Clone();
-
-            arrow2D.Width += MouseHitLineOffset;
-
-            return arrow2D;
-        }
-
-        /// <summary>
         /// 描画に必要な情報をまとめたクラスを返す。
         /// </summary>
         /// <param name="type">描画タイプ</param>

@@ -88,26 +88,6 @@ namespace graphicbox2d
         // ===============================================================================
 
         /// <summary>
-        /// マウスヒット中の図形（拡大した図形）を返す。
-        /// </summary>
-        /// <returns>拡張された図形</returns>
-        internal override Object2D GetHitObject()
-        {
-            Circle2D circle = (Circle2D)this.Clone();
-
-            if (circle.IsFilled == true)
-            {
-                circle.R *= MouseHitPolyOffset;
-            }
-            else
-            {
-                circle.LineWidth += MouseHitLineOffset;
-            }
-
-            return circle;
-        }
-
-        /// <summary>
         /// マウスポイントがこの図形にヒットしているか判定する。
         /// </summary>
         /// <param name="MousePoint">マウスポイント</param>
@@ -185,6 +165,11 @@ namespace graphicbox2d
             figure.X = clientPoint.X;
             figure.Y = clientPoint.Y;
             figure.R = R * Global.Graphic2DControl.DisplayGridWidth;
+
+            if(type == eDrawFigureType.Hit && IsFilled == true)
+            {
+                figure.R *= MouseHitPolyOffset;
+            }
 
             return figure;
         }

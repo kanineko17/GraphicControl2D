@@ -295,7 +295,7 @@ namespace graphicbox2d
 
             SKPaint paint = GetTextSKPaint(text);
 
-            SKFont font = DrawManager.GetSKFont(figure.FontName, figure.DrawFontSize);
+            SKFont font = DrawManager.GetSKFont(figure.FontName, figure.FontSize);
 
             try
             {

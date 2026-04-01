@@ -35,6 +35,6 @@ namespace graphicbox2d.描画図形クラス
         /// <summary>
         /// 描画時に使用するフォントサイズ
         /// </summary>
-        public float DrawFontSize { get; set; }
+        public float FontSize { get; set; }
     }
 }
