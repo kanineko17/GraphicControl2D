@@ -79,6 +79,12 @@ namespace graphicbox2d
         private TextData _CenterTextData;
 
         /// <summary>
+        /// グリッドの格子点リスト
+        /// </summary>
+        public List<SKPoint> GridPoints { get { return GetGridPoints(); } }
+        private List<SKPoint> _GridPoints = new List<SKPoint>();
+
+        /// <summary>
         /// 全ての破棄対象オブジェクトリストを取得する
         /// </summary>
         private List<IDisposable> m_AllDisposeObjects => new List<IDisposable>()
@@ -198,6 +204,21 @@ namespace graphicbox2d
             }
 
             return _CenterTextData;
+        }
+
+        /// <summary>
+        /// グリッドの格子点リストを取得する。
+        /// グリッドデータが変更されている場合は更新処理を行った上で返す。
+        /// </summary>
+        /// <returns>表示領域内の格子点座標リスト。</returns>
+        private List<SKPoint> GetGridPoints()
+        {
+            if (IsChangedGraphic2DControlGridData() == true)
+            {
+                UpdateGridData();
+            }
+
+            return _GridPoints;
         }
 
         /// <summary>
@@ -404,6 +425,31 @@ namespace graphicbox2d
             );
 
             _CenterTextData = new TextData("0", centerTextPoint);
+
+            ///////////////////////////////////////////////////////////////////////
+            // 格子点
+            ///////////////////////////////////////////////////////////////////////
+            _GridPoints.Clear();
+
+            // 縦線のインデックス範囲（X方向）
+            int xAxisStartIndex = -Graphic2DControl.UserMoveClientCenterPoint.X / m_Graphic2DControl.DisplayGridWidth;
+            int xAxisLineNum = (int)(bounds.Width / m_Graphic2DControl.DisplayGridWidth);
+
+            // 横線のインデックス範囲（Y方向）
+            int yAxisStartIndex = -Graphic2DControl.UserMoveClientCenterPoint.Y / m_Graphic2DControl.DisplayGridWidth;
+            int yAxisLineNum = (int)(bounds.Height / m_Graphic2DControl.DisplayGridWidth);
+
+            for (int ix = xAxisStartIndex - (xAxisLineNum / 2) - 1; ix <= xAxisStartIndex + (xAxisLineNum / 2) + 1; ix++)
+            {
+                float px = ix * m_Graphic2DControl.DisplayGridWidth + m_Graphic2DControl.DisplayCenterPoint.X;
+
+                for (int iy = yAxisStartIndex - (yAxisLineNum / 2) - 1; iy <= yAxisStartIndex + (yAxisLineNum / 2) + 1; iy++)
+                {
+                    float py = iy * m_Graphic2DControl.DisplayGridWidth + m_Graphic2DControl.DisplayCenterPoint.Y;
+
+                    _GridPoints.Add(new SKPoint(px, py));
+                }
+            }
 
             // キャッシュ更新
             _cashGridData.DisplayCenterPoint = m_Graphic2DControl.DisplayCenterPoint;
