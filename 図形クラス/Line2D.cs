@@ -226,5 +226,46 @@ namespace graphicbox2d
             line2D.Style = this.Style;
             line2D.Color = this.Color;
         }
+
+        /// <summary>
+        /// ドキュメントデータを書き出す
+        /// </summary>
+        /// <param name="doc">出力先ドキュメント</param>
+        public override void OutDocument(ref Object2D_Document doc)
+        {
+            if (doc == null)
+            {
+                doc = new Line2D_Document();
+            }
+
+            base.OutDocument(ref doc);
+
+            Line2D_Document lineDoc = (Line2D_Document)doc;
+            lineDoc.Start = this.Start;
+            lineDoc.End = this.End;
+            lineDoc.Width = this.Width;
+            lineDoc.Style = this.Style;
+            lineDoc.CustomLineStyle = this.CustomLineStyle?.Clone() as float[];
+            lineDoc.CustomDashPhase = this.CustomDashPhase;
+            lineDoc.Color = this.Color;
+        }
+
+        /// <summary>
+        /// ドキュメントデータを取り込む
+        /// </summary>
+        /// <param name="doc">取り込むドキュメント</param>
+        public override void ImportDocument(in Object2D_Document doc)
+        {
+            base.ImportDocument(doc);
+
+            Line2D_Document lineDoc = (Line2D_Document)doc;
+            this.Start = lineDoc.Start;
+            this.End = lineDoc.End;
+            this.Width = lineDoc.Width;
+            this.Style = lineDoc.Style;
+            this.CustomLineStyle = lineDoc.CustomLineStyle?.Clone() as float[];
+            this.CustomDashPhase = lineDoc.CustomDashPhase;
+            this.Color = lineDoc.Color;
+        }
     }
 }

@@ -101,6 +101,41 @@ namespace graphicbox2d
 
             return figure;
         }
+
+        /// <summary>
+        /// ドキュメントデータを書き出す
+        /// </summary>
+        /// <param name="doc">出力先ドキュメント</param>
+        public override void OutDocument(ref Object2D_Document doc)
+        {
+            if (doc == null)
+            {
+                doc = new Arrow2D_Document();
+            }
+
+            base.OutDocument(ref doc);
+
+            Arrow2D_Document arrowDoc = (Arrow2D_Document)doc;
+            arrowDoc.StartCap = this.StartCap;
+            arrowDoc.EndCap = this.EndCap;
+            arrowDoc.StartCapSize = this.StartCapSize;
+            arrowDoc.EndCapSize = this.EndCapSize;
+        }
+
+        /// <summary>
+        /// ドキュメントデータを取り込む
+        /// </summary>
+        /// <param name="doc">取り込むドキュメント</param>
+        public override void ImportDocument(in Object2D_Document doc)
+        {
+            base.ImportDocument(doc);
+
+            Arrow2D_Document arrowDoc = (Arrow2D_Document)doc;
+            this.StartCap = arrowDoc.StartCap;
+            this.EndCap = arrowDoc.EndCap;
+            this.StartCapSize = arrowDoc.StartCapSize;
+            this.EndCapSize = arrowDoc.EndCapSize;
+        }
     }
 
     /// <summary>

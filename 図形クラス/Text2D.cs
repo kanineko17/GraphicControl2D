@@ -260,5 +260,46 @@ namespace graphicbox2d
 
             return figure;
         }
+
+        /// <summary>
+        /// ドキュメントデータを書き出す
+        /// </summary>
+        /// <param name="doc">出力先ドキュメント</param>
+        public override void OutDocument(ref Object2D_Document doc)
+        {
+            if (doc == null)
+            {
+                doc = new Text2D_Document();
+            }
+
+            base.OutDocument(ref doc);
+
+            Text2D_Document textDoc = (Text2D_Document)doc;
+            textDoc.X = this.X;
+            textDoc.Y = this.Y;
+            textDoc.Text = this.Text;
+            textDoc.Angle = this.Angle;
+            textDoc.FontName = this.FontName;
+            textDoc.FontSize = this.FontSize;
+            textDoc.Color = this.Color;
+        }
+
+        /// <summary>
+        /// ドキュメントデータを取り込む
+        /// </summary>
+        /// <param name="doc">取り込むドキュメント</param>
+        public override void ImportDocument(in Object2D_Document doc)
+        {
+            base.ImportDocument(doc);
+
+            Text2D_Document textDoc = (Text2D_Document)doc;
+            this.X = textDoc.X;
+            this.Y = textDoc.Y;
+            this.Text = textDoc.Text;
+            this.Angle = textDoc.Angle;
+            this.FontName = textDoc.FontName;
+            this.FontSize = textDoc.FontSize;
+            this.Color = textDoc.Color;
+        }
     }
 }

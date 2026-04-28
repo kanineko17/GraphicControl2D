@@ -188,5 +188,38 @@ namespace graphicbox2d
             circle.Y = this.Y;
             circle.R = this.R;
         }
+
+        /// <summary>
+        /// ドキュメントデータを書き出す
+        /// </summary>
+        /// <param name="doc">出力先ドキュメント</param>
+        public override void OutDocument(ref Object2D_Document doc)
+        {
+            if (doc == null)
+            {
+                doc = new Circle2D_Document();
+            }
+
+            base.OutDocument(ref doc);
+
+            Circle2D_Document circleDoc = (Circle2D_Document)doc;
+            circleDoc.X = this.X;
+            circleDoc.Y = this.Y;
+            circleDoc.R = this.R;
+        }
+
+        /// <summary>
+        /// ドキュメントデータを取り込む
+        /// </summary>
+        /// <param name="doc">取り込むドキュメント</param>
+        public override void ImportDocument(in Object2D_Document doc)
+        {
+            base.ImportDocument(doc);
+
+            Circle2D_Document circleDoc = (Circle2D_Document)doc;
+            this.X = circleDoc.X;
+            this.Y = circleDoc.Y;
+            this.R = circleDoc.R;
+        }
     }
 }
