@@ -174,5 +174,38 @@ namespace graphicbox2d
 
             return EndPoint;
         }
+
+        /// <summary>
+        /// ドキュメントデータを書き出す
+        /// </summary>
+        /// <param name="doc">出力先ドキュメント</param>
+        public override void OutDocument(ref Object2D_Document doc)
+        {
+            if (doc == null)
+            {
+                doc = new Arc2D_Document();
+            }
+
+            base.OutDocument(ref doc);
+
+            Arc2D_Document arcDoc = (Arc2D_Document)doc;
+            arcDoc.StartAngle = this.StartAngle;
+            arcDoc.EndAngle = this.EndAngle;
+            arcDoc.IsDrawSideLines = this.IsDrawSideLines;
+        }
+
+        /// <summary>
+        /// ドキュメントデータを取り込む
+        /// </summary>
+        /// <param name="doc">取り込むドキュメント</param>
+        public override void ImportDocument(in Object2D_Document doc)
+        {
+            base.ImportDocument(doc);
+
+            Arc2D_Document arcDoc = (Arc2D_Document)doc;
+            this.StartAngle = arcDoc.StartAngle;
+            this.EndAngle = arcDoc.EndAngle;
+            this.IsDrawSideLines = arcDoc.IsDrawSideLines;
+        }
     }
 }

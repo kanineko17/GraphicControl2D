@@ -220,5 +220,44 @@ namespace graphicbox2d
 
             return figure;
         }
+
+        /// <summary>
+        /// ドキュメントデータを書き出す
+        /// </summary>
+        /// <param name="doc">出力先ドキュメント</param>
+        public override void OutDocument(ref Object2D_Document doc)
+        {
+            if (doc == null)
+            {
+                doc = new Graph2D_Document();
+            }
+
+            base.OutDocument(ref doc);
+
+            Graph2D_Document graphDoc = (Graph2D_Document)doc;
+            graphDoc.Points = this.Points.ToList();
+            graphDoc.Width = this.Width;
+            graphDoc.Style = this.Style;
+            graphDoc.CustomLineStyle = this.CustomLineStyle?.Clone() as float[];
+            graphDoc.CustomDashPhase = this.CustomDashPhase;
+            graphDoc.Color = this.Color;
+        }
+
+        /// <summary>
+        /// ドキュメントデータを取り込む
+        /// </summary>
+        /// <param name="doc">取り込むドキュメント</param>
+        public override void ImportDocument(in Object2D_Document doc)
+        {
+            base.ImportDocument(doc);
+
+            Graph2D_Document graphDoc = (Graph2D_Document)doc;
+            this.Points = graphDoc.Points.ToList();
+            this.Width = graphDoc.Width;
+            this.Style = graphDoc.Style;
+            this.CustomLineStyle = graphDoc.CustomLineStyle?.Clone() as float[];
+            this.CustomDashPhase = graphDoc.CustomDashPhase;
+            this.Color = graphDoc.Color;
+        }
     }
 }

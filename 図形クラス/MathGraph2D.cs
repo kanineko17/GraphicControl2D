@@ -184,5 +184,40 @@ namespace graphicbox2d
 
             return closestIndex;
         }
+
+        /// <summary>
+        /// ドキュメントデータを書き出す
+        /// </summary>
+        /// <param name="doc">出力先ドキュメント</param>
+        public override void OutDocument(ref Object2D_Document doc)
+        {
+            if (doc == null)
+            {
+                doc = new MathGraph2D_Document();
+            }
+
+            base.OutDocument(ref doc);
+
+            MathGraph2D_Document mathDoc = (MathGraph2D_Document)doc;
+            mathDoc.Susiki = this.Susiki;
+            mathDoc.StartX = this.StartX;
+            mathDoc.EndX = this.EndX;
+            mathDoc.CalculateInterval = this.CalculateInterval;
+        }
+
+        /// <summary>
+        /// ドキュメントデータを取り込む
+        /// </summary>
+        /// <param name="doc">取り込むドキュメント</param>
+        public override void ImportDocument(in Object2D_Document doc)
+        {
+            base.ImportDocument(doc);
+
+            MathGraph2D_Document mathDoc = (MathGraph2D_Document)doc;
+            this.Susiki = mathDoc.Susiki;
+            this.StartX = mathDoc.StartX;
+            this.EndX = mathDoc.EndX;
+            this.CalculateInterval = mathDoc.CalculateInterval;
+        }
     }
 }
