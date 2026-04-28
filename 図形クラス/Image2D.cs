@@ -5,6 +5,7 @@ using graphicbox2d.描画図形クラス;
 using Newtonsoft.Json.Linq;
 using SkiaSharp;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -150,6 +151,11 @@ namespace graphicbox2d
         /// 図形の中心点
         /// </summary>
         internal override Vector2 CenterPoint => GetCenterPoint();
+
+        /// <summary>
+        /// 図形の選択ポイント
+        /// </summary>
+        internal override List<PointF> SnapPoints => GetSnapPoints();
 
         internal int ClientWidth => (int)CalConvert.ConvertGridLengthToClientLength(_Width);
 
@@ -334,6 +340,23 @@ namespace graphicbox2d
             img._Bitmap = this._Bitmap.Copy();
             img._OriginalBitmap = this._OriginalBitmap.Copy();
             img._HitBitmap = this._HitBitmap.Copy();
+        }
+
+        /// <summary>
+        /// スナップポイントを取得する
+        /// </summary>
+        /// <returns>スナップポイントのリスト</returns>
+        private List<PointF> GetSnapPoints()
+        {
+            PointF[] boundingBox = GetBoundingBox();
+            if (boundingBox == null)
+            {
+                return new List<PointF>();
+            }
+
+            List<PointF> snapPoints = new List<PointF>(boundingBox);
+            snapPoints.Add(CenterPoint.ToPointF());
+            return snapPoints;
         }
 
         /// <summary>

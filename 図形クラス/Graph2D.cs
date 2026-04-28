@@ -68,6 +68,11 @@ namespace graphicbox2d
         internal override Vector2 CenterPoint { get { return GetCenterPoint(); } }
 
         /// <summary>
+        /// 図形の選択ポイント
+        /// </summary>
+        internal override List<PointF> SnapPoints => GetSnapPoints();
+
+        /// <summary>
         /// 原点とXの値が最も近い点のインデックス値
         /// </summary>
         private int ZeroXPointIndex = -1;
@@ -186,6 +191,17 @@ namespace graphicbox2d
         internal override PointF[] GetBoundingBox()
         {
             return CalBoundBox.GetBoundingBoxPolygon(Points.ToArray());
+        }
+
+        /// <summary>
+        /// スナップポイントを取得する
+        /// </summary>
+        /// <returns>スナップポイントのリスト</returns>
+        private List<PointF> GetSnapPoints()
+        {
+            List<PointF> snapPoints = new List<PointF>(Points);
+            snapPoints.Add(CenterPoint.ToPointF());
+            return snapPoints;
         }
 
         /// <summary>
