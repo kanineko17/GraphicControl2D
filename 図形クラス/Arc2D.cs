@@ -81,6 +81,11 @@ namespace graphicbox2d
         /// </summary>
         internal PointF ArcEndAnglePoint => GetArcEndAnglePoint();
 
+        /// <summary>
+        /// 図形の選択ポイント
+        /// </summary>
+        internal override List<PointF> SnapPoints => GetSnapPoints();
+
         // ===============================================================================
         // 非公開メソッド
         // ===============================================================================
@@ -139,6 +144,20 @@ namespace graphicbox2d
             figure.IsDrawSideLines = IsDrawSideLines;
 
             return figure;
+        }
+
+        /// <summary>
+        /// スナップポイントを取得する
+        /// </summary>
+        /// <returns>スナップポイントのリスト</returns>
+        private List<PointF> GetSnapPoints()
+        {
+            return new List<PointF>
+            {
+                new PointF(X, Y),
+                ArcStartAnglePoint,
+                ArcEndAnglePoint,
+            };
         }
 
         /// <summary>

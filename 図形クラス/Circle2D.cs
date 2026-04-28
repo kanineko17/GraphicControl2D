@@ -52,6 +52,11 @@ namespace graphicbox2d
         /// </summary>
         internal override Vector2 CenterPoint { get { return new Vector2(X, Y); } }
 
+        /// <summary>
+        /// 図形の選択ポイント
+        /// </summary>
+        internal override List<PointF> SnapPoints => GetSnapPoints();
+
         // ===============================================================================
         // 公開メソッド
         // ===============================================================================
@@ -141,6 +146,22 @@ namespace graphicbox2d
         {
             this.X += X;
             this.Y += Y;
+        }
+
+        /// <summary>
+        /// スナップポイントを取得する
+        /// </summary>
+        /// <returns>スナップポイントのリスト</returns>
+        private List<PointF> GetSnapPoints()
+        {
+            return new List<PointF>
+            {
+                new PointF(X, Y),
+                new PointF(X + R, Y),
+                new PointF(X - R, Y),
+                new PointF(X, Y + R),
+                new PointF(X, Y - R),
+            };
         }
 
         /// <summary>

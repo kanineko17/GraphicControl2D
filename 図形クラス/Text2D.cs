@@ -84,6 +84,11 @@ namespace graphicbox2d
         internal float CircumCircleR => GetCircumCircleR();
 
         /// <summary>
+        /// 図形の選択ポイント
+        /// </summary>
+        internal override List<PointF> SnapPoints => GetSnapPoints();
+
+        /// <summary>
         /// 描画時に使用するフォントサイズ
         /// </summary>
         internal float DrawFontSize => FontSize * Graphic2DControl.UserZoom;
@@ -201,6 +206,15 @@ namespace graphicbox2d
             _BoundingBox = GetBoundingBox();
             _CenterPoint = GraphicCaluculate.CaluculateCenterPoint(_BoundingBox);
             _CircumCircleR = GraphicCaluculate.CaluculateCircumCircleR(_CenterPoint, _BoundingBox);
+        }
+
+        /// <summary>
+        /// スナップポイントを取得する
+        /// </summary>
+        /// <returns>スナップポイントのリスト</returns>
+        private List<PointF> GetSnapPoints()
+        {
+            return new List<PointF> { new PointF(X, Y) };
         }
 
         /// <summary>

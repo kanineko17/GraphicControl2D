@@ -50,6 +50,11 @@ namespace graphicbox2d
         internal override Vector2 CenterPoint { get { return GetCenterPoint(); } }
 
         /// <summary>
+        /// 図形の選択ポイント
+        /// </summary>
+        internal override List<PointF> SnapPoints => GetSnapPoints();
+
+        /// <summary>
         /// ポリゴン図形を完全内包する円（外接円）の半径
         /// </summary>
         internal float CircumCircleR { get { return GetCircumCircleR(); } }
@@ -202,6 +207,23 @@ namespace graphicbox2d
             Vector2 centerPoint = GraphicCaluculate.CaluculateCenterPoint(AllBoundingBoxPoints);
 
             return GraphicCaluculate.CaluculateCircumCircleR(centerPoint, AllBoundingBoxPoints);
+        }
+
+        /// <summary>
+        /// スナップポイントを取得する
+        /// </summary>
+        /// <returns>スナップポイントのリスト</returns>
+        private List<PointF> GetSnapPoints()
+        {
+            PointF[] boundingBox = GetBoundingBox();
+            if (boundingBox == null)
+            {
+                return new List<PointF>();
+            }
+
+            List<PointF> snapPoints = new List<PointF>(boundingBox);
+            snapPoints.Add(CenterPoint.ToPointF());
+            return snapPoints;
         }
 
         /// <summary>
