@@ -435,13 +435,16 @@ namespace graphicbox2d
         /// ドキュメントデータを書き出す
         /// </summary>
         /// <param name="doc">出力先ドキュメント</param>
-        public override void OutDocument(out Object2D_Document doc)
+        public override void OutDocument(ref Object2D_Document doc)
         {
-            Image2D_Document imageDoc = new Image2D_Document();
+            if (doc == null)
+            {
+                doc = new Image2D_Document();
+            }
 
-            imageDoc.IsSelect = this.IsSelect;
-            imageDoc.ZOrder = this.ZOrder;
-            imageDoc._ID = this._ID;
+            base.OutDocument(ref doc);
+
+            Image2D_Document imageDoc = (Image2D_Document)doc;
 
             imageDoc.X = this.X;
             imageDoc.Y = this.Y;
@@ -461,11 +464,9 @@ namespace graphicbox2d
         /// <param name="doc">取り込むドキュメント</param>
         public override void ImportDocument(in Object2D_Document doc)
         {
-            Image2D_Document imageDoc = (Image2D_Document)doc;
+            base.ImportDocument(in doc);
 
-            this.IsSelect = imageDoc.IsSelect;
-            this.ZOrder = imageDoc.ZOrder;
-            this._ID = imageDoc._ID;
+            Image2D_Document imageDoc = (Image2D_Document)doc;
 
             this.X = imageDoc.X;
             this.Y = imageDoc.Y;

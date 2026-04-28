@@ -254,7 +254,7 @@ namespace graphicbox2d
             foreach (var object2D in objects)
             {
                 Object2D_Document doc = null;
-                object2D.OutDocument(out doc);
+                object2D.OutDocument(ref doc);
 
                 switch (doc.m_Type)
                 {

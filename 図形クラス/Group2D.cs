@@ -244,9 +244,7 @@ namespace graphicbox2d
         /// <param name="doc">ドキュメント</param>
         public override void ImportDocument(in Object2D_Document doc)
         {
-            _ID = doc._ID;
-            IsSelect = doc.IsSelect;
-            ZOrder = doc.ZOrder;
+            base.ImportDocument(in doc);
 
             Group2D_Document GroupDoc = doc as Group2D_Document;
 
@@ -262,14 +260,14 @@ namespace graphicbox2d
         /// ドキュメントデータを書き出す
         /// </summary>
         /// <param name="doc">ドキュメント</param>
-        public override void OutDocument(out Object2D_Document doc)
+        public override void OutDocument(ref Object2D_Document doc)
         {
-            doc = new Group2D_Document();
+            if (doc == null)
+            {
+                doc = new Group2D_Document();
+            }
 
-            // 基底クラスのデータをコピー
-            doc._ID = _ID;
-            doc.IsSelect = IsSelect;
-            doc.ZOrder = ZOrder;
+            base.OutDocument(ref doc);
 
             // 派生クラスのデータをコピー
             foreach (var item in ObjectList)
@@ -336,7 +334,7 @@ namespace graphicbox2d
             doc.ZOrder = ZOrder;
 
             Object2D_Document ObjectDoc = null;
-            Object.OutDocument(out ObjectDoc);
+            Object.OutDocument(ref ObjectDoc);
             doc.Object = ObjectDoc;
 
             return doc;

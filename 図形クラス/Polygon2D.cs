@@ -1,4 +1,5 @@
 ﻿using graphicbox2d.グラフィック計算;
+using graphicbox2d.その他;
 using graphicbox2d.描画図形クラス;
 using SkiaSharp;
 using System;
@@ -45,6 +46,11 @@ namespace graphicbox2d
         /// 図形の中心点
         /// </summary>
         internal override Vector2 CenterPoint { get { return GetCenterPoint(); } }
+
+        /// <summary>
+        /// 図形の選択ポイント
+        /// </summary>
+        internal override List<PointF> SnapPoints => GetSnapPoints();
 
         /// <summary>
         /// ポリゴン図形を完全内包する円（外接円）の半径
@@ -120,7 +126,7 @@ namespace graphicbox2d
             eMouseHitType eMouseHitType;
 
             Vector2 _CenterPoint;
-            float   _CircumCircleR;
+            float _CircumCircleR;
 
             GraphicCaluculate.GetCenterPointAndCircumCircleR(Points, out _CenterPoint, out _CircumCircleR);
 
@@ -211,19 +217,75 @@ namespace graphicbox2d
         {
             Polygon2D_DrawFigure figure = new Polygon2D_DrawFigure();
 
+            figure.Points = GetDrawPoints(type);
+
+            return figure;
+        }
+
+        /// <summary>
+        /// スナップポイントを取得する
+        /// </summary>
+        /// <returns>スナップポイントのリスト</returns>
+        private List<PointF> GetSnapPoints()
+        {
+            List<PointF> snapPoints = new List<PointF>();
+            snapPoints.AddRange(Points);
+            snapPoints.Add(CenterPoint.ToPointF());
+            return snapPoints;
+        }
+
+        /// <summary>
+        /// 描画するための頂点座標を取得する。
+        /// </summary>
+        /// <param name="type">描画タイプ</param>
+        /// <returns>描画用の頂点座標</returns>
+        private SKPoint[] GetDrawPoints(eDrawFigureType type)
+        {
+            SKPoint[] points;
+
             if (type == eDrawFigureType.Hit && IsFilled == true)
             {
                 List<PointF> OutPoints;
                 GraphicCaluculate.GetScalingPolygon(this.Points, CenterPoint.ToPointF(), MouseHitPolyOffset, out OutPoints);
 
-                figure.Points = OutPoints.Select(pt => CalConvert.ConvertDisplayGridPointToClientPoint(pt)).ToArray();
+                points = OutPoints.Select(pt => CalConvert.ConvertDisplayGridPointToClientPoint(pt)).Select(pt => new SKPoint(pt.X, pt.Y)).ToArray();
             }
             else
             {
-                figure.Points = Points.Select(pt => CalConvert.ConvertDisplayGridPointToClientPoint(pt)).ToArray();
+                points = Points.Select(pt => CalConvert.ConvertDisplayGridPointToClientPoint(pt)).Select(pt => new SKPoint(pt.X, pt.Y)).ToArray();
             }
 
-            return figure;
+            return points;
+        }
+
+        /// <summary>
+        /// ドキュメントデータを書き出す
+        /// </summary>
+        /// <param name="doc">出力先ドキュメント</param>
+        public override void OutDocument(ref Object2D_Document doc)
+        {
+            if(doc == null)
+            {
+                doc = new Polygon2D_Document();
+            }
+
+            base.OutDocument(ref doc); 
+
+            // 複製を作成する
+            (doc as Polygon2D_Document).Points = this.Points.ToList();
+        }
+
+        /// <summary>
+        /// ドキュメントデータを取り込む
+        /// </summary>
+        /// <param name="doc">取り込むドキュメント</param>
+        public override void ImportDocument(in Object2D_Document doc)
+        {
+            base.ImportDocument(in doc);
+
+            Polygon2D_Document polygonDoc = (Polygon2D_Document)doc;
+
+            this.Points = polygonDoc.Points.ToList();
         }
     }
 }

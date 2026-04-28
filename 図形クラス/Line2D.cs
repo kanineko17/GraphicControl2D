@@ -76,7 +76,8 @@ namespace graphicbox2d
         /// <summary>
         /// 図形の選択ポイント
         /// </summary>
-        internal override PointF[] SnapPoints { get { return new PointF[] { Start, End }; } }
+        internal override List<PointF> SnapPoints => GetSnapPoints();
+
 
         // ===============================================================================
         // 公開メソッド
@@ -199,6 +200,15 @@ namespace graphicbox2d
             }
 
             return figure;
+        }
+
+        /// <summary>
+        /// スナップポイントを取得する
+        /// </summary>
+        /// <returns>スナップポイントのリスト</returns>
+        private List<PointF> GetSnapPoints()
+        {
+            return new List<PointF> { Start, CenterPoint.ToPointF(), End };
         }
 
         /// <summary>

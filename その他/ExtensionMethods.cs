@@ -17,61 +17,9 @@ using System.Threading.Tasks;
 namespace graphicbox2d
 {
 
-    /// <summary>
-    /// Vector2 型の拡張メソッドを提供します。
-    /// </summary>
-    public static class Vector2Extensions
-    {
-        /// <summary>
-        /// Vector2 を PointF に変換します。
-        /// </summary>
-        /// <param name="v">変換対象の Vector2。</param>
-        /// <returns>変換後の PointF。</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static PointF ToPointF(this Vector2 v)
-        {
-            return new PointF(v.X, v.Y);
-        }
 
-        /// <summary>
-        /// Vector2 を Point に変換します。
-        /// </summary>
-        /// <param name="v">変換対象の Vector2。</param>
-        /// <returns>変換後の Point。</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Point ToPoint(this Vector2 v)
-        {
-            return new Point((int)v.X, (int)v.Y);
-        }
 
-        /// <summary>
-        /// Vector2 を SKPoint に変換する
-        /// </summary>
-        /// <param name="v">変換元のベクトル</param>
-        /// <returns>SKPoint</returns>
-        internal static SKPoint ToSKPoint(this Vector2 v)
-        {
-            return new SKPoint(v.X, v.Y);
-        }
 
-    }
-
-    /// <summary>
-    /// PointF 型の拡張メソッドを提供します。
-    /// </summary>
-    public static class PointFExtensions
-    {
-        /// <summary>
-        /// PointF を Vector2 に変換します。
-        /// </summary>
-        /// <param name="p">変換対象の PointF。</param>
-        /// <returns>変換後の Vector2。</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Vector2 ToVector2(this PointF p)
-        {
-            return new Vector2(p.X, p.Y);
-        }
-    }
 
     /// <summary>
     /// Point 型の拡張メソッドを提供します。

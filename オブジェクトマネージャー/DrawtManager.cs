@@ -99,6 +99,7 @@ namespace graphicbox2d.オブジェクトマネージャー
             SKPaint sKPaint = new SKPaint();
             sKPaint.Style = SKPaintStyle.Fill;
             sKPaint.IsStroke = false;
+            sKPaint.IsAntialias = true;
 
             // 基本設定
             sKPaint.Color = new SKColor(color.R, color.G, color.B, color.A);

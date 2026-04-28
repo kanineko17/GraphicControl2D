@@ -56,6 +56,33 @@ namespace graphicbox2d
         private SKPaint _SelectBoxPaint = DrawManager.GetLineSkPaint(Color.White, 1, false, LineStyle.SelectBoxDash);
 
         /// <summary>
+        /// スナップポイント描画用のペン
+        /// </summary>
+        private SKPaint m_SnapPointPaint => _SnapPointPaint;
+        private SKPaint _SnapPointPaint = DrawManager.GetFillSkPaint(Color.FromArgb(128, Color.Yellow));
+
+        /// <summary>
+        /// スナップライン描画用のペン
+        /// </summary>
+        private SKPaint m_SnapLinePaint => _SnapLinePaint;
+        private SKPaint _SnapLinePaint = DrawManager.GetLineSkPaint(Color.White, 1, false, LineStyle.Dash);
+
+        /// <summary>
+        /// スナップポイントの描画サイズ(クライアント座標系)
+        /// </summary>
+        internal const float SNAP_POINT_R = 5;
+
+        /// <summary>
+        /// マウスHITスナップポイントの描画サイズ（クライアント座標系）
+        /// </summary>
+        internal const float MOUSE_HIT_SNAP_POINT_R = 8;
+
+        /// <summary>
+        /// マウスヒット範囲クライアント座標系）
+        /// </summary>
+        internal const float MOUSE_NEAR_SNAP_POINT_R = 50;
+
+        /// <summary>
         /// 背景のグリッドマネージャー
         /// </summary>
         internal readonly GridManager m_GridManager;
@@ -74,8 +101,8 @@ namespace graphicbox2d
         /// </summary>
         public GraphicDrawEngine(Graphic2DControl Parent)
         {
-            m_Parent                  = Parent;
-            m_GridManager             = new GridManager(Parent, this);
+            m_Parent = Parent;
+            m_GridManager = new GridManager(Parent, this);
         }
 
         /// <summary>
@@ -761,7 +788,6 @@ namespace graphicbox2d
             canvas.DrawPath(m_GridManager.GridPath, m_GridManager.GridPaint);
         }
 
-
         /// <summary>
         /// 指定された Graphics オブジェクトにグリッド座標テキストを描画する
         /// </summary>
@@ -769,6 +795,44 @@ namespace graphicbox2d
         private void DrawGridText(SKCanvas canvas)
         {
             canvas.DrawTexts(m_GridManager.GridTexts, m_GridManager.GridSKFont, m_GridManager.GridFontPaint);
+        }
+
+        /// <summary>
+        /// 指定された SKCanvas にスナップポイントを描画する
+        /// </summary>
+        /// <param name="canvas">描画対象の SKCanvas オブジェクト</param>
+        /// <param name="GridSnapPoint">スナップポイントの座標</param>
+        /// <param name="IsHighlight">ハイライト表示かどうか</param>
+        public void DrawSnapPoint(SKCanvas canvas, PointF GridSnapPoint, bool IsHighlight)
+        {
+            float snapR = 0;
+
+            if (IsHighlight == true)
+            {
+                snapR = MOUSE_HIT_SNAP_POINT_R;
+            }
+            else
+            {
+                snapR = SNAP_POINT_R;
+            }
+
+            SKPoint ClientSnapPoint = CalConvert.ConvertDisplayGridPointToClientPoint(GridSnapPoint);
+
+            canvas.DrawCircle(ClientSnapPoint, snapR, m_SnapPointPaint);
+        }
+
+        /// <summary>
+        /// 指定された SKCanvas にスナップラインを描画する
+        /// </summary>
+        /// <param name="canvas">描画対象の SKCanvas オブジェクト</param>
+        /// <param name="GridSnapPoint1">スナップラインの始点座標</param>
+        /// <param name="GridSnapPoint2">スナップラインの終点座標</param>
+        public void DrawSnapLine(SKCanvas canvas, PointF GridSnapPoint1, PointF GridSnapPoint2)
+        {
+            SKPoint ClientSnapPoint1 = CalConvert.ConvertDisplayGridPointToClientPoint(GridSnapPoint1);
+            SKPoint ClientSnapPoint2 = CalConvert.ConvertDisplayGridPointToClientPoint(GridSnapPoint2);
+
+            canvas.DrawLine(ClientSnapPoint1, ClientSnapPoint2, m_SnapLinePaint);
         }
 
         /// <summary>

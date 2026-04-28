@@ -25,7 +25,7 @@ namespace graphicbox2d
     /// <summary>
     /// 全図形の基底クラス
     /// </summary>
-    public class Object2D : IComparable<Object2D>, IXmlSerializable, IDisposable
+    public class Object2D : IComparable<Object2D>, IDisposable
     {
         // ===============================================================================
         // 公開プロパティ
@@ -35,6 +35,11 @@ namespace graphicbox2d
         /// 図形の種類
         /// </summary>
         public virtual eObject2DType m_Type => eObject2DType.None;
+
+        /// <summary>
+        /// 図形の名称
+        /// </summary>
+        public string Name { get; set; } = string.Empty;
 
         /// <summary>
         /// 図形の表示フラグ
@@ -70,7 +75,7 @@ namespace graphicbox2d
         /// <summary>
         /// 図形の選択ポイント
         /// </summary>
-        internal virtual PointF[] SnapPoints { get { return null; } }
+        internal virtual List<PointF> SnapPoints { get { return null; } }
 
         /// <summary>
         /// マウスヒット中の図形の線の太さの加算量
@@ -85,9 +90,9 @@ namespace graphicbox2d
         internal virtual float MouseHitPolyOffset { get; set; } = 1.05f;
 
         /// <summary>
-        /// スナップポイントを表示するかどうかのフラグ
+        /// グラフィック２Dコントロール内部で使用するためのオブジェクト名
         /// </summary>
-        internal bool IsShowSnapPoints { get; set; } = false;
+        internal string SystemName { get; set; } = string.Empty;
 
         /// <summary>
         /// 格オブジェクトのインデックス番号
@@ -238,86 +243,6 @@ namespace graphicbox2d
             return null;
         }
 
-        // ============================================================
-        // IXmlSerializable 実装
-        // ============================================================
-
-        /// <summary>
-        /// XML スキーマを取得する。
-        /// </summary>
-        /// <returns>null</returns>
-        public XmlSchema GetSchema() => null;
-
-        /// <summary>
-        /// WriteXml実装
-        /// XMLのデータ書き出しの方法を定義する
-        /// </summary>
-        /// <param name="writer">Writer</param>
-        public void WriteXml(XmlWriter writer)
-        {
-            // 全ての公開プロパティを取得してループ
-            foreach (var prop in this.GetType().GetProperties())
-            {
-                if(prop.CanRead == false)
-                {
-                    continue;
-                }
-
-                // プロパティの値を取得
-                var value = prop.GetValue(this);
-
-                if (value == null)
-                {
-                    // 値が null の場合はスキップ
-                    continue;
-                }
-
-                // プロパティの値を文字列に変換
-                string ElementString =  XmlDataConvert.DataToElementString(value);
-
-                
-                // XML に要素を書き出し
-                writer.WriteElementString(prop.Name, ElementString);
-            }
-        }
-
-        /// <summary>
-        /// ReadXml実装
-        /// データの読み込み方法を定義する
-        /// </summary>
-        /// <param name="reader">Reader</param>
-        public void ReadXml(XmlReader reader)
-        {
-            reader.ReadStartElement();
-
-            while (reader.NodeType == XmlNodeType.Element)
-            {
-                string name = reader.Name;
-                string value = reader.ReadElementContentAsString();
-
-                if (string.IsNullOrEmpty(value) == true)
-                {
-                    // 値が null の場合はスキップ
-                    continue;
-                }
-
-                var prop = this.GetType().GetProperty(name);
-
-                if (prop == null || prop.CanWrite == false)
-                {
-                    // プロパティが存在しない、または書き込み不可の場合はスキップ
-                    continue;
-                }
-
-                // 文字列をデータに変換
-                object converted = XmlDataConvert.ElementStringToData(value, prop.PropertyType);
-
-                // プロパティに値を設定
-                prop.SetValue(this, converted);
-            }
-
-            reader.ReadEndElement();
-        }
 
         /// <summary>
         /// ドキュメントデータを取り込む
@@ -325,120 +250,25 @@ namespace graphicbox2d
         /// <param name="doc">ドキュメント</param>
         public virtual void ImportDocument(in Object2D_Document doc)
         {
-            // ドキュメントのプロパティをこのオブジェクトにコピーする
-            foreach (var prop in this.GetType().GetProperties())
-            {
-                if (prop.CanWrite == false)
-                {
-                    continue;
-                }
-                // パブリックメンバー出ない場合はスキップ
-                if (prop.SetMethod.IsPublic == false)
-                {
-                    continue;
-                }
-                // ドキュメントからプロパティの値を取得
-                var value = doc.GetType().GetProperty(prop.Name)?.GetValue(doc);
-                if (value == null)
-                {
-                    // 値が null の場合はスキップ
-                    continue;
-                }
-                // プロパティの値をこのオブジェクトに設定
-                prop.SetValue(this, value);
-            }
+            IsVisible = doc.IsVisible;
+            IsSelect = doc.IsSelect;
+            ZOrder = doc.ZOrder;
         }
 
         /// <summary>
         /// ドキュメントデータを書き出す
         /// </summary>
-        /// <param name="doc">ドキュメント</param>
-        public virtual void OutDocument(out Object2D_Document doc)
+        /// <param name="target">ドキュメント</param>
+        public virtual void OutDocument(ref Object2D_Document target)
         {
-            switch (this.m_Type)
+            if(target == null)
             {
-                case eObject2DType.None:
-                    doc = new Object2D_Document();
-                    break;
-                case eObject2DType.Point:
-                    doc = new Point2D_Document();
-                    break;
-                case eObject2DType.Line:
-                    doc = new Line2D_Document();
-                    break;
-                case eObject2DType.Circle:
-                    doc = new Circle2D_Document();
-                    break;
-                case eObject2DType.Polygon:
-                    doc = new Polygon2D_Document();
-                    break;
-                case eObject2DType.Arrow:
-                    doc = new Arrow2D_Document();
-                    break;
-                case eObject2DType.Text:
-                    doc = new Text2D_Document();
-                    break;
-                case eObject2DType.Arc:
-                    doc = new Arc2D_Document();
-                    break;
-                case eObject2DType.Graph:
-                    doc = new Graph2D_Document();
-                    break;
-                case eObject2DType.MathGraph:
-                    doc = new MathGraph2D_Document();
-                    break;
-                case eObject2DType.Group:
-                    doc = new Group2D_Document();
-                    break;
-                case eObject2DType.Image:
-                    doc = new Image2D_Document();
-                    break;
-                default:
-                    doc = null;
-                    break;
+                target = new Object2D_Document();
             }
 
-            // プロパティの値をドキュメントに設定
-            foreach (var prop in this.GetType().GetProperties())
-            {
-                if (prop.CanRead == false)
-                {
-                    continue;
-                }
-
-                // パブリックメンバー出ない場合はスキップ
-                if (prop.GetMethod.IsPublic == false)
-                {
-                    continue;
-                }
-
-                // プロパティの値を取得
-                var value = prop.GetValue(this);
-
-                if (value == null)
-                {
-                    // 値が null の場合はスキップ
-                    continue;
-                }
-
-                var targetProp = doc.GetType().GetProperty(prop.Name);
-                if (targetProp == null) continue;
-
-                // setter が無いならスキップ
-                if (targetProp.SetMethod == null || targetProp.SetMethod.IsPublic == false)
-                {
-                    continue;
-                }
-
-                // 型が一致しないならスキップ
-                if (!targetProp.PropertyType.IsAssignableFrom(prop.PropertyType))
-                {
-                    continue;
-                }
-
-                // プロパティの値をドキュメントに設定
-                doc.GetType().GetProperty(prop.Name).SetValue(doc, value);
-            }
+            target.IsVisible = this.IsVisible;
+            target.IsSelect = this.IsSelect;
+            target.ZOrder = this.ZOrder;
         }
     }
 }

@@ -89,11 +89,56 @@ namespace graphicbox2d
                 fillObject2D.IsDrawLine       = this.IsDrawLine;
                 fillObject2D.LineWidth           = this.LineWidth;
                 fillObject2D.LineStyle           = this.LineStyle;
-                fillObject2D.LineCustomLineStyle = this.LineCustomLineStyle;
+                fillObject2D.LineCustomLineStyle = this.LineCustomLineStyle.Clone() as float[];
+                fillObject2D.LineCustomDashPhase = this.LineCustomDashPhase;
                 fillObject2D.LineColor           = this.LineColor;
                 fillObject2D.IsFilled            = this.IsFilled;
                 fillObject2D.FillColor           = this.FillColor;
             }
+        }
+
+        /// <summary>
+        /// ドキュメントデータを書き出す
+        /// </summary>
+        /// <param name="doc">出力先ドキュメント</param>
+        public override void OutDocument(ref Object2D_Document doc)
+        {
+            if (doc == null)
+            {
+                doc = new FillObject2D_Document();
+            }
+
+            base.OutDocument(ref doc);
+
+            FillObject2D_Document fillDoc = (FillObject2D_Document)doc;
+            fillDoc.IsDrawLine = this.IsDrawLine;
+            fillDoc.LineWidth = this.LineWidth;
+            fillDoc.LineStyle = this.LineStyle;
+            fillDoc.LineCustomLineStyle = this.LineCustomLineStyle?.Clone() as float[];
+            fillDoc.LineCustomDashPhase = this.LineCustomDashPhase;
+            fillDoc.LineColor = this.LineColor;
+            fillDoc.IsFilled = this.IsFilled;
+            fillDoc.FillColor = this.FillColor;
+        }
+
+        /// <summary>
+        /// ドキュメントデータを取り込む
+        /// </summary>
+        /// <param name="doc">取り込むドキュメント</param>
+        public override void ImportDocument(in Object2D_Document doc)
+        {
+            base.ImportDocument(doc);
+
+            FillObject2D_Document fillDoc = (FillObject2D_Document)doc;
+
+            this.IsDrawLine = fillDoc.IsDrawLine;
+            this.LineWidth = fillDoc.LineWidth;
+            this.LineStyle = fillDoc.LineStyle;
+            this.LineCustomLineStyle = fillDoc.LineCustomLineStyle?.Clone() as float[];
+            this.LineCustomDashPhase = fillDoc.LineCustomDashPhase;
+            this.LineColor = fillDoc.LineColor;
+            this.IsFilled = fillDoc.IsFilled;
+            this.FillColor = fillDoc.FillColor;
         }
     }
 }

@@ -124,7 +124,9 @@ namespace graphicbox2d
                 GraphicCaluculate.SusikiCaluculate(Susiki, StartX, EndX, CalculateInterval, _ID)
             );
 
-            Points = points.ToList();
+            // 値がNaNの点を除外してリスト化
+            Points = points.Where(p => float.IsNaN(p.X) == false && float.IsNaN(p.Y) == false).ToList();
+
             ZeroXPointIndex = GetZeroXPointIndex(Points);
 
             // 計算終了メッセージを送信

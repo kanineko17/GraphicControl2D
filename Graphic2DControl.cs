@@ -1,5 +1,6 @@
 ﻿using graphicbox2d.グラフィック計算;
 using graphicbox2d.グローバル変数;
+using graphicbox2d.その他;
 using Newtonsoft.Json;
 using SkiaSharp;
 using SkiaSharp.Views.Desktop;
@@ -290,6 +291,8 @@ namespace graphicbox2d
 
             File.WriteAllText(filePath, json);
 
+            document.Dispose();
+
         }
 
         /// <summary>
@@ -309,14 +312,7 @@ namespace graphicbox2d
             }
 
             // 新しいデータを読み込む
-            if (IsJson(filePath) == true)
-            {
-                LoadNewData(filePath);
-            }
-            else
-            {
-                LoadOldData(filePath);
-            }
+            LoadNewData(filePath);
 
             // 再描画
             Invalidate();
@@ -457,6 +453,11 @@ namespace graphicbox2d
         /// バックグラウンドビットマップ（SkiaSharp描画用）
         /// </summary>
         internal SKBitmap sKBackGroundBitmap;
+
+        /// <summary>
+        /// スナップモード時に使用するデータパック
+        /// </summary>
+        internal SnapModeDataPack SnapDataPack = new SnapModeDataPack();
 
 
         // ===============================================================================
@@ -866,127 +867,12 @@ namespace graphicbox2d
         }
 
         /// <summary>
-        /// マウス移動イベント(セレクトモード)
-        /// </summary>
-        /// <param name="e"></param>
-        protected virtual void OnExMouseMove_SelectMode(Graphic2DMouseEventArgs e)
-        {
-            Point MouseMovement = GetMouseMovement(e);
-
-            // オブジェクトドラッグ操作中の場合
-            if (IsDraggingObject == true)
-            {
-                // マウスカーソルに合わせてオブジェクトを移動する
-                PointF GridMouseMovement = CalConvert.ConvertClientMouseMovementToDisplayGridMouseMovement(new Point(MouseMovement.X, MouseMovement.Y));
-
-                if (HitClientObject != null)
-                {
-                    HitClientObject.Move(GridMouseMovement);
-                }
-            }
-
-            // デフォルトモードのマウス移動処理を実行
-            OnExMouseMove_DefaultMode(e, false);
-
-            // 再描画を実行
-            this.skControl.Invalidate();
-        }
-
-        /// <summary>
-        /// マウス移動イベント（スナップモードモード）
-        /// </summary>
-        /// <param name="e"></param>
-        protected virtual void OnExMouseMove_SnapMode(Graphic2DMouseEventArgs e)
-        {
-
-        }
-
-        /// <summary>
         /// 描画イベント（デフォルトモード）
         /// </summary>
         /// <param name="e"></param>
         private void OnPaint_DefaultMode(SKPaintSurfaceEventArgs e)
         {
-            Layers.Sort();
-
-            foreach (Layer2D layer in Layers)
-            {
-                // レイヤーが非表示の場合はスキップする
-                if (layer.IsVisible == false)
-                {
-                    continue;
-                }
-
-                List<Object2D> allObjects = layer.GetAllObjects();
-
-                // 全オブジェクトをZオーダーでソートする
-                allObjects.Sort();
-
-                foreach (Object2D object2D in allObjects)
-                {
-                    // オブジェクトが非表示の場合はスキップする
-                    if (object2D.IsVisible == false)
-                    {
-                        continue;
-                    }
-
-                    _DRAW_ENGINE.DrawObject2D(e.Surface.Canvas, object2D, eDrawFigureType.Normal);
-                }
-            }
-        }
-
-        /// <summary>
-        /// 描画イベント （セレクトモード）
-        /// </summary>
-        /// <param name="e"></param>
-        private void OnPaint_SelectMode(SKPaintSurfaceEventArgs e)
-        {
-            Layers.Sort();
-
-            foreach (Layer2D layer in Layers)
-            {
-                // レイヤーが非表示の場合はスキップする
-                if (layer.IsVisible == false)
-                {
-                    continue;
-                }
-
-                List<Object2D> allObjects = layer.GetAllObjects();
-
-                // 全オブジェクトをZオーダーでソートする
-                allObjects.Sort();
-
-                foreach (Object2D object2D in allObjects)
-                {
-                    // オブジェクトが非表示の場合はスキップする
-                    if (object2D.IsVisible == false)
-                    {
-                        continue;
-                    }
-
-                    // マウスにヒットしているオブジェクトは後で強調表示するため、ここでは描画しない
-                    if (object2D == HitClientObject)
-                    {
-                        continue;
-                    }
-
-                    _DRAW_ENGINE.DrawObject2D(e.Surface.Canvas, object2D, eDrawFigureType.Normal);
-                }
-
-                // マウスにヒットしているオブジェクトを強調表示する
-                if (HitClientObject != null)
-                {
-                    _DRAW_ENGINE.DrawObject2D(e.Surface.Canvas, HitClientObject, eDrawFigureType.Hit);
-                }
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="e"></param>
-        private void OnPaint_SnapMode(SKPaintSurfaceEventArgs e)
-        {
+            Paint_Objects(e, null);
         }
 
         /// <summary>
@@ -1006,11 +892,288 @@ namespace graphicbox2d
         }
 
         /// <summary>
+        /// マウス移動イベント(セレクトモード)
+        /// </summary>
+        /// <param name="e"></param>
+        protected virtual void OnExMouseMove_SelectMode(Graphic2DMouseEventArgs e)
+        {
+            // デフォルトモードのマウス移動処理を実行
+            OnExMouseMove_DefaultMode(e, false);
+
+            Point MouseMovement = GetMouseMovement(e);
+
+            // オブジェクトドラッグ操作中の場合
+            if (IsDraggingObject == true)
+            {
+                // マウスカーソルに合わせてオブジェクトを移動する
+                PointF GridMouseMovement = CalConvert.ConvertClientMouseMovementToDisplayGridMouseMovement(new Point(MouseMovement.X, MouseMovement.Y));
+
+                if (HitClientObject != null)
+                {
+                    HitClientObject.Move(GridMouseMovement);
+                }
+            }
+
+            // 再描画を実行
+            this.skControl.Invalidate();
+        }
+
+        /// <summary>
+        /// 描画イベント （セレクトモード）
+        /// </summary>
+        /// <param name="e"></param>
+        private void OnPaint_SelectMode(SKPaintSurfaceEventArgs e)
+        {
+            // マウスにヒットしているオブジェクトを強調表示する
+            Paint_Objects(e, HitClientObject);
+        }
+
+        /// <summary>
         /// マウスクリックイベント時の処理（スナップモードモード）
         /// </summary>
         /// <param name="e"></param>
         private void OnMouseClick_SnapMode(Graphic2DMouseEventArgs e)
         {
+            switch (SnapDataPack.CurrentStep)
+            {
+                case eMode_Snap.Step1:
+                    // STEP1の処理
+                    if (HitClientObject != null)
+                    {
+                        SnapDataPack.Step2.SnappingObject = HitClientObject;
+                        SnapDataPack.CurrentStep = eMode_Snap.Step2;
+                    }
+                    break;
+                case eMode_Snap.Step2:
+                    // STEP2の処理
+
+                    if (SnapDataPack.Step2.HitSnapPoint != null)
+                    {
+                        SnapDataPack.Step3.SnappingObject = SnapDataPack.Step2.SnappingObject;
+                        SnapDataPack.Step3.SelectSnapPoint = SnapDataPack.Step2.HitSnapPoint;
+                        SnapDataPack.CurrentStep = eMode_Snap.Step3;
+                    }
+
+                    break;
+                case eMode_Snap.Step3:
+                    // STEP3の処理
+
+                    float moveX = SnapDataPack.Step3.NearSnapPoint.Value.X - SnapDataPack.Step3.SelectSnapPoint.Value.X;
+                    float moveY = SnapDataPack.Step3.NearSnapPoint.Value.Y - SnapDataPack.Step3.SelectSnapPoint.Value.Y;
+
+                    SnapDataPack.Step3.SnappingObject.Move(moveX, moveY);
+                    SnapDataPack.CurrentStep = eMode_Snap.Step1;
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// マウス移動イベント（スナップモードモード）
+        /// </summary>
+        /// <param name="e"></param>
+        protected virtual void OnExMouseMove_SnapMode(Graphic2DMouseEventArgs e)
+        {
+            PointF? HitSnapPoint = null;
+
+            Point MousePosition = new Point(e.X, e.Y);
+
+            PointF GridMousePoint = CalConvert.ConvertClientPointToDisplayGridPoint(MousePosition);
+
+            switch (SnapDataPack.CurrentStep)
+            {
+                case eMode_Snap.Step1:
+                    // STEP2の処理
+                    // デフォルトモードのマウス移動処理を実行
+                    OnExMouseMove_DefaultMode(e);
+                    break;
+                case eMode_Snap.Step2:
+                    // STEP2の処理
+                    // デフォルトモードのマウス移動処理を実行
+                    OnExMouseMove_DefaultMode(e);
+
+                    HitSnapPoint = GetMouseHitSnapPoint(GridMousePoint.X, GridMousePoint.Y, SnapDataPack.Step2.SnappingObject.SnapPoints);
+
+                    // マウスヒットしているスナップポイントを更新する
+                    if (HitSnapPoint != SnapDataPack.Step2.HitSnapPoint)
+                    {
+                        SnapDataPack.Step2.HitSnapPoint = HitSnapPoint;
+                        // 再描画
+                        this.skControl.Invalidate();
+                    }
+
+                    break;
+                case eMode_Snap.Step3:
+                    // STEP3の処理
+                    // デフォルトモードのマウス移動処理を実行
+                    OnExMouseMove_DefaultMode(e);
+
+                    List<PointF> AllSnapPoints = _DRAW_ENGINE.m_GridManager.GridPoints;
+
+                    if (HitClientObject != null)
+                    {
+                        AllSnapPoints.AddRange(HitClientObject.SnapPoints);
+                    }
+
+                    PointF? NearSnapPoint = GetMouseNearestSnapPoint(GridMousePoint.X, GridMousePoint.Y, AllSnapPoints);
+
+                    if(NearSnapPoint != SnapDataPack.Step3.NearSnapPoint)
+                    {
+                        SnapDataPack.Step3.NearSnapPoint = NearSnapPoint;
+                        // 再描画
+                        this.skControl.Invalidate();
+                    }
+
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// 描画イベント （スナップモード）
+        /// </summary>
+        /// <param name="e"></param>
+        private void OnPaint_SnapMode(SKPaintSurfaceEventArgs e)
+        {
+            List<PointF> SnapPoints = null;
+            PointF? HitSnapPoint = null;
+            PointF? NearestSnapPoint = null;
+            PointF? SelectSnapPoint = null;
+
+            switch (SnapDataPack.CurrentStep)
+            {
+                case eMode_Snap.Step1:
+                    // STEP1の処理
+                    Paint_Objects(e, HitClientObject);
+                    break;
+                case eMode_Snap.Step2:
+                    // STEP2の処理
+                    Paint_Objects(e, null);
+
+                    SnapPoints = SnapDataPack.Step2.SnappingObject.SnapPoints;
+                    HitSnapPoint = SnapDataPack.Step2.HitSnapPoint;
+
+                    Paint_SnapPoints(e, SnapPoints, HitSnapPoint);
+                    break;
+                case eMode_Snap.Step3:
+                    // STEP3の処理
+                    Paint_Objects(e, null);
+
+                    NearestSnapPoint = SnapDataPack.Step3.NearSnapPoint;
+                    SelectSnapPoint = SnapDataPack.Step3.SelectSnapPoint;
+
+                    Paint_SnapLine(e, NearestSnapPoint, SelectSnapPoint);
+
+                    SnapPoints = new List<PointF>() { SelectSnapPoint.Value, NearestSnapPoint.Value };
+                    Paint_HitSnapPoints(e, SnapPoints);
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// 画面のオブジェクトを描画する
+        /// </summary>
+        /// <param name="e"></param>
+        /// <param name="HighlightObject">強調表示するオブジェクト（nullの場合は強調表示なし）</param>
+        private void Paint_Objects(SKPaintSurfaceEventArgs e, Object2D HighlightObject)
+        {
+            Layers.Sort();
+
+            foreach (Layer2D layer in Layers)
+            {
+                // レイヤーが非表示の場合はスキップする
+                if (layer.IsVisible == false)
+                {
+                    continue;
+                }
+
+                List<Object2D> allObjects = layer.GetAllObjects();
+
+                // 全オブジェクトをZオーダーでソートする
+                allObjects.Sort();
+
+                foreach (Object2D object2D in allObjects)
+                {
+                    // オブジェクトが非表示の場合はスキップする
+                    if (object2D.IsVisible == false)
+                    {
+                        continue;
+                    }
+
+                    // ハイライトオブジェクトは後で強調表示するため、ここでは描画しない
+                    if (object2D == HighlightObject)
+                    {
+                        continue;
+                    }
+
+                    _DRAW_ENGINE.DrawObject2D(e.Surface.Canvas, object2D, eDrawFigureType.Normal);
+                }
+
+                // ハイライトオブジェクトを強調表示する
+                if (HighlightObject != null)
+                {
+                    _DRAW_ENGINE.DrawObject2D(e.Surface.Canvas, HighlightObject, eDrawFigureType.Hit);
+                }
+            }
+        }
+
+        /// <summary>
+        /// スナップポイントを描画する
+        /// </summary>
+        /// <param name="e">描画イベント引数</param>
+        /// <param name="SnapPoints">スナップポイントのリスト</param>
+        /// <param name="HighlightSnapPoint">強調表示するスナップポイント（nullの場合は強調表示なし）</param>
+        private void Paint_SnapPoints(SKPaintSurfaceEventArgs e, List<PointF> SnapPoints, PointF? HighlightSnapPoint)
+        {
+            if (SnapPoints != null)
+            {
+                foreach (PointF snapPoint in SnapPoints)
+                {
+                    // ハイライトスナップポイントは後で強調表示するため、ここでは描画しない
+                    if (snapPoint == HighlightSnapPoint)
+                    {
+                        continue;
+                    }
+
+                    // 通常のスナップポイントを描画する
+                    _DRAW_ENGINE.DrawSnapPoint(e.Surface.Canvas, snapPoint, false);
+                }
+            }
+
+            // ハイライトスナップポイントを強調表示する
+            if (HighlightSnapPoint != null)
+            {
+                _DRAW_ENGINE.DrawSnapPoint(e.Surface.Canvas, HighlightSnapPoint.Value, true);
+            }
+        }
+
+        /// <summary>
+        /// ヒットしているスナップポイントを描画する
+        /// </summary>
+        /// <param name="e">描画イベント引数</param>
+        /// <param name="SnapPoints">スナップポイントのリスト</param>
+        private void Paint_HitSnapPoints(SKPaintSurfaceEventArgs e, List<PointF> SnapPoints)
+        {
+            if (SnapPoints != null)
+            {
+                foreach (PointF snapPoint in SnapPoints)
+                {
+                    // ヒットスナップポイントを描画する
+                    _DRAW_ENGINE.DrawSnapPoint(e.Surface.Canvas, snapPoint, true);
+                }
+            }
+        }
+
+        /// <summary>
+        /// スナップラインを描画する
+        /// </summary>
+        /// <param name="e">描画イベント引数</param>
+        /// <param name="start">スナップラインの開始点（グリッド座標系）</param>
+        /// <param name="end">スナップラインの終了点（グリッド座標系）</param>
+        private void Paint_SnapLine(SKPaintSurfaceEventArgs e, PointF? start, PointF? end)
+        {
+            if (start != null && end != null)
+            {
+                _DRAW_ENGINE.DrawSnapLine(e.Surface.Canvas, start.Value, end.Value);
+            }
         }
 
         /// <summary>
@@ -1079,8 +1242,8 @@ namespace graphicbox2d
         /// <summary>
         /// マウスにヒットしているオブジェクトを更新する
         /// </summary>
-        /// <param name="X">マウスX座標</param>
-        /// <param name="Y">マウスY座標</param>
+        /// <param name="X">マウスX座標(クライアント座標)</param>
+        /// <param name="Y">マウスY座標（クライアント座標）</param>
         private void UpdateHitClientObject(int X, int Y)
         {
             Point MousePosition = new Point(X, Y);
@@ -1176,6 +1339,112 @@ namespace graphicbox2d
         }
 
         /// <summary>
+        /// マウスにヒットしているスナップポイントを取得する
+        /// </summary>
+        /// <param name="X">マウスのX座標</param>
+        /// <param name="Y">マウスのY座標</param>
+        /// <param name="SnapPoints">スナップポイントのリスト</param>
+        /// <returns>ヒットしているスナップポイントの座標</returns>
+        private PointF? GetMouseHitSnapPoint(float X, float Y, List<PointF> SnapPoints)
+        {
+            PointF? HitSnapPoint = null;
+
+            PointF MousePosition = new PointF(X, Y);
+
+            List<PointF> HitCrossRangeSnapPoint = new List<PointF>();
+
+            List<PointF> HitOnSnapPoint = new List<PointF>();
+
+            foreach (PointF snapPoint in SnapPoints)
+            {
+                float GridSnapR = CalConvert.ConvertClientLengthToDisplayGridLength((int)GraphicDrawEngine.SNAP_POINT_R);
+
+                eMouseHitType hitType = CalIsHit.IsHitMouseRangeFillCircle(snapPoint.X, snapPoint.Y, GridSnapR, MousePosition, MOUSE_HIT_RANGE);
+
+                if (hitType == eMouseHitType.CrossMouseRange)
+                {
+                    HitCrossRangeSnapPoint.Add(snapPoint);
+                }
+                else if (hitType == eMouseHitType.MousePointOnObject)
+                {
+                    HitOnSnapPoint.Add(snapPoint);
+                }
+            }
+
+            int AllHitCount = HitOnSnapPoint.Count + HitCrossRangeSnapPoint.Count;
+
+            // どのオブジェクトにもヒットしていない場合
+            if (AllHitCount == 0)
+            {
+                HitSnapPoint = null;
+            }
+            // 1つだけのオブジェクトにヒットしている場合
+            else if (AllHitCount == 1)
+            {
+                if (HitOnSnapPoint.Count == 1)
+                {
+                    HitSnapPoint = HitOnSnapPoint[0];
+                }
+                else
+                {
+                    HitSnapPoint = HitCrossRangeSnapPoint[0];
+                }
+            }
+            // 複数のオブジェクトにヒットしている場合
+            else
+            {
+                if (HitOnSnapPoint.Count == 0)
+                {
+                    // ======================
+                    // マウスポイント(点)に重なっているスナップポイントは存在せず、マウスポイント範囲を表す半径とスナップポイントが交差している場合
+                    // ======================
+
+                    // 最も近いスナップポイントを選択する
+                    HitSnapPoint = GetMouseNearestSnapPoint(X, Y, HitCrossRangeSnapPoint);
+                }
+                else
+                {
+                    // ======================
+                    // マウスポイント(点)に重なっているスナップポイントが存在する場合
+                    // ======================
+
+                    // 複数ヒットしている場合は、最も近いスナップポイントを選択する
+                    HitSnapPoint = GetMouseNearestSnapPoint(X, Y, HitOnSnapPoint);
+                }
+            }
+
+            return HitSnapPoint;
+        }
+
+        /// <summary>
+        /// マウスに最も近いスナップポイントを取得する
+        /// </summary>
+        /// <param name="X">マウスのX座標</param>
+        /// <param name="Y">マウスのY座標</param>
+        /// <param name="SnapPoints">スナップポイントのリスト</param>
+        /// <returns>最も近いスナップポイントの座標</returns>
+        private PointF? GetMouseNearestSnapPoint(float X, float Y, List<PointF> SnapPoints)
+        {
+            PointF MousePosition = new PointF(X, Y);
+
+            float nearestDistance = float.MaxValue;
+            PointF? NearestPoint = null;
+
+            foreach (PointF snapPoint in SnapPoints)
+            {
+                float currentDistance = MousePosition.DistanceTo(snapPoint);
+
+                if (currentDistance < nearestDistance)
+                {
+                    nearestDistance = currentDistance;
+                    NearestPoint = snapPoint;
+                }
+            }
+
+            return NearestPoint;
+        }
+
+        /// <summary>
         /// オブジェクト削除実行
         /// </summary>
         /// <param name="e"></param>
@@ -1234,20 +1503,6 @@ namespace graphicbox2d
             }
 
             this.skControl.Invalidate();
-        }
-
-        /// <summary>
-        /// XMLファイルからObject2DContainerをデシリアライズして読み込む。
-        /// </summary>
-        /// <param name="filePath">読み込み対象のファイルパス</param>
-        /// <returns>復元されたObject2DContainer</returns>
-        private Object2DContainer LoadFromXml(string filePath)
-        {
-            var serializer = new XmlSerializer(typeof(Object2DContainer));
-            using (var reader = new StreamReader(filePath))
-            {
-                return (Object2DContainer)serializer.Deserialize(reader);
-            }
         }
 
         /// <summary>
@@ -1326,50 +1581,6 @@ namespace graphicbox2d
             {
                 return false;
             }
-        }
-
-        /// <summary>
-        /// 旧形式(XML)のデータを読み込み、
-        /// すべての図形を 1 つのレイヤーにまとめて追加する。
-        /// </summary>
-        /// <param name="filePath">読み込む XML ファイルのパス</param>
-        /// <remarks>
-        /// ・LoadFromXml により Object2DContainer を復元  
-        /// ・読み込んだ図形群を新規レイヤーに集約  
-        /// ・レイヤー名は "OldData-日時" 形式で自動生成  
-        /// ・読み込み後に再描画を実行  
-        /// </remarks>
-        private void LoadOldData(string filePath)
-        {
-            // ファイルからデータを読み込む
-            Object2DContainer container = LoadFromXml(filePath);
-
-            Layer2D layer2D = new Layer2D();
-            layer2D.LayerName = "OldData-" + DateTime.Now.ToString("yyyyMMddHHmmss");
-
-            // 点図形
-            layer2D.Points.AddRange(container.Points);
-            // 線図形
-            layer2D.Lines.AddRange(container.Lines);
-            // 円図形
-            layer2D.Circles.AddRange(container.Circles);
-            // 多角形図形
-            layer2D.Polygons.AddRange(container.Polygons);
-            // 矢印線図形
-            layer2D.Arrows.AddRange(container.Arrows);
-            // テキスト図形
-            layer2D.Texts.AddRange(container.Texts);
-            // 円弧図形
-            layer2D.Arcs.AddRange(container.Arcs);
-            // グラフ図形
-            layer2D.Graphs.AddRange(container.Graphs);
-            // グループ図形
-            layer2D.Groups.AddRange(container.Groups);
-
-            this.Layers.Add(layer2D);
-
-            // 再描画
-            this.skControl.Invalidate();
         }
 
         /// <summary>

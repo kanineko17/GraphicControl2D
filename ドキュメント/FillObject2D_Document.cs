@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,7 +12,7 @@ namespace graphicbox2d
     /// <summary>
     /// 塗りつぶし図形の基底クラス
     /// </summary>
-    public class FillObject2D_Document : Object2D_Document, IFillProperty
+    public class FillObject2D_Document : Object2D_Document, IFillProperty, IDisposable
     {
 
         // ===============================================================================
@@ -64,5 +65,14 @@ namespace graphicbox2d
         /// 塗りつぶしの色
         /// </summary>
         public Color FillColor { get; set; } = Color.White;
+
+        /// <summary>
+        /// Disposeメソッド。リストをクリアしてリソースを解放する。
+        /// </summary>
+        public new void Dispose()
+        {
+            LineCustomLineStyle = null;
+            base.Dispose();
+        }
     }
 }

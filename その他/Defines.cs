@@ -94,6 +94,18 @@ namespace graphicbox2d
         Snap,
     }
 
+    internal enum eMode_Snap
+    {
+        /// <summary>なし</summary>
+        None,
+        /// <summary>STEP1:オブジェクトを選択</summary>
+        Step1,
+       /// <summary>STEP2:スナップポイントを選択</summary>
+        Step2,
+        /// <summary>STEP3:格子点を選択し、図形の移動を確定</summary>
+        Step3,
+    }
+
     // ===============================================================================
     //   非公開 enum（DLL内でのみ公開）
     // ===============================================================================

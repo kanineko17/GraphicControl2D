@@ -451,7 +451,7 @@ namespace graphicbox2d
                     throw new Exception("√の後は括弧が必要です");
                 }
 
-                CSharpSusiki = StringRangeReplace(CSharpSusiki, InsideStart - 1, end, string.Format("sqrt({0})", inside));
+                CSharpSusiki = StringRangeReplace(CSharpSusiki, InsideStart - 1, end, string.Format("Math.Sqrt({0})", inside));
             }
 
             return CSharpSusiki;
@@ -527,7 +527,7 @@ namespace graphicbox2d
                     throw new Exception("Pow Error");
                 }
 
-                CSharpSusiki = StringRangeReplace(CSharpSusiki, LeftEnd, RightEnd, string.Format("pow({0}, {1})", LeftInside, RightInside));
+                CSharpSusiki = StringRangeReplace(CSharpSusiki, LeftEnd, RightEnd, string.Format("Math.Pow({0}, {1})", LeftInside, RightInside));
             }
 
             return CSharpSusiki;

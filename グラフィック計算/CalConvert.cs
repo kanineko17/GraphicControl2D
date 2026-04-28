@@ -1,6 +1,7 @@
 ﻿using graphicbox2d;
 using graphicbox2d.グローバル変数;
 using Newtonsoft.Json.Linq;
+using OpenTK.Graphics.ES11;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
@@ -132,6 +133,19 @@ namespace graphicbox2d.グラフィック計算
         }
 
         /// <summary>
+        /// クライアント座標の PointF を表示グリッド座標の PointF に変換
+        /// </summary>
+        /// <param name="ClientPoint">クライアント座標の点（SKPoint）</param>
+        /// <returns>表示グリッド座標に変換された PointF</returns>
+        public static PointF ConvertClientPointToDisplayGridPoint(SKPoint ClientPoint)
+        {
+            Vector2 GridV = new Vector2();
+            GridV.X = (float)(ClientPoint.X - (float)Global.Graphic2DControl.DisplayCenterPoint.X) / Global.Graphic2DControl.DisplayGridWidth;
+            GridV.Y = -1 * (float)(ClientPoint.Y - (float)Global.Graphic2DControl.DisplayCenterPoint.Y) / Global.Graphic2DControl.DisplayGridWidth;
+            return GridV.ToPointF();
+        }
+
+        /// <summary>
         /// 表示グリッド座標 (x, y) をクライアント座標 (outX, outY) に変換
         /// </summary>
         /// <param name="x">表示グリッド座標 X</param>
@@ -153,7 +167,7 @@ namespace graphicbox2d.グラフィック計算
         /// </summary>
         /// <param name="GridPoints">表示グリッド座標の点リスト（PointF）</param>
         /// <returns>クライアント座標に変換された PointFリスト</returns>
-        public static SKPoint[] ConvertDisplayGridPointToClientPoint(PointF[] GridPoints)
+        public static SKPoint[] ConvertDisplayGridPointToClientPoints(PointF[] GridPoints)
         {
             SKPoint[] ClientPoints = new SKPoint[GridPoints.Length];
 
@@ -163,6 +177,36 @@ namespace graphicbox2d.グラフィック計算
             }
 
             return ClientPoints;
+        }
+
+        /// <summary>
+        /// クライアント座標の PointF を表示グリッド座標の PointF に変換
+        /// </summary>
+        /// <param name="ClientPoints">クライアント座標の点リスト（SKPoint）</param>
+        /// <returns>表示グリッド座標に変換された PointFリスト</returns>
+        public static PointF[] ConvertClientPointToDisplayGridPoints(SKPoint[] ClientPoints)
+        {
+            PointF[] GridPoints = new PointF[ClientPoints.Length];
+            for (int i = 0; i < ClientPoints.Length; i++)
+            {
+                GridPoints[i] = ConvertClientPointToDisplayGridPoint(ClientPoints[i]);
+            }
+            return GridPoints;
+        }
+
+        /// <summary>
+        /// クライアント座標の PointF を表示グリッド座標の PointF に変換
+        /// </summary>
+        /// <param name="ClientPoints">クライアント座標の点リスト（SKPoint）</param>
+        /// <returns>表示グリッド座標に変換された PointFリスト</returns>
+        public static List<PointF> ConvertClientPointToDisplayGridPoints(List<SKPoint> ClientPoints)
+        {
+            List<PointF> GridPoints = new List<PointF>(ClientPoints.Count);
+            for (int i = 0; i < ClientPoints.Count; i++)
+            {
+                GridPoints.Add(ConvertClientPointToDisplayGridPoint(ClientPoints[i]));
+            }
+            return GridPoints;
         }
 
         /// <summary>

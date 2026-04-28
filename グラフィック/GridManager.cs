@@ -79,10 +79,15 @@ namespace graphicbox2d
         private TextData _CenterTextData;
 
         /// <summary>
-        /// グリッドの格子点リスト
+        /// グリッドの格子点リスト(グリッド座標)
         /// </summary>
-        public List<SKPoint> GridPoints { get { return GetGridPoints(); } }
-        private List<SKPoint> _GridPoints = new List<SKPoint>();
+        public List<PointF> GridPoints { get { return CalConvert.ConvertClientPointToDisplayGridPoints(ClientGridPoints); } }
+
+        /// <summary>
+        /// グリッドの格子点リスト(クライアント座標)
+        /// </summary>
+        public List<SKPoint> ClientGridPoints { get { return GetGridPoints(); } }
+        private List<SKPoint> _ClientGridPoints = new List<SKPoint>();
 
         /// <summary>
         /// 全ての破棄対象オブジェクトリストを取得する
@@ -218,7 +223,7 @@ namespace graphicbox2d
                 UpdateGridData();
             }
 
-            return _GridPoints;
+            return _ClientGridPoints;
         }
 
         /// <summary>
@@ -429,15 +434,15 @@ namespace graphicbox2d
             ///////////////////////////////////////////////////////////////////////
             // 格子点
             ///////////////////////////////////////////////////////////////////////
-            _GridPoints.Clear();
+            _ClientGridPoints.Clear();
 
             // 縦線のインデックス範囲（X方向）
             int xAxisStartIndex = -Graphic2DControl.UserMoveClientCenterPoint.X / m_Graphic2DControl.DisplayGridWidth;
-            int xAxisLineNum = (int)(bounds.Width / m_Graphic2DControl.DisplayGridWidth);
+            xAxisLineNum = (int)(bounds.Width / m_Graphic2DControl.DisplayGridWidth);
 
             // 横線のインデックス範囲（Y方向）
             int yAxisStartIndex = -Graphic2DControl.UserMoveClientCenterPoint.Y / m_Graphic2DControl.DisplayGridWidth;
-            int yAxisLineNum = (int)(bounds.Height / m_Graphic2DControl.DisplayGridWidth);
+            yAxisLineNum = (int)(bounds.Height / m_Graphic2DControl.DisplayGridWidth);
 
             for (int ix = xAxisStartIndex - (xAxisLineNum / 2) - 1; ix <= xAxisStartIndex + (xAxisLineNum / 2) + 1; ix++)
             {
@@ -447,7 +452,7 @@ namespace graphicbox2d
                 {
                     float py = iy * m_Graphic2DControl.DisplayGridWidth + m_Graphic2DControl.DisplayCenterPoint.Y;
 
-                    _GridPoints.Add(new SKPoint(px, py));
+                    _ClientGridPoints.Add(new SKPoint(px, py));
                 }
             }
 
