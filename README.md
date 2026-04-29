@@ -126,11 +126,25 @@ this.graphic2dControl1.Invalidate();
 ![GraphicBox2D Demo](https://raw.githubusercontent.com/kanineko17/GraphicControl2D/main/README_PNG/README3.png)
 
 ### Mode
-You can switch between a simple drawing mode and an interactive mode that allows mouse operations.
+You can switch between a simple drawing mode and multiple interactive modes that allow mouse-based editing operations.
 
-- **Default Mode**: A basic drawing mode. Mouse interactions are not supported.
-- **Slect Mode**: An interactive mode that allows you to select, move, and delete shape objects using the mouse.
+![GraphicBox2D Demo](https://raw.githubusercontent.com/kanineko17/GraphicControl2D/main/README_PNG/README8.gif)
 
+- **Default Mode**  
+  A basic drawing mode. Mouse interactions are not supported.
+
+- **Select Mode**  
+  An interactive mode that allows you to select, move, and delete shape objects using the mouse.  
+  You can click shapes to select them, drag to move them, or press the Delete key to remove them.
+
+- **Snap Mode**  
+  A precision editing mode that lets you snap shapes to exact positions.  
+  In this mode, you can:
+  - Select a **vertex** of a shape (e.g., line endpoints, polygon vertices, image corners).  
+  - Then select a **grid intersection** or a **vertex of another shape**.  
+  - The selected shape will move so that the chosen vertex aligns perfectly with the target point.
+
+  This mode is ideal for creating clean, mathematically accurate diagrams where shapes must align precisely with the grid or with each other.
 ![GraphicBox2D Demo](https://raw.githubusercontent.com/kanineko17/GraphicControl2D/main/README_PNG/README5.png)
 
 ### Saving Data
