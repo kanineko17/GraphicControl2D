@@ -483,8 +483,7 @@ namespace graphicbox2d
 
             HitClientObject = null;
 
-            OriginalClientCenterPoint.X = (int)this.Width / 2;
-            OriginalClientCenterPoint.Y = (int)this.Height / 2;
+            UpdateOriginalClientCenterPoint();
 
             this.SetStyle(ControlStyles.UserPaint |
                           ControlStyles.OptimizedDoubleBuffer, true);
@@ -592,6 +591,24 @@ namespace graphicbox2d
             base.OnBackgroundImageChanged(e);
 
             this.sKBackGroundBitmap = this.BackgroundImage.ToSKBitmap();
+
+            Invalidate();
+        }
+
+        /// <summary>
+        /// コントロールサイズチェンジイベント
+        /// </summary>
+        /// <param name="e"></param>
+        protected override void OnResize(EventArgs e)
+        {
+            if (DesignMode == false)
+            {
+                return;
+            }
+
+            base.OnResize(e);
+
+            UpdateOriginalClientCenterPoint();
 
             Invalidate();
         }
@@ -1237,6 +1254,15 @@ namespace graphicbox2d
             {
                 this.Cursor = DefaultCuror;
             }
+        }
+
+        /// <summary>
+        /// オリジナルの画面中央クライアント座標を更新する
+        /// </summary>
+        private void UpdateOriginalClientCenterPoint()
+        {
+            OriginalClientCenterPoint.X = (int)this.Width / 2;
+            OriginalClientCenterPoint.Y = (int)this.Height / 2;
         }
 
         /// <summary>
@@ -2044,8 +2070,7 @@ namespace graphicbox2d
         {
             base.OnResize(e);
 
-            OriginalClientCenterPoint.X = (int)this.Width / 2;
-            OriginalClientCenterPoint.Y = (int)this.Height / 2;
+            UpdateOriginalClientCenterPoint();
         }
 
         /// <summary>
