@@ -9,13 +9,15 @@ https://github.com/kanineko17/GraphicControl2D
 If you find any bugs or have feature requests, please feel free to contact me here! 「info@kanineko.com」
 
 ## What's New Version
+-  (v4.1.0) Significantly fixed issues where formula graph generation would fail.
+-  (v4.0.0) Added Snap Mode.
 -  (v3.3.8) Add visibility control for each shape Object (introduce an IsVisible property).
 -  (v3.3.7) Added Image Objects.
 -  (v3.2.3) Added Group Shape Objects and Layer functionality.
--  (v3.2.2)Fixed an issue where the Y-axis grid labels had inverted signs.
--  (v3.2.0)Fixed minor bugs and Updated README
--  (v3.1.4)Added background image support.Adjusted the grid line width to be thinner.
--  (v3.0.0)Changed the rendering engine to SkiaSharp.
+-  (v3.2.2) Fixed an issue where the Y-axis grid labels had inverted signs.
+-  (v3.2.0) Fixed minor bugs and updated README.
+-  (v3.1.4) Added background image support. Adjusted the grid line width to be thinner.
+-  (v3.0.0) Changed the rendering engine to SkiaSharp.
 
 ## English
 
@@ -126,7 +128,9 @@ this.graphic2dControl1.Invalidate();
 ![GraphicBox2D Demo](https://raw.githubusercontent.com/kanineko17/GraphicControl2D/main/README_PNG/README3.png)
 
 ### Mode
-You can switch between a simple drawing mode and multiple interactive modes that allow mouse-based editing operations.
+You can switch between a simple drawing mode and multiple interactive modes that 
+allow mouse-based editing operations.
+
 ![GraphicBox2D Demo](https://raw.githubusercontent.com/kanineko17/GraphicControl2D/main/README_PNG/README5.png)
 
 - **Default Mode**  
@@ -142,8 +146,9 @@ You can switch between a simple drawing mode and multiple interactive modes that
   - Select a **vertex** of a shape (e.g., line endpoints, polygon vertices, image corners).  
   - Then select a **grid intersection** or a **vertex of another shape**.  
   - The selected shape will move so that the chosen vertex aligns perfectly with the target point.
+    This mode is ideal for creating clean, mathematically accurate diagrams where shapes must align 
+    precisely with the grid or with each other.
 
-  This mode is ideal for creating clean, mathematically accurate diagrams where shapes must align precisely with the grid or with each other.
 ![GraphicBox2D Demo](https://raw.githubusercontent.com/kanineko17/GraphicControl2D/main/README_PNG/README8.gif)
 
 ### Saving Data
@@ -215,8 +220,15 @@ Specify the formula to be graphed as a string in the `Susiki` property.
 
 Example:
 ```csharp
-graph.Susiki = "x^(2√2) + 3*x + 2 + |sin(x)÷2|2";
+graph.Susiki = "(sin(x^2)*exp(-0.1*x)+cos(3*x))/(1+0.05*x^2)+0.5*sin(1/(x+0.1))";
 ```
+![GraphicBox2D Demo](https://raw.githubusercontent.com/kanineko17/GraphicControl2D/main/README_PNG/README10.png)
+
+```csharp
+graph.Susiki = "||sin(x)÷2|+|x||";
+```
+![GraphicBox2D Demo](https://raw.githubusercontent.com/kanineko17/GraphicControl2D/main/README_PNG/README9.png)
+
 
 **Variable Name**  
 Only the variable **"x"** can be used in formulas.
@@ -237,8 +249,7 @@ Only the variable **"x"** can be used in formulas.
 - Power: ＾, ^
 
 **Supported Symbols**
-- Square root: √ (e.g., √x, √(x+1))
-- Absolute value: | (e.g., |x+1|)
+- Square root: √
 
 **Supported Constants**
 - Pi: π

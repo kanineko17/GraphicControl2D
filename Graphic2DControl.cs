@@ -208,6 +208,14 @@ namespace graphicbox2d
         [Category("グラフ")]
         public event Graphic2DObjectEventHandler SusikiCaluculateEnd;
 
+        /// <summary>
+        ///  Graphic2Dコントロールでグラフオブジェクトの数式計算がエラーになった時に発生します。
+        /// </summary>
+        [Browsable(true)]
+        [Description("Graphic2Dコントロール内で、数式計算がエラーになった時に発生します。")]
+        [Category("グラフ")]
+        public event Graphic2DObjectEventHandler SusikiCaluculateError;
+
         // ===============================================================================
         //
         //                       公開メソッド
@@ -806,6 +814,27 @@ namespace graphicbox2d
             // 再描画
             this.skControl.Invalidate();
         }
+
+        /// <summary>
+        /// 数式計算エラーイベント
+        /// 数式計算エラーメッセージがポストされた時に呼び出される。
+        /// </summary>
+        /// <param name="e"></param>
+        protected virtual void OnSusikiCaluculateError(Graphic2DObjectEventArgs e)
+        {
+            IsCaluculatingSusiki = false;
+
+            MessageBox.Show(
+                "An error occurred while evaluating the expression.\nPlease check the contents of the expression.",
+                "Expression Evaluation Error",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Error
+            );
+
+            // 再描画
+            this.skControl.Invalidate();
+        }
+
 
         // ==========================================
         //　 ＊その他メソッド＊
@@ -1694,6 +1723,16 @@ namespace graphicbox2d
 
                     SusikiCaluculateEnd?.Invoke(this, end_eventArgs);
 
+                    break;
+
+                // グラフオブジェクト数式計算エラー
+                case WinMsg.WM_SUSIKI_CALC_ERROR:
+                    int Error_ID = (int)m.WParam;
+                    Object2D Error_CaclulatingObject = (Object2D)AllObjects.Where(obj => obj._ID == Error_ID).FirstOrDefault();
+                    Graphic2DObjectEventArgs error_eventArgs = MessageConverter.Convert(m, Error_CaclulatingObject);
+                    // 既定の処理を呼び出す
+                    OnSusikiCaluculateError(error_eventArgs);
+                    SusikiCaluculateError?.Invoke(this, error_eventArgs);
                     break;
 
                 // マウスオブジェクトエンターイベント

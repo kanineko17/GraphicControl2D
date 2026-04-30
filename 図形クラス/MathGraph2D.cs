@@ -120,17 +120,28 @@ namespace graphicbox2d
 
 
             // 重い計算はバックグラウンドで実行
-            PointF[] points = await Task.Run(() =>
+            SusikiCalResult result = await Task.Run(() =>
                 GraphicCaluculate.SusikiCaluculate(Susiki, StartX, EndX, CalculateInterval, _ID)
             );
 
-            // 値がNaNの点を除外してリスト化
-            Points = points.Where(p => float.IsNaN(p.X) == false && float.IsNaN(p.Y) == false).ToList();
+            if (result.ResultType == eSusikiCalRet.Success)
+            {
+                // 成功
+                // 値がNaNの点を除外してリスト化
+                Points = result.Points.Where(p => float.IsNaN(p.X) == false && float.IsNaN(p.Y) == false).ToList();
 
-            ZeroXPointIndex = GetZeroXPointIndex(Points);
+                ZeroXPointIndex = GetZeroXPointIndex(Points);
 
-            // 計算終了メッセージを送信
-            WinAPI.PostMessage(Graphic2DControl.hWnd, WinMsg.WM_SUSIKI_CALC_END, (IntPtr)_ID, IntPtr.Zero);
+                // 計算終了メッセージを送信
+                WinAPI.PostMessage(Graphic2DControl.hWnd, WinMsg.WM_SUSIKI_CALC_END, (IntPtr)_ID, IntPtr.Zero);
+            }
+            else
+            {
+                // エラー
+                WinAPI.PostMessage(Graphic2DControl.hWnd, WinMsg.WM_SUSIKI_CALC_ERROR, (IntPtr)_ID, IntPtr.Zero);
+                return;
+            }
+
         }
 
         /// <summary>

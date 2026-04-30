@@ -1,32 +1,202 @@
-﻿using Microsoft.CodeAnalysis.CSharp.Scripting;
+﻿using graphicbox2d.グローバル変数;
+using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace graphicbox2d
 {
+    /// <summary>
+    /// 数式計算の結果の種類を表す列挙型
+    /// </summary>
+    public enum eSusikiCalRet
+    {
+        /// <summary>
+        /// 計算成功
+        /// </summary>
+        Success,
+
+        /// <summary>
+        /// 計算エラー（例：数式の形式が不正、評価中に例外が発生など）
+        /// </summary>
+        Error,
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public struct SusikiCalResult
+    {
+        /// <summary>
+        /// 計算結果
+        /// </summary>
+        public eSusikiCalRet ResultType;
+
+        /// <summary>
+        /// 計算結果メッセージ
+        /// </summary>
+        public string ResultMessage;
+
+        /// <summary>
+        /// 計算結果の座標を格納した PointF 配列。
+        /// </summary>
+        public PointF[] Points;
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        /// <param name="_ResultType">計算結果の種類</param>
+        /// <param name="_ResultMessage">計算結果のメッセージ</param>
+        /// <param name="_Points">計算結果の座標配列</param>
+        public SusikiCalResult(eSusikiCalRet _ResultType, string _ResultMessage, PointF[] _Points)
+        {
+            ResultType = _ResultType;
+            ResultMessage = _ResultMessage;
+            Points = _Points;
+        }
+    }
+
     /// <summary>
     /// 数式計算クラス
     /// </summary>
     public static class SusikiCalculater
     {
         /// <summary>
-        /// 正規表現パターン定義
+        /// 絶対値
         /// </summary>
         private const string R_ABS = @"\|";
-        private const string R_CHAR = @"a-z";
+
+        /// <summary>
+        /// ルート記号
+        /// </summary>
+        private const string R_SQUARE = @"√";
+
+        /// <summary>
+        /// π
+        /// </summary>
+        private const string R_PI = @"π";
+
+        /// <summary>
+        /// 自然対数の底 e
+        /// </summary>
+        private const string R_E = @"(e(?!xp)|ｅ)";
+
+        /// <summary>
+        /// 変数 x
+        /// </summary>
+        private const string R_X = @"x";
+
+        /// <summary>
+        /// 文字
+        /// </summary>
+        private const string R_CHAR = @"[a-z]";
+
+        /// <summary>
+        /// 文字（大文字）
+        /// </summary>
+        private const string R_CHAR_UPPER = @"[A-Z]";
+
+        /// <summary>
+        /// 数字
+        /// </summary>
         private const string R_DIGIT = @"\d";
+
+        /// <summary>
+        /// 小数点記号
+        /// </summary>
         private const string R_DOT = @"\.";
+
+        /// <summary>
+        /// 開始括弧
+        /// </summary>
         private const string R_START_PAREN = @"\(";
+        /// <summary>
+        /// 終了括弧
+        /// </summary>
         private const string R_END_PAREN = @"\)";
+
+        /// <summary>
+        /// 乗記号
+        /// </summary>
+        private const string R_POW = @"\^";
+
+        /// <summary>
+        /// 演算子
+        /// </summary>
         private const string R_OPER = @"\+\-\*\/";
+
+        /// <summary>
+        /// プラス記号
+        /// </summary>
+        private const string R_PLUS = @"\+";
+
+        /// <summary>
+        /// マイナス記号
+        /// </summary>
         private const string R_MINUS = @"\-";
-        private const string R_DIGIT_DOT = @"\d\.";
+
+        /// <summary>
+        /// 積記号
+        /// </summary>
+        private const string R_MULT = @"\*";
+
+        /// <summary>
+        /// 除記号
+        /// </summary>
+        private const string R_DIV = @"\/";
+
+        /// <summary>
+        /// 全角プラス記号
+        /// </summary>
+        private const string R_PLUS_BIG = @"＋";
+
+        /// <summary>
+        /// 全角マイナス記号
+        /// </summary>
+        private const string R_MINUS_BIG = @"－";
+
+        /// <summary>
+        /// 全角積記号
+        /// </summary>
+        private const string R_MULT_BIG = @"×";
+
+        /// <summary>
+        /// 全角除記号
+        /// </summary>
+        private const string R_DIV_BIG = @"÷";
+
+        /// <summary>
+        /// 小数点つきの数字
+        /// 例： 123, 3.14, 0.5 など
+        /// </summary>
+        private static readonly string R_DIGIT_SET = $"{R_DIGIT}+[{R_DIGIT}{R_DOT}]+{R_DIGIT}+";
+
+        /// <summary>
+        /// 小数点つきの数字または変数xまたは定数eやπ
+        /// </summary>
+        private static readonly string R_DIGIT_SET_OR_X_OR_E_OR_PI = $"({R_DIGIT_SET}|x|Math.E|Math.PI|{R_DIGIT})";
+            
+        /// <summary>
+        /// 絶対値の内側の最も右、または左にある文字や数字、括弧
+        /// </summary>
+        private static readonly string R_INNER_ABS_SIDE = $@"({R_DIGIT}|{R_CHAR}|{R_CHAR_UPPER}|{R_START_PAREN}|{R_END_PAREN})";
+
+        /// <summary>
+        /// 絶対値の内側にあるパターン
+        /// </summary>
+        private static readonly string R_INNER_ABS = $@"{R_INNER_ABS_SIDE}[^|]*{R_INNER_ABS_SIDE}";
+
+        /// <summary>
+        /// 絶対値の内側にあるパターン（1文字のみ）
+        /// </summary>
+        private static readonly string R_INNER_ABS_ONE_CHAR = $@"({R_X}|{R_DIGIT})";
 
         // 置換用データ構造
         struct ReplaceItem
@@ -50,7 +220,7 @@ namespace graphicbox2d
         static SusikiCalculater()
         {
             // 置換リスト定義
-            RepItems.Add(new ReplaceItem("e", "Math.E"));
+            //RepItems.Add(new ReplaceItem("e", "Math.E"));
             RepItems.Add(new ReplaceItem("ｅ", "Math.E"));
             RepItems.Add(new ReplaceItem("π", "Math.PI"));
             RepItems.Add(new ReplaceItem("×", "*"));
@@ -93,7 +263,7 @@ namespace graphicbox2d
         /// - PointF は構造体なので new で代入している点に注意。
         /// </remarks>
 
-        public static async Task<PointF[]> Caluculate(string Susiki, double Start, double End, double CalculateInterval)
+        public static async Task<SusikiCalResult> Caluculate(string Susiki, double Start, double End, double CalculateInterval)
         {
             try
             {
@@ -108,16 +278,22 @@ namespace graphicbox2d
                                    typeof(object).Assembly)
                     .WithImports("System", "System.Drawing");
 
-                return await CSharpScript.EvaluateAsync<PointF[]>(script, options);
+                PointF[] points = await CSharpScript.EvaluateAsync<PointF[]>(script, options);
+
+                SusikiCalResult result = new SusikiCalResult(eSusikiCalRet.Success, "Calculation successful.", points);
+
+                return result;
             }
             catch (Exception ex)
             {
-                // エラー内容を確認
-                Console.WriteLine("エラー発生: " + ex.Message);
-                Console.WriteLine("詳細: " + ex.ToString());
+                string errorMessage = "An error occurred while evaluating the expression.\n\nPlease check the format of the expression.\n\nDetails: " + ex.Message;
+
+                PointF[] points = Array.Empty<PointF>();
+
+                SusikiCalResult result = new SusikiCalResult(eSusikiCalRet.Error, errorMessage, points);
 
                 // 呼び元に返す場合は null や空配列を返す
-                return Array.Empty<PointF>();
+                return result;
             }
         }
 
@@ -133,14 +309,17 @@ namespace graphicbox2d
             CSharpSusiki = CSharpSusiki.Replace(" ", ""); // 空白削除
             CSharpSusiki = CSharpSusiki.Replace("　", ""); // 全角空白削除
 
+            // 定数の置換
+            CSharpSusiki = ReplaceDifines(CSharpSusiki);
+
             // 2x →　(2*x)
-            CSharpSusiki = ReplaceByRegex(CSharpSusiki, $"([{R_DIGIT_DOT}]+)x", "($1*x)", RegexOptions.IgnoreCase);
+            CSharpSusiki = ReplaceByRegex(CSharpSusiki, $"({R_DIGIT_SET})x", $"{R_START_PAREN}$1*x{R_END_PAREN}", RegexOptions.IgnoreCase);
 
             // 2π→　（2*Math.PI）
-            CSharpSusiki = ReplaceByRegex(CSharpSusiki, $"([{R_DIGIT_DOT}]+)π", "($1*π)");
+            CSharpSusiki = ReplaceByRegex(CSharpSusiki, $"({R_DIGIT_SET})Math.PI", $"{R_START_PAREN}$1*Math.PI{R_END_PAREN}");
 
             // 2e→　（2*Math.E）
-            CSharpSusiki = ReplaceByRegex(CSharpSusiki, $"([{R_DIGIT_DOT}]+)e", "($1*e)");
+            CSharpSusiki = ReplaceByRegex(CSharpSusiki, $"({R_DIGIT_SET})Math.E", $"{R_START_PAREN}$1*Math.E{R_END_PAREN}");
 
             // 2√(.....)  →　(2*√(.......))
             CSharpSusiki = ConnectSquare(CSharpSusiki);
@@ -156,9 +335,6 @@ namespace graphicbox2d
 
             // 指数の処理
             CSharpSusiki = EvaluatePow(CSharpSusiki);
-
-            // 定数の置換
-            CSharpSusiki = ReplaceDifines(CSharpSusiki);
 
             return CSharpSusiki;
         }
@@ -251,6 +427,14 @@ namespace graphicbox2d
             return -1; // 見つからなかった
         }
 
+        /// <summary>
+        /// 数式文字列に含まれる指定位置の終了括弧 ')' に対応する開始括弧 '(' の位置を返す。
+        /// ネストされた括弧にも対応。
+        /// </summary>
+        /// <param name="expression">数式文字列</param>
+        /// <param name="startIndex">終了括弧 ')' の位置</param>
+        /// <returns>対応する開始括弧 '(' の位置。見つからなければ -1。</returns>
+        /// <exception cref="ArgumentException"></exception>
         private static int LeftFindMatchingParenthesis(string expression, int startIndex)
         {
             if (expression[startIndex] != ')')
@@ -298,6 +482,13 @@ namespace graphicbox2d
             return 0;
         }
 
+        /// <summary>
+        /// 数式文字列に含まれる指定位置の数字の終了位置を返す。
+        /// </summary>
+        /// <param name="expression">数式文字列</param>
+        /// <param name="startIndex">数字の開始位置</param>
+        /// <returns>数字の終了位置。見つからなければ -1。</returns>
+        /// <exception cref="ArgumentException"></exception>
         private static int RightFindMatchingDigits(string expression, int startIndex)
         {
             if (char.IsDigit(expression[startIndex]) == false)
@@ -319,7 +510,14 @@ namespace graphicbox2d
         // 文字列操作系関数
         // =====================================================================
 
-
+        /// <summary>
+        /// 数式文字列の指定位置に文字列を挿入する。
+        /// </summary>
+        /// <param name="input">対象の文字列</param>
+        /// <param name="index">挿入位置</param>
+        /// <param name="insertText">挿入する文字列</param>
+        /// <returns>挿入後の文字列</returns>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
         private static string InsertAt(string input, int index, string insertText)
         {
             if (index < 0 || index > input.Length)
@@ -341,11 +539,26 @@ namespace graphicbox2d
             return Regex.Replace(input, pattern, replacement, regexOptions);
         }
 
+        /// <summary>
+        /// 数式文字列の指定範囲を抜き出す
+        /// </summary>
+        /// <param name="expr">数式文字列</param>
+        /// <param name="start">開始位置</param>
+        /// <param name="end">終了位置</param>
+        /// <returns>指定範囲の文字列</returns>
         private static string GetStringRange(string expr, int start, int end)
         {
             return expr.Substring(start, end - start + 1);
         }
 
+        /// <summary>
+        /// 数式文字列の指定範囲を置換する
+        /// </summary>
+        /// <param name="expr">数式文字列</param>
+        /// <param name="start">開始位置</param>
+        /// <param name="end">終了位置</param>
+        /// <param name="Replace">置換文字列</param>
+        /// <returns>置換後の文字列</returns>
         private static string StringRangeReplace(string expr, int start, int end, string Replace)
         {
             return expr.Substring(0, start) + Replace + expr.Substring(end + 1);
@@ -359,7 +572,8 @@ namespace graphicbox2d
         private static string ConnectSquare(string CSharpSusiki)
         {
 
-            string MatchPattern = $"([{R_DIGIT}{R_DOT}]+|x)√";
+            // 2√(.....)  →　(2*√(.......))
+            string MatchPattern = $"({R_DIGIT_SET_OR_X_OR_E_OR_PI})√";
 
             // 2√(.....)  →　(2*√(.......))
             while (Regex.IsMatch(CSharpSusiki, MatchPattern) == true)
@@ -392,7 +606,7 @@ namespace graphicbox2d
         /// <returns></returns>
         private static string ConnectStartParenthese(string CSharpSusiki)
         {
-            string MatchPattern = $"([{R_DIGIT}{R_DOT}]+|x){R_START_PAREN}";
+            string MatchPattern = $"{R_DIGIT_SET_OR_X_OR_E_OR_PI}{R_START_PAREN}";
 
             // 2(.....)  →　(2*(.......))
             while (Regex.IsMatch(CSharpSusiki, MatchPattern) == true)
@@ -542,48 +756,32 @@ namespace graphicbox2d
         {
             string CSharpSusiki = expr;
 
-            string MatchPattern = $"{R_ABS}[{R_DIGIT}{R_CHAR}{R_END_PAREN}]+{R_ABS}";
-
-            while (Regex.IsMatch(CSharpSusiki, MatchPattern, RegexOptions.IgnoreCase) == true)
+            // =======================================================================
+            // 絶対値記号内に文字列が１文字しかない場合
+            // ========================================================================
+            // 正規表現とマッチしている文字列があるか判定
+            while (Regex.Match(CSharpSusiki, $"{R_ABS}{R_INNER_ABS_ONE_CHAR}{R_ABS}").Success == true)
             {
-                Match m = Regex.Match(CSharpSusiki, MatchPattern, RegexOptions.IgnoreCase);
+                Match m = Regex.Match(CSharpSusiki, $"{R_ABS}{R_INNER_ABS_ONE_CHAR}{R_ABS}");
+                int AbsStart = m.Index;
+                int AbsEnd = m.Index + m.Length - 1;
+                string inside = GetStringRange(CSharpSusiki, AbsStart + 1, AbsEnd - 1);
 
-                string inside = GetStringRange(CSharpSusiki, m.Index + 1, m.Index + m.Length - 2);
-                CSharpSusiki = StringRangeReplace(CSharpSusiki, m.Index, m.Index + m.Length - 1, $"abs({inside})");
+                CSharpSusiki = StringRangeReplace(CSharpSusiki, AbsStart, AbsEnd, string.Format("Math.Abs({0})", inside));
             }
 
-            MatchPattern = $"{R_ABS}{R_MINUS}[{R_DIGIT}{R_CHAR}]+{R_ABS}";
-
-            while (Regex.IsMatch(CSharpSusiki, MatchPattern, RegexOptions.IgnoreCase) == true)
+            // =======================================================================
+            // 絶対値記号内に文字列が複数ある場合
+            // ========================================================================
+            // 正規表現とマッチしている文字列があるか判定
+            while (Regex.Match(CSharpSusiki, $"{R_ABS}{R_INNER_ABS}{R_ABS}").Success == true)
             {
-                Match m = Regex.Match(CSharpSusiki, MatchPattern, RegexOptions.IgnoreCase);
+                Match m = Regex.Match(CSharpSusiki, $"{R_ABS}{R_INNER_ABS}{R_ABS}");
+                int AbsStart = m.Index;
+                int AbsEnd = m.Index + m.Length - 1;
+                string inside = GetStringRange(CSharpSusiki, AbsStart + 1, AbsEnd - 1);
 
-                string inside = GetStringRange(CSharpSusiki, m.Index + 1, m.Index + m.Length - 2);
-                CSharpSusiki = StringRangeReplace(CSharpSusiki, m.Index, m.Index + m.Length - 1, $"abs({inside})");
-            }
-
-            string InsideFirttChar = $"{R_DIGIT}{R_CHAR}{R_START_PAREN}";
-            string InsideLastChar = $"{R_DIGIT}{R_CHAR}{R_END_PAREN}";
-            string InseideMid = $"{R_DIGIT}{R_CHAR}{R_OPER}{R_DOT}{R_START_PAREN}{R_END_PAREN}+";
-
-            MatchPattern = $"{R_ABS}[{InsideFirttChar}][{InseideMid}]+[{InsideLastChar}]{R_ABS}";
-
-            while (Regex.IsMatch(CSharpSusiki, MatchPattern, RegexOptions.IgnoreCase) == true)
-            {
-                Match m = Regex.Match(CSharpSusiki, MatchPattern, RegexOptions.IgnoreCase);
-
-                string inside = GetStringRange(CSharpSusiki, m.Index + 1, m.Index + m.Length - 2);
-                CSharpSusiki = StringRangeReplace(CSharpSusiki, m.Index, m.Index + m.Length - 1, $"abs({inside})");
-            }
-
-            MatchPattern = $"{R_ABS}{R_MINUS}[{InsideFirttChar}][{InseideMid}]+[{InsideLastChar}]{R_ABS}";
-
-            while (Regex.IsMatch(CSharpSusiki, MatchPattern, RegexOptions.IgnoreCase) == true)
-            {
-                Match m = Regex.Match(CSharpSusiki, MatchPattern, RegexOptions.IgnoreCase);
-
-                string inside = GetStringRange(CSharpSusiki, m.Index + 1, m.Index + m.Length - 2);
-                CSharpSusiki = StringRangeReplace(CSharpSusiki, m.Index, m.Index + m.Length - 1, $"abs({inside})");
+                CSharpSusiki = StringRangeReplace(CSharpSusiki, AbsStart, AbsEnd, string.Format("Math.Abs({0})", inside));
             }
 
             return CSharpSusiki;

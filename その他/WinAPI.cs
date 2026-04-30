@@ -43,6 +43,7 @@ namespace graphicbox2d
         public const int WM_MOUSE_ENTER_ON_OBJECT = WM_USER + 3;
         public const int WM_MOUSE_LEAVE_ON_OBJECT = WM_USER + 4;
         public const int WM_OBJECT_DELETE         = WM_USER + 5;
+        public const int WM_SUSIKI_CALC_ERROR     = WM_USER + 6;
     }
 
     /// <summary>

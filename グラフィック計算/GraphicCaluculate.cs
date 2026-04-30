@@ -1322,17 +1322,17 @@ namespace graphicbox2d.グラフィック計算
         /// <summary>
         /// 数式を計算して、指定範囲の点群を取得する非同期メソッド。
         /// </summary>
-        /// <param name="Susiki"></param>
-        /// <param name="StartX"></param>
-        /// <param name="EndX"></param>
-        /// <param name="CalculateInterval"></param>
-        /// <param name="ObjectID"></param>
-        /// <returns></returns>
-        public static async Task<PointF[]> SusikiCaluculate(string Susiki, double StartX, double EndX, double CalculateInterval, int ObjectID = int.MinValue)
+        /// <param name="Susiki">計算する数式</param>
+        /// <param name="StartX">計算範囲の開始X座標</param>
+        /// <param name="EndX">計算範囲の終了X座標</param>
+        /// <param name="CalculateInterval">計算間隔</param>
+        /// <param name="ObjectID">オブジェクトID（省略可能）</param>
+        /// <returns>計算結果を格納した <see cref="SusikiCalResult"/> オブジェクト</returns>
+        public static async Task<SusikiCalResult> SusikiCaluculate(string Susiki, double StartX, double EndX, double CalculateInterval, int ObjectID = int.MinValue)
         {
-            PointF[] points =  await SusikiCalculater.Caluculate(Susiki, StartX, EndX, CalculateInterval);
+            SusikiCalResult result =  await SusikiCalculater.Caluculate(Susiki, StartX, EndX, CalculateInterval);
 
-            return points;
+            return result;
         }
     }
 }
