@@ -78,6 +78,7 @@ namespace graphicbox2d.その他
 
         /// <summary>
         /// マウスから最も近いグリッドポイントまたはスナップポイント（グリッド座標系）
+        /// </summary>
         internal PointF? NearSnapPoint = null;
     }
 }
