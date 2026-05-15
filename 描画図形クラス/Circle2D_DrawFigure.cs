@@ -1,3 +1,4 @@
+using graphicbox2d.図形クラスインターフェース;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ namespace graphicbox2d.描画図形クラス
     /// <summary>
     /// 円図形描画に必要な情報をまとめたクラス
     /// </summary>
-    internal class Circle2D_DrawFigure
+    internal class Circle2D_DrawFigure : IDrawFigure
     {
         /// <summary>
         /// X座標（クライアント座標）

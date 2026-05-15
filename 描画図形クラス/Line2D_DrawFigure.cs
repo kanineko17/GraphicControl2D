@@ -1,4 +1,5 @@
-﻿using SkiaSharp;
+﻿using graphicbox2d.図形クラスインターフェース;
+using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,7 @@ namespace graphicbox2d.描画図形クラス
     /// <summary>
     /// 線図形描画に必要な情報をまとめたクラス
     /// </summary>
-    internal class Line2D_DrawFigure
+    internal class Line2D_DrawFigure : IDrawFigure
     {
         /// <summary>
         /// 始点

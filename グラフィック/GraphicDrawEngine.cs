@@ -282,8 +282,7 @@ namespace graphicbox2d
 
             if (polygon.IsSelect == true)
             {
-                SKPoint[] points = CalBoundBox.GetBoundingBoxPolygonSK(figure.Points);
-                canvas.DrawPolygon(points, m_SelectBoxPaint);
+                canvas.DrawPolygon(figure.BoundingBox, m_SelectBoxPaint);
             }
         }
 

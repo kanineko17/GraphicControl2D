@@ -1,4 +1,5 @@
-﻿using graphicbox2d.グラフィック計算;
+﻿using graphicbox2d.ENUM;
+using graphicbox2d.グラフィック計算;
 using graphicbox2d.グローバル変数;
 using graphicbox2d.その他;
 using Newtonsoft.Json;
@@ -636,12 +637,6 @@ namespace graphicbox2d
             {
                 obj.Move(deltaX, deltaY);
             }
-
-            // 再描画
-            if (IsInvalidate == true)
-            {
-                this.skControl.Invalidate();
-            }
         }
 
         // ==========================================
@@ -830,9 +825,6 @@ namespace graphicbox2d
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Error
             );
-
-            // 再描画
-            this.skControl.Invalidate();
         }
 
 
@@ -886,30 +878,23 @@ namespace graphicbox2d
         /// マウス移動イベント（デフォルトモード）
         /// </summary>
         /// <param name="e"></param>
-        /// <param name="IsInvalidate">true:再描画を実行する false:再描画を実行しない</param>
-        protected virtual void OnExMouseMove_DefaultMode(Graphic2DMouseEventArgs e, bool IsInvalidate = true)
+        /// <returns>再描画の種類</returns>
+        protected virtual eInvalidateType OnExMouseMove_DefaultMode(Graphic2DMouseEventArgs e)
         {
-            Point MouseMovement = GetMouseMovement(e);
-
-            // マウスにヒットしているオブジェクトを更新
-            if (IsDraggingObject == false)
-            {
-                // オブジェクトドラッグ操作中でない場合のみ、マウスヒットオブジェクトを更新する
-                UpdateHitClientObject(e.X, e.Y);
-            }
+            eInvalidateType invalidateType = eInvalidateType.None;
 
             // マウスホイールが押されている場合、画面移動を実行
             if (IsDraggingObject == false && MouseDownButton == MouseButtons.Middle)
             {
+                Point MouseMovement = GetMouseMovement(e);
+
                 UserMoveClientCenterPoint.X += MouseMovement.X;
                 UserMoveClientCenterPoint.Y += MouseMovement.Y;
+
+                invalidateType = eInvalidateType.Full;
             }
 
-            if (IsInvalidate == true)
-            {
-                // 再描画を実行
-                this.skControl.Invalidate();
-            }
+            return invalidateType;
         }
 
         /// <summary>
@@ -944,9 +929,16 @@ namespace graphicbox2d
         protected virtual void OnExMouseMove_SelectMode(Graphic2DMouseEventArgs e)
         {
             // デフォルトモードのマウス移動処理を実行
-            OnExMouseMove_DefaultMode(e, false);
+            OnExMouseMove_DefaultMode(e);
 
             Point MouseMovement = GetMouseMovement(e);
+
+            // マウスにヒットしているオブジェクトを更新
+            if (IsDraggingObject == false)
+            {
+                // オブジェクトドラッグ操作中でない場合のみ、マウスヒットオブジェクトを更新する
+                UpdateHitClientObject(e.X, e.Y);
+            }
 
             // オブジェクトドラッグ操作中の場合
             if (IsDraggingObject == true)
@@ -1246,8 +1238,6 @@ namespace graphicbox2d
             {
                 layer.RemoveSelectedObjects();
             }
-            // 再描画
-            this.skControl.Invalidate();
         }
 
         /// <summary>
@@ -1556,8 +1546,6 @@ namespace graphicbox2d
             {
                 return;
             }
-
-            this.skControl.Invalidate();
         }
 
         /// <summary>
@@ -2180,6 +2168,8 @@ namespace graphicbox2d
                 default:
                     break;
             }
+
+            this.skControl.Invalidate();
         }
     }
 }

@@ -20,6 +20,55 @@ namespace graphicbox2d.グラフィック計算
         /// </summary>
         private const int LINE_BOUNDING_BOX_WITDH = 4;
 
+        /// <summary>
+        /// SKPoint[] 形式のバウンディングボックスを Rectangle に変換する
+        /// </summary>
+        /// <param name="boundingBox"></param>
+        /// <returns></returns>
+        public static Rectangle ConvertBoundingBoxToRect(SKPoint[] boundingBox)
+        {
+            // nullチェックや要素数チェックは必要に応じて残す
+            if (boundingBox == null || boundingBox.Length < 4)
+                return Rectangle.Empty;
+
+            // 最初の要素で初期化
+            float minX = boundingBox[0].X;
+            float minY = boundingBox[0].Y;
+            float maxX = boundingBox[0].X;
+            float maxY = boundingBox[0].Y;
+
+            // 2点目以降を比較（LINQを使わず直接アクセス）
+            for (int i = 1; i < 4; i++)
+            {
+                float x = boundingBox[i].X;
+                float y = boundingBox[i].Y;
+
+                if (x < minX)
+                { 
+                    minX = x; 
+                }
+                else if (x > maxX) 
+                { 
+                    maxX = x; 
+                }
+
+                if (y < minY) 
+                { 
+                    minY = y; 
+                }
+                else if (y > maxY) 
+                { 
+                    maxY = y; 
+                }
+            }
+            return new Rectangle(
+                (int)minX,
+                (int)minY,
+                (int)(maxX - minX),
+                (int)(maxY - minY)
+            );
+        }
+
         // ===============================================================================
         // バウンディングボックス取得関数
         // ===============================================================================
