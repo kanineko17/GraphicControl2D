@@ -202,9 +202,7 @@ namespace graphicbox2d
             // 選択状態なら選択ボックスを描画
             if (line.IsSelect == true)
             {
-                SKPoint[] points = CalBoundBox.GetBoundingBoxLineSK(figure.Start, figure.End, line.Width);
-
-                canvas.DrawPolygon(points, m_SelectBoxPaint);
+                canvas.DrawPolygon(figure.BoundingBox, m_SelectBoxPaint);
             }
         }
 
@@ -249,8 +247,7 @@ namespace graphicbox2d
 
             if (circle.IsSelect == true)
             {
-                SKPoint[] points = CalBoundBox.GetBoundingBoxCircleSK(figure.X, figure.Y, figure.R);
-                canvas.DrawPolygon(points, m_SelectBoxPaint);
+                canvas.DrawPolygon(figure.BoundingBox, m_SelectBoxPaint);
             }
         }
 
@@ -304,8 +301,7 @@ namespace graphicbox2d
             // 選択中の場合はハイライト描画
             if (arrow.IsSelect == true)
             {
-                SKPoint[] points = CalBoundBox.GetBoundingBoxLineSK(figure.Start, figure.End, arrow.Width);
-                canvas.DrawPolygon(points, m_SelectBoxPaint);
+                canvas.DrawPolygon(figure.BoundingBox, m_SelectBoxPaint);
             }
         }
         /// <summary>
@@ -348,11 +344,7 @@ namespace graphicbox2d
 
                 if (text.IsSelect)
                 {
-                    var points = CalBoundBox.GetBoundingBoxTextSK(
-                        figure.ClientPoint.X, figure.ClientPoint.Y,
-                        font, figure.Text, figure.Angle, eCalculateType.Client);
-
-                    canvas.DrawPolygon(points, m_SelectBoxPaint);
+                    canvas.DrawPolygon(figure.BoundingBox, m_SelectBoxPaint);
                 }
             }
             finally
@@ -398,8 +390,7 @@ namespace graphicbox2d
 
             if (arc.IsSelect == true)
             {
-                SKPoint[] points = CalBoundBox.GetBoundingBoxCircleSK(figure.X, figure.Y, figure.R);
-                canvas.DrawPolygon(points, m_SelectBoxPaint);
+                canvas.DrawPolygon(figure.BoundingBox, m_SelectBoxPaint);
             }
         }
 
@@ -425,8 +416,7 @@ namespace graphicbox2d
 
             if (graph.IsSelect == true)
             {
-                SKPoint[] points = CalBoundBox.GetBoundingBoxPolygonSK(figure.Points);
-                canvas.DrawPolygon(points, m_SelectBoxPaint);
+                canvas.DrawPolygon(figure.BoundingBox, m_SelectBoxPaint);
             }
         }
 
@@ -448,7 +438,7 @@ namespace graphicbox2d
             if (group.IsSelect == true)
             {
                 Group2D_DrawFigure figure = group.GetDrawFigure(drawType) as Group2D_DrawFigure;
-                canvas.DrawPolygon(figure.BoundingBoxPoints, m_SelectBoxPaint);
+                canvas.DrawPolygon(figure.BoundingBox, m_SelectBoxPaint);
             }
         }
 
@@ -466,8 +456,7 @@ namespace graphicbox2d
 
             if (image.IsSelect == true)
             {
-                SKPoint[] ClientBoundingBox = CalBoundBox.GetBoundingBoxSK(figure.X, figure.Y, figure.Bitmap.Width, figure.Bitmap.Height, figure.Angle, eCalculateType.Client, eRotateType.Center);
-                canvas.DrawPolygon(ClientBoundingBox, m_SelectBoxPaint);
+                canvas.DrawPolygon(figure.BoundingBox, m_SelectBoxPaint);
             }
         }
 
