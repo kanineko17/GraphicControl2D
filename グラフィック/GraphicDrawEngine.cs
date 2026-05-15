@@ -349,6 +349,7 @@ namespace graphicbox2d
             }
             finally
             {
+                font.Dispose();
             }
         }
 

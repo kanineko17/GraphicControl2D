@@ -59,6 +59,7 @@ namespace graphicbox2d
         /// グリッド用フォント
         /// </summary>
         public SKFont GridSKFont => GetGridSKFont();
+        private SKFont _GridSKFont = null;
 
         /// <summary>
         /// グリッドパス
@@ -522,9 +523,14 @@ namespace graphicbox2d
         {
             Font OriginalFont = m_Graphic2DControl.Font;
 
-            SKFont sKFont = DrawManager.GetSKFont(OriginalFont.SystemFontName, OriginalFont.Size * 1.33f * Graphic2DControl.UserZoom, OriginalFont.Style.ToSKFontStyle());
+            if(_GridSKFont!=null)
+            {
+                _GridSKFont.Dispose();
+            }
 
-            return sKFont;
+            _GridSKFont = DrawManager.GetSKFont(OriginalFont.SystemFontName, OriginalFont.Size * 1.33f * Graphic2DControl.UserZoom, OriginalFont.Style.ToSKFontStyle());
+
+            return _GridSKFont;
         }
 
         /// <summary>

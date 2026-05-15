@@ -57,14 +57,22 @@ namespace graphicbox2d.描画図形クラス
         /// <returns></returns>
         public SKPoint[] GetBoundingBox()
         {
-            using SKFont font = DrawManager.GetSKFont(FontName, FontSize);
-            return CalBoundBox.GetBoundingBoxTextSK(
-                ClientPoint.X,
-                ClientPoint.Y,
-                font,
-                Text,
-                Angle,
-                eCalculateType.Client);
+            SKFont font = DrawManager.GetSKFont(FontName, FontSize);
+
+            try
+            {
+                return CalBoundBox.GetBoundingBoxTextSK(
+                    ClientPoint.X,
+                    ClientPoint.Y,
+                    font,
+                    Text,
+                    Angle,
+                    eCalculateType.Client);
+            }
+            finally
+            {
+                font.Dispose(); 
+            }
         }
 
         /// <summary>
