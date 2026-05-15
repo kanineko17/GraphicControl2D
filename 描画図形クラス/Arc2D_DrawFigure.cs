@@ -1,7 +1,9 @@
+using graphicbox2d.グラフィック計算;
 using graphicbox2d.図形クラスインターフェース;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -42,5 +44,33 @@ namespace graphicbox2d.描画図形クラス
         /// 円弧の両サイドの線を描画するかどうか
         /// </summary>
         public bool IsDrawSideLines { get; set; }
+
+        /// <summary>
+        /// クライアント座標のバウンディングボックス
+        /// </summary>
+        public SKPoint[] BoundingBox => GetBoundingBox();
+
+        /// <summary>
+        /// クライアント座標のバウンディングボックスを表す矩形
+        /// </summary>
+        public Rectangle BoundingBoxRect => GetBoundingBoxRect();
+
+        /// <summary>
+        /// クライアント座標のバウンディングボックスを取得する
+        /// </summary>
+        /// <returns></returns>
+        public SKPoint[] GetBoundingBox()
+        {
+            return CalBoundBox.GetBoundingBoxCircleSK(X, Y, R);
+        }
+
+        /// <summary>
+        /// クライアント座標のバウンディングボックスを表す矩形
+        /// </summary>
+        /// <returns></returns>
+        public Rectangle GetBoundingBoxRect()
+        {
+            return CalBoundBox.ConvertBoundingBoxToRect(BoundingBox);
+        }
     }
 }
