@@ -78,6 +78,11 @@ namespace graphicbox2d
         internal const float MOUSE_HIT_SNAP_POINT_R = 8;
 
         /// <summary>
+        /// スナップポイントの描画の矩形のオフセット値
+        /// </summary>
+        internal const float SNAP_POINT_RECT_OFFSET = 10;
+
+        /// <summary>
         /// マウスヒット範囲クライアント座標系）
         /// </summary>
         internal const float MOUSE_NEAR_SNAP_POINT_R = 50;

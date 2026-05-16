@@ -248,7 +248,7 @@ namespace graphicbox2d
         /// Rectangle型のバウンディングボックスを取得する（クライアント座標）
         /// </summary>
         /// <returns>バウンディングボックスの矩形</returns>
-        internal virtual Rectangle GetDrawBoundingBoxRect()
+        internal virtual Rectangle GetInvalidateRect()
         {
             return default;
         }

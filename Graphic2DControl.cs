@@ -811,7 +811,7 @@ namespace graphicbox2d
             Graph2D_DrawFigure drawFigure = e.Object.GetDrawFigure(eDrawFigureType.Normal) as Graph2D_DrawFigure;
 
             // 再描画
-            this.skControl.Invalidate(drawFigure.BoundingBoxRect);
+            this.skControl.Invalidate(drawFigure.InvalidateRect);
         }
 
         /// <summary>
@@ -922,7 +922,7 @@ namespace graphicbox2d
                 HitClientObject.IsSelect = !HitClientObject.IsSelect;
 
                 // 再描画
-                Invalidate();
+                this.skControl.Invalidate(HitClientObject.GetInvalidateRect());
             }
         }
 
@@ -960,11 +960,11 @@ namespace graphicbox2d
 
                 if (HitClientObject != null)
                 {
-                    Rectangle BeforeMoveRect = HitClientObject.GetDrawBoundingBoxRect();
+                    Rectangle BeforeMoveRect = HitClientObject.GetInvalidateRect();
 
                     HitClientObject.Move(GridMouseMovement);
 
-                    Rectangle AfterMoveRect = HitClientObject.GetDrawBoundingBoxRect();
+                    Rectangle AfterMoveRect = HitClientObject.GetInvalidateRect();
 
                     invalidateMoveRect = Rectangle.Union(BeforeMoveRect, AfterMoveRect);
 
@@ -1018,6 +1018,9 @@ namespace graphicbox2d
         /// <param name="e"></param>
         private void OnMouseClick_SnapMode(Graphic2DMouseEventArgs e)
         {
+            eInvalidateType invalidateType = eInvalidateType.None;
+            Rectangle invalidateRect = default;
+
             switch (SnapDataPack.CurrentStep)
             {
                 case eMode_Snap.Step1:
@@ -1026,16 +1029,30 @@ namespace graphicbox2d
                     {
                         SnapDataPack.Step2.SnappingObject = HitClientObject;
                         SnapDataPack.CurrentStep = eMode_Snap.Step2;
+
+                        invalidateType = eInvalidateType.Rect;
+                        invalidateRect = HitClientObject.GetInvalidateRect();
                     }
+
                     break;
                 case eMode_Snap.Step2:
                     // STEP2の処理
 
                     if (SnapDataPack.Step2.HitSnapPoint != null)
                     {
+                        Point MousePosition = new Point(e.X, e.Y);
+                        PointF GridMousePoint = CalConvert.ConvertClientPointToDisplayGridPoint(MousePosition);
+
+                        List<PointF> AllSnapPoints = _DRAW_ENGINE.m_GridManager.GridPoints;
+
                         SnapDataPack.Step3.SnappingObject = SnapDataPack.Step2.SnappingObject;
                         SnapDataPack.Step3.SelectSnapPoint = SnapDataPack.Step2.HitSnapPoint;
+                        SnapDataPack.Step3.NearSnapPoint = GetMouseNearestSnapPoint(GridMousePoint.X, GridMousePoint.Y, AllSnapPoints);
+
                         SnapDataPack.CurrentStep = eMode_Snap.Step3;
+
+                        invalidateType = eInvalidateType.Rect;
+                        invalidateRect = HitClientObject.GetInvalidateRect();
                     }
 
                     break;
@@ -1045,9 +1062,23 @@ namespace graphicbox2d
                     float moveX = SnapDataPack.Step3.NearSnapPoint.Value.X - SnapDataPack.Step3.SelectSnapPoint.Value.X;
                     float moveY = SnapDataPack.Step3.NearSnapPoint.Value.Y - SnapDataPack.Step3.SelectSnapPoint.Value.Y;
 
+                    Rectangle beforeRect = SnapDataPack.Step3.SnappingObject.GetInvalidateRect();
+
                     SnapDataPack.Step3.SnappingObject.Move(moveX, moveY);
+
+                    Rectangle afterRect = SnapDataPack.Step3.SnappingObject.GetInvalidateRect();
+
                     SnapDataPack.CurrentStep = eMode_Snap.Step1;
+
+                    invalidateType = eInvalidateType.Rect;
+                    invalidateRect = Rectangle.Union(beforeRect, afterRect);
+
                     break;
+            }
+
+            if(invalidateType == eInvalidateType.Rect)
+            {
+                this.skControl.Invalidate(invalidateRect);
             }
         }
 
@@ -1072,6 +1103,11 @@ namespace graphicbox2d
                     // STEP2の処理
                     // デフォルトモードのマウス移動処理を実行
                     invalidateType = OnExMouseMove_DefaultMode(e);
+
+                    // マウスヒットしているオブジェクトを更新する
+                    eInvalidateType invalidateType2 = UpdateHitClientObject(e.X, e.Y, out invalidateRect);
+                    UpdateInvalidateType(ref invalidateType, invalidateType2);
+
                     break;
                 case eMode_Snap.Step2:
                     // STEP2の処理
@@ -1083,7 +1119,7 @@ namespace graphicbox2d
                     // マウスヒットしているスナップポイントを更新する
                     if (HitSnapPoint != SnapDataPack.Step2.HitSnapPoint)
                     {
-                        invalidateRect = GetSnapPointsRect(HitSnapPoint, SnapDataPack.Step2.HitSnapPoint, GraphicDrawEngine.MOUSE_HIT_SNAP_POINT_R);
+                        invalidateRect = GetSnapPointsRect(HitSnapPoint, SnapDataPack.Step2.HitSnapPoint, GraphicDrawEngine.SNAP_POINT_RECT_OFFSET);
 
                         UpdateInvalidateType(ref invalidateType, eInvalidateType.Rect);
 
@@ -1096,6 +1132,9 @@ namespace graphicbox2d
                     // デフォルトモードのマウス移動処理を実行
                     invalidateType = OnExMouseMove_DefaultMode(e);
 
+                    // マウスヒットしているオブジェクトを更新する
+                    UpdateHitClientObject(e.X, e.Y);
+
                     List<PointF> AllSnapPoints = _DRAW_ENGINE.m_GridManager.GridPoints;
 
                     if (HitClientObject != null)
@@ -1107,7 +1146,12 @@ namespace graphicbox2d
 
                     if(NearSnapPoint != SnapDataPack.Step3.NearSnapPoint)
                     {
-                        invalidateRect = GetSnapPointsRect(NearSnapPoint, SnapDataPack.Step3.NearSnapPoint, GraphicDrawEngine.MOUSE_HIT_SNAP_POINT_R);
+                        List<PointF?> invalidateSnapPoints = new List<PointF?>();
+                        invalidateSnapPoints.Add(NearSnapPoint);
+                        invalidateSnapPoints.Add(SnapDataPack.Step3.NearSnapPoint);
+                        invalidateSnapPoints.Add(SnapDataPack.Step3.SelectSnapPoint);
+
+                        invalidateRect = GetSnapPointsRect(invalidateSnapPoints, GraphicDrawEngine.SNAP_POINT_RECT_OFFSET);
 
                         UpdateInvalidateType(ref invalidateType, eInvalidateType.Rect);
 
@@ -1212,7 +1256,7 @@ namespace graphicbox2d
                         continue;
                     }
 
-                    Rectangle objectRect = object2D.GetDrawBoundingBoxRect();
+                    Rectangle objectRect = object2D.GetInvalidateRect();
 
                     if(objectRect.IntersectsWith(invalidateRect) == false)
                     {
@@ -1366,6 +1410,18 @@ namespace graphicbox2d
         /// </summary>
         /// <param name="X">マウスX座標(クライアント座標)</param>
         /// <param name="Y">マウスY座標（クライアント座標）</param>
+        private void UpdateHitClientObject(int X, int Y)
+        {
+            Rectangle InvalidateRect;
+
+            UpdateHitClientObject(X, Y, out InvalidateRect);
+        }
+
+        /// <summary>
+        /// マウスにヒットしているオブジェクトを更新する
+        /// </summary>
+        /// <param name="X">マウスX座標(クライアント座標)</param>
+        /// <param name="Y">マウスY座標（クライアント座標）</param>
         /// <param name="InvalidateRect">再描画する矩形領域</param>
         /// <returns>再描画の種類</returns>
         private eInvalidateType UpdateHitClientObject(int X, int Y, out Rectangle InvalidateRect)
@@ -1467,12 +1523,12 @@ namespace graphicbox2d
 
                 if (Old_HitClientObject != null)
                 {
-                    invalidateRects.Add(Old_HitClientObject.GetDrawBoundingBoxRect());
+                    invalidateRects.Add(Old_HitClientObject.GetInvalidateRect());
                 }
 
                 if (HitClientObject != null)
                 {
-                    invalidateRects.Add(HitClientObject.GetDrawBoundingBoxRect());
+                    invalidateRects.Add(HitClientObject.GetInvalidateRect());
                 }
 
                 InvalidateRect = CalBoundBox.GetUnionRect(invalidateRects);
@@ -1772,13 +1828,57 @@ namespace graphicbox2d
         }
 
         /// <summary>
+        /// 全てのスナップポイントを完全に包含する矩形を取得する
+        /// </summary>
+        /// <param name="snapPoints">スナップポイントリスト</param>
+        /// <param name="padding">スナップポイントの矩形のオフセット値（クライアント座標）</param>
+        /// <returns>すべてのスナップポイントを包含する最小の矩形(クライアント座標)</returns>
+        public Rectangle GetSnapPointsRect(List<PointF?> snapPoints, float padding)
+        {
+            if (snapPoints == null || snapPoints.Count == 0)
+            {
+                return default;
+            }
+
+            List<PointF> validSnapPoints = snapPoints.Where(p => p != null).Select(p => p.Value).ToList();
+
+            // スナップポイントを全て包含する矩形を取得する
+            Rectangle snapPointsRect = default;
+
+            // minx, miny, maxx, maxy を初期化する
+            float minX = float.MaxValue;
+            float minY = float.MaxValue;
+            float maxX = float.MinValue;
+            float maxY = float.MinValue;
+
+            foreach (PointF snapPoint in validSnapPoints)
+            {
+                SKPoint cliSnapPoint = CalConvert.ConvertDisplayGridPointToClientPoint(snapPoint);
+
+                minX = Math.Min(minX, cliSnapPoint.X);
+                minY = Math.Min(minY, cliSnapPoint.Y);
+                maxX = Math.Max(maxX, cliSnapPoint.X);
+                maxY = Math.Max(maxY, cliSnapPoint.Y);
+            }
+
+            // スナップポイントを完全に包含する矩形を作成する
+            snapPointsRect = new Rectangle(
+                (int)(minX - padding), 
+                (int)(minY - padding), 
+                (int)(maxX - minX + 2 * padding), 
+                (int)(maxY - minY + 2 * padding));
+
+            return snapPointsRect;  
+        }
+
+        /// <summary>
         /// スナップポイントを完全に包含する矩形を取得する
         /// </summary>
         /// <param name="snapPoint1">スナップポイント1(グリッド座標)</param>
         /// <param name="snapPoint2">スナップポイント2(グリッド座標)</param>
-        /// <param name="SnapPointR">スナップポイントの半径（クライアント座標）</param>
+        /// <param name="padding">スナップポイントの矩形のオフセット値（クライアント座標）</param>
         /// <returns>すべてのスナップポイントを包含する最小の矩形(クライアント座標)</returns>
-        public static Rectangle GetSnapPointsRect(PointF? snapPoint1, PointF? snapPoint2, float SnapPointR)
+        public Rectangle GetSnapPointsRect(PointF? snapPoint1, PointF? snapPoint2, float padding)
         {
             if (snapPoint1 == null && snapPoint2 == null)
             {
@@ -1786,15 +1886,15 @@ namespace graphicbox2d
             }
             else if (snapPoint1 != null && snapPoint2 == null)
             {
-                return GetSnapPointRect(snapPoint1.Value, SnapPointR);
+                return GetSnapPointRect(snapPoint1.Value, padding);
             }
             else if (snapPoint1 == null && snapPoint2 != null)
             {
-                return GetSnapPointRect(snapPoint2.Value, SnapPointR);
+                return GetSnapPointRect(snapPoint2.Value, padding);
             }
             else
             {
-                return GetSnapPointsRect(snapPoint1.Value, snapPoint2.Value, SnapPointR);
+                return GetSnapPointsRect(snapPoint1.Value, snapPoint2.Value, padding);
             }
         }
 
@@ -1802,15 +1902,15 @@ namespace graphicbox2d
         /// スナップポイントを完全に包含する矩形を取得する
         /// </summary>
         /// <param name="snapPoint">スナップポイント(グリッド座標)</param>
-        /// <param name="SnapPointR">スナップポイントの半径（クライアント座標）</param>
+        /// <param name="padding">スナップポイントの矩形のオフセット値（クライアント座標）</param>
         /// <returns>スナップポイントを包含する矩形(クライアント座標)</returns>
-        public static Rectangle GetSnapPointRect(PointF snapPoint, float SnapPointR)
+        public Rectangle GetSnapPointRect(PointF snapPoint, float padding)
         {
             SKPoint cliSnapPoint = CalConvert.ConvertDisplayGridPointToClientPoint(snapPoint);
-            float left = cliSnapPoint.X - SnapPointR;
-            float top = cliSnapPoint.Y - SnapPointR;
-            float right = cliSnapPoint.X + SnapPointR;
-            float bottom = cliSnapPoint.Y + SnapPointR;
+            float left = cliSnapPoint.X - padding;
+            float top = cliSnapPoint.Y - padding;
+            float right = cliSnapPoint.X + padding;
+            float bottom = cliSnapPoint.Y + padding;
             return new Rectangle((int)left, (int)top, (int)(right - left), (int)(bottom - top));
         }
 
@@ -1819,17 +1919,17 @@ namespace graphicbox2d
         /// </summary>
         /// <param name="snapPoint1">スナップポイント1(グリッド座標)</param>
         /// <param name="snapPoint2">スナップポイント2(グリッド座標)</param>
-        /// <param name="SnapPointR">スナップポイントの半径（クライアント座標）</param>
+        /// <param name="padding">スナップポイントの矩形のオフセット値（クライアント座標）</param>
         /// <returns>すべてのスナップポイントを包含する最小の矩形(クライアント座標)</returns>
-        public static Rectangle GetSnapPointsRect(PointF snapPoint1, PointF snapPoint2, float SnapPointR)
+        public Rectangle GetSnapPointsRect(PointF snapPoint1, PointF snapPoint2, float padding)
         {
             SKPoint cliSnapPoint1 = CalConvert.ConvertDisplayGridPointToClientPoint(snapPoint1);
             SKPoint cliSnapPoint2 = CalConvert.ConvertDisplayGridPointToClientPoint(snapPoint2);
 
-            float left = Math.Min(cliSnapPoint1.X, cliSnapPoint2.X) - SnapPointR;
-            float top = Math.Min(cliSnapPoint1.Y, cliSnapPoint2.Y) - SnapPointR;
-            float right = Math.Max(cliSnapPoint1.X, cliSnapPoint2.X) + SnapPointR;
-            float bottom = Math.Max(cliSnapPoint1.Y, cliSnapPoint2.Y) + SnapPointR;
+            float left = Math.Min(cliSnapPoint1.X, cliSnapPoint2.X) - padding;
+            float top = Math.Min(cliSnapPoint1.Y, cliSnapPoint2.Y) - padding;
+            float right = Math.Max(cliSnapPoint1.X, cliSnapPoint2.X) + padding;
+            float bottom = Math.Max(cliSnapPoint1.Y, cliSnapPoint2.Y) + padding;
 
             return new Rectangle((int)left, (int)top, (int)(right - left), (int)(bottom - top));
         }

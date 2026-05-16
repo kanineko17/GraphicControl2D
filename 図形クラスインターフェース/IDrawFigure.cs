@@ -16,8 +16,8 @@ namespace graphicbox2d.図形クラスインターフェース
         SKPoint[] BoundingBox { get;}
 
         /// <summary>
-        /// クライアント座標のバウンディングボックスを表す矩形
+        /// クライアント座標の再描画領域を表す矩形
         /// </summary>
-        Rectangle BoundingBoxRect { get;}
+        Rectangle InvalidateRect { get;}
     }
 }

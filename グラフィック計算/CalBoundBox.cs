@@ -44,8 +44,9 @@ namespace graphicbox2d.グラフィック計算
         /// SKPoint[] 形式のバウンディングボックスを Rectangle に変換する
         /// </summary>
         /// <param name="boundingBox"></param>
+        /// <param name="padding">バウンディングボックスに追加する余白</param>
         /// <returns></returns>
-        public static Rectangle ConvertBoundingBoxToRect(SKPoint[] boundingBox)
+        public static Rectangle ConvertBoundingBoxToRect(SKPoint[] boundingBox, float padding = 0)
         {
             // nullチェックや要素数チェックは必要に応じて残す
             if (boundingBox == null || boundingBox.Length < 4)
@@ -64,28 +65,28 @@ namespace graphicbox2d.グラフィック計算
                 float y = boundingBox[i].Y;
 
                 if (x < minX)
-                { 
-                    minX = x; 
+                {
+                    minX = x;
                 }
                 else if (x > maxX) 
-                { 
-                    maxX = x; 
+                {
+                    maxX = x;
                 }
 
                 if (y < minY) 
-                { 
-                    minY = y; 
+                {
+                    minY = y;
                 }
                 else if (y > maxY) 
-                { 
-                    maxY = y; 
+                {
+                    maxY = y;
                 }
             }
             return new Rectangle(
-                (int)minX,
-                (int)minY,
-                (int)(maxX - minX),
-                (int)(maxY - minY)
+                (int)(minX - padding),
+                (int)(minY - padding),
+                (int)(maxX - minX) + 2 * (int)padding,
+                (int)(maxY - minY) + 2 * (int)padding
             );
         }
 

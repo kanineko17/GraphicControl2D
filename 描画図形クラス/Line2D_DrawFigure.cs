@@ -13,7 +13,7 @@ namespace graphicbox2d.描画図形クラス
     /// <summary>
     /// 線図形描画に必要な情報をまとめたクラス
     /// </summary>
-    internal class Line2D_DrawFigure : IDrawFigure
+    internal class Line2D_DrawFigure : Object2D_DrawFigure, IDrawFigure
     {
         /// <summary>
         /// 始点
@@ -36,9 +36,9 @@ namespace graphicbox2d.描画図形クラス
         public SKPoint[] BoundingBox => GetBoundingBox();
 
         /// <summary>
-        /// クライアント座標のバウンディングボックスを表す矩形
+        /// クライアント座標の再描画領域を表す矩形
         /// </summary>
-        public Rectangle BoundingBoxRect => GetBoundingBoxRect();
+        public Rectangle InvalidateRect => GetInvalidateRect();
 
         /// <summary>
         /// クライアント座標のバウンディングボックスを取得する
@@ -50,12 +50,12 @@ namespace graphicbox2d.描画図形クラス
         }
 
         /// <summary>
-        /// クライアント座標のバウンディングボックスを表す矩形
+        /// クライアント座標の再描画領域を表す矩形
         /// </summary>
         /// <returns></returns>
-        public Rectangle GetBoundingBoxRect()
+        public Rectangle GetInvalidateRect()
         {
-            return CalBoundBox.ConvertBoundingBoxToRect(BoundingBox);
+            return CalBoundBox.ConvertBoundingBoxToRect(BoundingBox, DEF_INVALIDATE_OFFSET);
         }
     }
 }

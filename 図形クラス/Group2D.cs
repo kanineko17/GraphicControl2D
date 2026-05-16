@@ -264,10 +264,10 @@ namespace graphicbox2d
         /// Rectangle型のバウンディングボックスを取得する（クライアント座標）
         /// </summary>
         /// <returns>バウンディングボックスの矩形</returns>
-        internal override Rectangle GetDrawBoundingBoxRect()
+        internal override Rectangle GetInvalidateRect()
         {
             IDrawFigure figure = GetDrawFigure(eDrawFigureType.Normal) as IDrawFigure;
-            return figure.BoundingBoxRect;
+            return figure.InvalidateRect;
         }
 
         /// <summary>
