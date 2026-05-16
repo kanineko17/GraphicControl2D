@@ -1,4 +1,5 @@
 ﻿using graphicbox2d.グラフィック計算;
+using graphicbox2d.図形クラスインターフェース;
 using graphicbox2d.描画図形クラス;
 using SkiaSharp;
 using System;
@@ -235,6 +236,24 @@ namespace graphicbox2d
             figure.Points = Points.Select(pt => CalConvert.ConvertDisplayGridPointToClientPoint(pt)).ToArray();
 
             return figure;
+        }
+
+        /// <summary>
+        /// Rectangle型のバウンディングボックスを取得する（クライアント座標）
+        /// </summary>
+        /// <returns>バウンディングボックスの矩形</returns>
+        internal override Rectangle GetDrawBoundingBoxRect()
+        {
+            IDrawFigure figure = GetDrawFigure(eDrawFigureType.Normal) as IDrawFigure;
+            
+            if(figure == null)
+            {
+                return Rectangle.Empty;
+            }
+            else
+            {
+                return figure.BoundingBoxRect;
+            }
         }
 
         /// <summary>

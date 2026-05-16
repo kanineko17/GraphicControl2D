@@ -235,6 +235,7 @@ namespace graphicbox2d
 
         /// <summary>
         /// 描画に必要な情報をまとめたクラスを返す。
+        /// （クライアント座標）
         /// </summary>
         /// <param name="type">描画タイプ</param>
         /// <returns>描画用のデータをまとめたクラス</returns>
@@ -243,6 +244,14 @@ namespace graphicbox2d
             return null;
         }
 
+        /// <summary>
+        /// Rectangle型のバウンディングボックスを取得する（クライアント座標）
+        /// </summary>
+        /// <returns>バウンディングボックスの矩形</returns>
+        internal virtual Rectangle GetDrawBoundingBoxRect()
+        {
+            return default;
+        }
 
         /// <summary>
         /// ドキュメントデータを取り込む

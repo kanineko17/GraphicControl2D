@@ -21,6 +21,26 @@ namespace graphicbox2d.グラフィック計算
         private const int LINE_BOUNDING_BOX_WITDH = 4;
 
         /// <summary>
+        /// 複数の Rectangle を受け取り、それらを完全に包含する最小の Rectangle を返す。
+        /// </summary>
+        /// <param name="rects">対象となる Rectangle のコレクション</param>
+        /// <returns>すべての Rectangle を包含する最小の Rectangle</returns>
+        public static Rectangle GetUnionRect(IEnumerable<Rectangle> rects)
+        {
+            if (rects == null || !rects.Any())
+                return Rectangle.Empty;
+
+            // すべての四角形から、一番左、一番上、一番右、一番下 の座標を割り出す
+            int minX = rects.Min(r => r.Left);
+            int minY = rects.Min(r => r.Top);
+            int maxX = rects.Max(r => r.Right);
+            int maxY = rects.Max(r => r.Bottom);
+
+            // 一番外側の座標を元に、新しい Rectangle を作成して返す
+            return Rectangle.FromLTRB(minX, minY, maxX, maxY);
+        }
+
+        /// <summary>
         /// SKPoint[] 形式のバウンディングボックスを Rectangle に変換する
         /// </summary>
         /// <param name="boundingBox"></param>

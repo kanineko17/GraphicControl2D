@@ -1,6 +1,7 @@
 ﻿using graphicbox2d.グラフィック計算;
 using graphicbox2d.グローバル変数;
 using graphicbox2d.その他;
+using graphicbox2d.図形クラスインターフェース;
 using graphicbox2d.描画図形クラス;
 using Newtonsoft.Json.Linq;
 using SkiaSharp;
@@ -452,6 +453,16 @@ namespace graphicbox2d
             }
 
             return figure;
+        }
+
+        /// <summary>
+        /// Rectangle型のバウンディングボックスを取得する（クライアント座標）
+        /// </summary>
+        /// <returns>バウンディングボックスの矩形</returns>
+        internal override Rectangle GetDrawBoundingBoxRect()
+        {
+            IDrawFigure figure = GetDrawFigure(eDrawFigureType.Normal) as IDrawFigure;
+            return figure.BoundingBoxRect;
         }
 
         /// <summary>
