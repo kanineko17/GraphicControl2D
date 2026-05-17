@@ -147,7 +147,15 @@ namespace graphicbox2d
         [Browsable(true)]
         [Description("マウス座標やズーム率等の情報をコントロールに表示します")]
         [Category("動作")]
-        public bool IsShowInfoText { get { return _IsShowInfoText; } set { SetWithInvalidate(ref _IsShowInfoText, in value); } }
+        public bool IsShowInfoText
+        {
+            get { return _IsShowInfoText; }
+            set
+            {
+                SetWithInvalidate(ref _IsShowInfoText, in value);
+                if (_infoLabel != null) _infoLabel.Visible = value;
+            }
+        }
         private bool _IsShowInfoText = true;
 
         /// <summary>
@@ -156,7 +164,19 @@ namespace graphicbox2d
         [Browsable(true)]
         [Description("情報テキストのフォントを指定します。")]
         [Category("動作")]
-        public Font InfoTextFont { get { return _InfoTextFont; } set { SetWithInvalidate(ref _InfoTextFont, in value); } }
+        public Font InfoTextFont
+        {
+            get { return _InfoTextFont; }
+            set
+            {
+                SetWithInvalidate(ref _InfoTextFont, in value);
+                if (_infoLabel != null)
+                {
+                    _infoLabel.Font = value;
+                    _infoLabel.Height = value.Height + INFO_LABEL_VERTICAL_PADDING;
+                }
+            }
+        }
         private Font _InfoTextFont = new Font("Yu Gothic", 9F, FontStyle.Regular, GraphicsUnit.Point, 128);
 
         /// <summary>
