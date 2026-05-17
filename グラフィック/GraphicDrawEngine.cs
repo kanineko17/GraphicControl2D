@@ -707,27 +707,6 @@ namespace graphicbox2d
         }
 
         /// <summary>
-        /// 情報テキスト文字列を取得する
-        /// </summary>
-        /// <returns>マウス位置・ズーム率などの情報テキスト文字列</returns>
-        public string GetInfoText()
-        {
-            PointF gridMousePoint = GetGridMousePoint();
-
-            string mousePosText = string.Format("Mouse Position : X={0:0.0000}, Y={1:0.0000}", gridMousePoint.X, gridMousePoint.Y);
-            string scaleText = string.Format("Zoom : {0:0.00}%", Graphic2DControl.UserZoom * 100);
-
-            string text = mousePosText + "    " + scaleText;
-
-            if (m_Parent.IsCaluculatingSusiki == true)
-            {
-                text += "    " + CALUCULATING_TEXT;
-            }
-
-            return text;
-        }
-
-        /// <summary>
         /// 情報テキストの表示位置データを更新
         /// </summary>
         /// <param name="Text">表示するテキスト文字列。</param>

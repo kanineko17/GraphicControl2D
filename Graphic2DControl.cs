@@ -364,11 +364,6 @@ namespace graphicbox2d
         /// </summary>
         internal const float MOUSE_HIT_RANGE = 0.1f;
 
-        /// <summary>
-        /// 情報テキストラベルの縦方向パディング（ピクセル）
-        /// </summary>
-        private const int INFO_LABEL_VERTICAL_PADDING = 8;
-
         // ===============================================================================
         // プロパティ
         // ===============================================================================
@@ -464,11 +459,6 @@ namespace graphicbox2d
         /// SkiaSharpコントロール
         /// </summary>
         internal SKControl skControl;
-
-        /// <summary>
-        /// 情報テキストラベル（マウス位置・ズーム率などを表示する）
-        /// </summary>
-        private Label _infoLabel;
 
         /// <summary>
         /// バックグラウンドビットマップ（SkiaSharp描画用）
@@ -2114,10 +2104,10 @@ namespace graphicbox2d
                     break;
             }
 
-            // 情報テキストラベルを更新
-            if (IsShowInfoText == true && _infoLabel != null)
+            // マウス座標テキストを描画
+            if (IsShowInfoText == true)
             {
-                _infoLabel.Text = _DRAW_ENGINE.GetInfoText();
+                _DRAW_ENGINE.DrawInfoText(e.Surface.Canvas);
             }
         }
 
@@ -2159,22 +2149,6 @@ namespace graphicbox2d
                 skControl.KeyDown += SkControl_KeyDown;
 
                 Controls.Add(skControl);
-
-                // 情報テキストラベルの初期化（コントロール下部に配置）
-                _infoLabel = new Label
-                {
-                    Dock = DockStyle.Bottom,
-                    Height = InfoTextFont.Height + INFO_LABEL_VERTICAL_PADDING,
-                    BackColor = Color.FromArgb(45, 45, 45),
-                    ForeColor = Color.White,
-                    Font = InfoTextFont,
-                    TextAlign = ContentAlignment.MiddleLeft,
-                    Padding = new Padding(4, 0, 0, 0),
-                    Visible = IsShowInfoText,
-                    AutoSize = false,
-                };
-                Controls.Add(_infoLabel);
-
                 skControl.Focus(); // ← 起動直後にキー入力を受けるため
             }
 
