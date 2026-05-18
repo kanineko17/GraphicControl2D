@@ -9,6 +9,7 @@ https://github.com/kanineko17/GraphicControl2D
 If you find any bugs or have feature requests, please feel free to contact me here! 「info@kanineko.com」
 
 ## What's New Version
+- (v4.5.0) Improved drawing performance. As a result of this optimization, the mouse position and zoom level indicators have been removed from the screen.
 -  (v4.1.0) Significantly fixed issues where formula graph generation would fail.
 -  (v4.0.0) Added Snap Mode.
 -  (v3.3.8) Add visibility control for each shape Object (introduce an IsVisible property).
