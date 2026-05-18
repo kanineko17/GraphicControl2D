@@ -99,7 +99,7 @@ namespace graphicbox2d
         /// <summary>
         /// 数式計算中文字列
         /// </summary>
-        private const string CALUCULATING_TEXT = "Info : Calculating formula....";
+        internal const string CALUCULATING_TEXT = "Info : Calculating formula....";
 
         /// <summary>
         /// コンストラクタ
@@ -670,39 +670,48 @@ namespace graphicbox2d
         {
             SKFont font = DrawManager.ConvertFontToSKFont(m_Parent.InfoTextFont);
             SKPaint paint = DrawManager.GetTextSkPaint(m_Parent.ForeColor);
+            SKPaint backPaint = new SKPaint
+            {
+                Color = SKColors.White,
+                Style = SKPaintStyle.Fill,
+                IsAntialias = true
+            };
+            SKPaint borderPaint = new SKPaint
+            {
+                Color = SKColors.Red,
+                Style = SKPaintStyle.Stroke,
+                StrokeWidth = 1f,
+                IsAntialias = true
+            };
 
             try
             {
                 PointF gridMousePoint = GetGridMousePoint();
+                string infoText = Graphic2DControl.BuildInfoText(gridMousePoint, Graphic2DControl.UserZoom, m_Parent.IsCaluculatingSusiki);
 
-                string mousePosText = string.Format("Mouse Position : X={0:0.0000}, Y={1:0.0000}", gridMousePoint.X, gridMousePoint.Y);
-                string scaleText = string.Format("Zoom : {0:0.00}%", Graphic2DControl.UserZoom * 100);
-
-                string otherText = "";
-
-                if (m_Parent.IsCaluculatingSusiki == true)
+                RectangleF drawArea = m_Parent.InfoTextDrawArea;
+                if (drawArea.Width <= 0 || drawArea.Height <= 0)
                 {
-                    otherText = CALUCULATING_TEXT;
+                    return;
                 }
 
-                PointF textPoint;
+                SKRect areaRect = new SKRect(drawArea.Left, drawArea.Top, drawArea.Right, drawArea.Bottom);
 
-                // マウス位置テキストの描画
-                textPoint = GetDrawInfoTextPosition(mousePosText, 1);
-                canvas.DrawText(mousePosText, textPoint.X, textPoint.Y, font, paint);
+                canvas.DrawRect(areaRect, backPaint);
+                canvas.DrawRect(areaRect, borderPaint);
 
-                // スケーリングテキストの描画
-                textPoint = GetDrawInfoTextPosition(scaleText, 2);
-                canvas.DrawText(scaleText, textPoint.X, textPoint.Y, font, paint);
+                SKFontMetrics metrics = font.Metrics;
+                float textX = drawArea.Left + Graphic2DControl.INFO_TEXT_AREA_PADDING_X;
+                float textY = drawArea.Top + Graphic2DControl.INFO_TEXT_AREA_PADDING_Y - metrics.Ascent;
 
-                // その他テキストの描画
-                textPoint = GetDrawInfoTextPosition(otherText, 3);
-                canvas.DrawText(otherText, textPoint.X, textPoint.Y, font, paint);
+                canvas.DrawText(infoText, textX, textY, font, paint);
             }
             finally
             {
                 font.Dispose();
                 paint.Dispose();
+                backPaint.Dispose();
+                borderPaint.Dispose();
             }
         }
 
