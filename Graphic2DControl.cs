@@ -363,6 +363,10 @@ namespace graphicbox2d
         /// マウス判定距離（この距離以内なら「ヒット扱い」）（グリッド座標で指定）
         /// </summary>
         internal const float MOUSE_HIT_RANGE = 0.1f;
+        internal const int INFO_TEXT_AREA_MARGIN = 5;
+        internal const int INFO_TEXT_AREA_PADDING_X = 8;
+        internal const int INFO_TEXT_AREA_PADDING_Y = 4;
+        internal const string INFO_TEXT_SAMPLE = "Mouse Position : X=-00000.0000, Y=-00000.0000 | Zoom : 000.00% | CALUCULATING...";
 
         // ===============================================================================
         // プロパティ
@@ -404,6 +408,11 @@ namespace graphicbox2d
         /// オリジナルの画面中央クライアント座標（コントロールの幅・高さの中心点）
         /// </summary>
         internal Point OriginalClientCenterPoint = new Point(0, 0);
+
+        /// <summary>
+        /// 情報テキスト描画領域（クライアント座標）
+        /// </summary>
+        internal RectangleF InfoTextDrawArea = RectangleF.Empty;
 
         /// <summary>
         /// 全オブジェクトを取得する
@@ -517,6 +526,8 @@ namespace graphicbox2d
                 InitializaSKControl();
             }
 
+            UpdateInfoTextDrawArea();
+
         }
 
         /// <summary>
@@ -620,6 +631,7 @@ namespace graphicbox2d
             base.OnResize(e);
 
             UpdateOriginalClientCenterPoint();
+            UpdateInfoTextDrawArea();
 
             Invalidate();
         }
@@ -2153,6 +2165,7 @@ namespace graphicbox2d
             }
 
             this.sKBackGroundBitmap = this.BackgroundImage.ToSKBitmap();
+            UpdateInfoTextDrawArea();
         }
 
         /// <summary>
@@ -2388,6 +2401,26 @@ namespace graphicbox2d
             base.OnResize(e);
 
             UpdateOriginalClientCenterPoint();
+            UpdateInfoTextDrawArea();
+        }
+
+        /// <summary>
+        /// 情報テキスト描画領域を再計算する
+        /// </summary>
+        private void UpdateInfoTextDrawArea()
+        {
+            SizeF textSize = CalText.GetTextSize(INFO_TEXT_SAMPLE, InfoTextFont, eCalculateType.Client);
+
+            float areaWidth = textSize.Width + INFO_TEXT_AREA_PADDING_X * 2;
+            float areaHeight = Math.Max(textSize.Height, InfoTextFont.Height) + INFO_TEXT_AREA_PADDING_Y * 2;
+
+            float width = Math.Min(areaWidth, ClientSize.Width);
+            float height = Math.Min(areaHeight, ClientSize.Height);
+
+            float x = Math.Max(0, ClientSize.Width - width - INFO_TEXT_AREA_MARGIN);
+            float y = Math.Max(0, ClientSize.Height - height - INFO_TEXT_AREA_MARGIN);
+
+            InfoTextDrawArea = new RectangleF(x, y, width, height);
         }
 
         /// <summary>
