@@ -363,9 +363,6 @@ namespace graphicbox2d
         /// マウス判定距離（この距離以内なら「ヒット扱い」）（グリッド座標で指定）
         /// </summary>
         internal const float MOUSE_HIT_RANGE = 0.1f;
-        internal const int INFO_TEXT_AREA_MARGIN = 5;
-        internal const int INFO_TEXT_AREA_PADDING_X = 8;
-        internal const int INFO_TEXT_AREA_PADDING_Y = 4;
 
         // ===============================================================================
         // プロパティ
@@ -407,11 +404,6 @@ namespace graphicbox2d
         /// オリジナルの画面中央クライアント座標（コントロールの幅・高さの中心点）
         /// </summary>
         internal Point OriginalClientCenterPoint = new Point(0, 0);
-
-        /// <summary>
-        /// 情報テキスト描画領域（クライアント座標）
-        /// </summary>
-        internal RectangleF InfoTextDrawArea = RectangleF.Empty;
 
         /// <summary>
         /// 全オブジェクトを取得する
@@ -525,8 +517,6 @@ namespace graphicbox2d
                 InitializaSKControl();
             }
 
-            UpdateInfoTextDrawArea();
-
         }
 
         /// <summary>
@@ -630,7 +620,6 @@ namespace graphicbox2d
             base.OnResize(e);
 
             UpdateOriginalClientCenterPoint();
-            UpdateInfoTextDrawArea();
 
             Invalidate();
         }
@@ -2164,7 +2153,6 @@ namespace graphicbox2d
             }
 
             this.sKBackGroundBitmap = this.BackgroundImage.ToSKBitmap();
-            UpdateInfoTextDrawArea();
         }
 
         /// <summary>
@@ -2400,48 +2388,6 @@ namespace graphicbox2d
             base.OnResize(e);
 
             UpdateOriginalClientCenterPoint();
-            UpdateInfoTextDrawArea();
-        }
-
-        /// <summary>
-        /// 情報テキスト描画領域を再計算する
-        /// </summary>
-        private void UpdateInfoTextDrawArea()
-        {
-            string sampleText = BuildInfoText(
-                new PointF(-99999.9999f, -99999.9999f),
-                9.9999f,
-                true);
-
-            SizeF textSize = CalText.GetTextSize(sampleText, InfoTextFont, eCalculateType.Client);
-
-            float areaWidth = textSize.Width + INFO_TEXT_AREA_PADDING_X * 2;
-            float areaHeight = InfoTextFont.Height + INFO_TEXT_AREA_PADDING_Y * 2;
-
-            float width = Math.Min(areaWidth, ClientSize.Width);
-            float height = Math.Min(areaHeight, ClientSize.Height);
-
-            float x = Math.Max(0, ClientSize.Width - width - INFO_TEXT_AREA_MARGIN);
-            float y = Math.Max(0, ClientSize.Height - height - INFO_TEXT_AREA_MARGIN);
-
-            InfoTextDrawArea = new RectangleF(x, y, width, height);
-        }
-
-        /// <summary>
-        /// 情報テキストを組み立てる
-        /// </summary>
-        internal static string BuildInfoText(PointF gridMousePoint, float zoom, bool isCaluculatingSusiki)
-        {
-            string mousePosText = string.Format("Mouse Position : X={0:0.0000}, Y={1:0.0000}", gridMousePoint.X, gridMousePoint.Y);
-            string scaleText = string.Format("Zoom : {0:0.00}%", zoom * 100);
-            string infoText = $"{mousePosText} | {scaleText}";
-
-            if (isCaluculatingSusiki == true)
-            {
-                infoText += $" | {GraphicDrawEngine.CALUCULATING_TEXT}";
-            }
-
-            return infoText;
         }
 
         /// <summary>
