@@ -486,8 +486,8 @@ namespace graphicbox2d
                 DisplayTextHeight = size.Height;
             }
 
-            float DisplayTextOffsetX = m_Graphic2DControl.TextOffsetX * Graphic2DControl.UserZoom;
-            float DisplayTextOffsetY = m_Graphic2DControl.TextOffsetY * Graphic2DControl.UserZoom;
+            float DisplayTextOffsetX = m_Graphic2DControl.TextOffsetX * Graphic2DControl._UserZoom;
+            float DisplayTextOffsetY = m_Graphic2DControl.TextOffsetY * Graphic2DControl._UserZoom;
 
             switch (m_Graphic2DControl.TextPosition)
             {
@@ -528,7 +528,7 @@ namespace graphicbox2d
                 _GridSKFont.Dispose();
             }
 
-            _GridSKFont = DrawManager.GetSKFont(OriginalFont.SystemFontName, OriginalFont.Size * 1.33f * Graphic2DControl.UserZoom, OriginalFont.Style.ToSKFontStyle());
+            _GridSKFont = DrawManager.GetSKFont(OriginalFont.SystemFontName, OriginalFont.Size * 1.33f * Graphic2DControl._UserZoom, OriginalFont.Style.ToSKFontStyle());
 
             return _GridSKFont;
         }

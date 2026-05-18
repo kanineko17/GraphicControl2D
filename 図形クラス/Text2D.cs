@@ -92,7 +92,7 @@ namespace graphicbox2d
         /// <summary>
         /// 描画時に使用するフォントサイズ
         /// </summary>
-        internal float DrawFontSize => FontSize * Graphic2DControl.UserZoom;
+        internal float DrawFontSize => FontSize * Graphic2DControl._UserZoom;
 
         // ===============================================================================
         // 公開メソッド

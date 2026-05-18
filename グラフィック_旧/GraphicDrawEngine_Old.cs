@@ -536,11 +536,6 @@ namespace graphicbox2d
             Font font = m_Parent.InfoTextFont;
             Brush brush = DrawManager_Old.GetSolidBrush(m_Parent.ForeColor);
 
-            PointF gridMousePoint = GetGridMousePoint();
-
-            string mousePosText = string.Format("Mouse Position : X={0:0.0000}, Y={1:0.0000}", gridMousePoint.X, gridMousePoint.Y);
-            string scaleText    = string.Format("Zoom : {0:0.00}%", Graphic2DControl.UserZoom * 100);
-
             string otherText = "";
 
             if (m_Parent.IsCaluculatingSusiki == true)
@@ -550,16 +545,8 @@ namespace graphicbox2d
 
             PointF textPoint;
 
-            // マウス位置テキストの描画
-            textPoint = GetDrawInfoTextPosition(g, mousePosText, 1);
-            g.DrawString(mousePosText, font, brush, textPoint.X, textPoint.Y);
-
-            // スケーリングテキストの描画
-            textPoint = GetDrawInfoTextPosition(g, scaleText, 2);
-            g.DrawString(scaleText, font, brush, textPoint.X, textPoint.Y);
-
             // その他テキストの描画
-            textPoint = GetDrawInfoTextPosition(g, otherText, 3);
+            textPoint = GetDrawInfoTextPosition(g, otherText, 1);
             g.DrawString(otherText, font, brush, textPoint.X, textPoint.Y);
 
         }

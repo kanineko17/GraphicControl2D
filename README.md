@@ -197,6 +197,14 @@ this.graphic2dControl1.Invalidate();
 
 ![GraphicBox2D Demo](https://raw.githubusercontent.com/kanineko17/GraphicControl2D/main/README_PNG/README7.png)
 
+###  UserZoom And GridMousePosition Properties
+If you want to know the current zoom level and the mouse position in the grid coordinate system, you can retrieve them using these properties.
+​```csharp
+// zoom (1.0 = 100%)
+float zoom = this.graphic2dControl1.UserZoom;
+// Mouse position of the grid
+PointF mouseGridPos = this.graphic2dControl1.GridMousePosition;
+​```
 
 
 ### How to Create a Math Graph

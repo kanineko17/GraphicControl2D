@@ -673,11 +673,6 @@ namespace graphicbox2d
 
             try
             {
-                PointF gridMousePoint = GetGridMousePoint();
-
-                string mousePosText = string.Format("Mouse Position : X={0:0.0000}, Y={1:0.0000}", gridMousePoint.X, gridMousePoint.Y);
-                string scaleText = string.Format("Zoom : {0:0.00}%", Graphic2DControl.UserZoom * 100);
-
                 string otherText = "";
 
                 if (m_Parent.IsCaluculatingSusiki == true)
@@ -685,18 +680,15 @@ namespace graphicbox2d
                     otherText = CALUCULATING_TEXT;
                 }
 
+                if(string.IsNullOrEmpty(otherText))
+                {
+                    return;
+                }
+
                 PointF textPoint;
 
-                // マウス位置テキストの描画
-                textPoint = GetDrawInfoTextPosition(mousePosText, 1);
-                canvas.DrawText(mousePosText, textPoint.X, textPoint.Y, font, paint);
-
-                // スケーリングテキストの描画
-                textPoint = GetDrawInfoTextPosition(scaleText, 2);
-                canvas.DrawText(scaleText, textPoint.X, textPoint.Y, font, paint);
-
                 // その他テキストの描画
-                textPoint = GetDrawInfoTextPosition(otherText, 3);
+                textPoint = GetDrawInfoTextPosition(otherText, 1);
                 canvas.DrawText(otherText, textPoint.X, textPoint.Y, font, paint);
             }
             finally
@@ -727,20 +719,6 @@ namespace graphicbox2d
             TextPt.Y = m_Parent.ClientSize.Height - OutRecordNo * m_Parent.InfoTextFont.Height;
 
             return TextPt;
-        }
-
-        /// <summary>
-        /// グリッドのマウス位置を取得する
-        /// </summary>
-        /// <returns></returns>
-        private PointF GetGridMousePoint()
-        {
-            // クライアント座標のマウス位置を取得
-            Point ClientMousePoint = m_Parent.PointToClient(Cursor.Position);
-            // グリッド座標に変換
-            PointF GridMousePoint = CalConvert.ConvertClientPointToDisplayGridPoint(ClientMousePoint);
-
-            return GridMousePoint;
         }
 
         /// <summary>

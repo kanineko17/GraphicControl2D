@@ -63,7 +63,21 @@ namespace graphicbox2d
         /// </summary>
         [Browsable(false)]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public static float UserZoom { get; set; } = 1.0f;
+        public float UserZoom { get { return _UserZoom; } set { _UserZoom = value; } }
+
+        /// <summary>
+        /// ユーザー操作によって変更された画面拡大率
+        /// </summary>
+        [Browsable(false)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        internal static float _UserZoom { get; set; } = 1.0f;
+
+        /// <summary>
+        /// マウスの位置（グリッド座標系）
+        /// </summary>
+        [Browsable(false)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public PointF GridMousePosition => GetGridMousePoint();
 
         /// <summary>
         /// ユーザー操作によって、中心座標を移動した量（クライアント座標系）
@@ -254,7 +268,7 @@ namespace graphicbox2d
         /// </summary>
         public void Redraw()
         {
-            this.skControl.Invalidate();
+            this.skControl.Invalidate2();
         }
 
         /// <summary>
@@ -267,7 +281,7 @@ namespace graphicbox2d
                 return;
             }
 
-            this.skControl.Invalidate();
+            this.skControl.Invalidate2();
         }
 
         // ==========================================
@@ -384,7 +398,7 @@ namespace graphicbox2d
         {
             get
             {
-                int width = (int)(GridWidth * UserZoom);
+                int width = (int)(GridWidth * _UserZoom);
 
                 if (width == 0)
                 {
@@ -808,10 +822,8 @@ namespace graphicbox2d
         {
             IsCaluculatingSusiki = false;
 
-            Graph2D_DrawFigure drawFigure = e.Object.GetDrawFigure(eDrawFigureType.Normal) as Graph2D_DrawFigure;
-
             // 再描画
-            this.skControl.Invalidate(drawFigure.InvalidateRect);
+            this.skControl.Invalidate2();
         }
 
         /// <summary>
@@ -922,7 +934,7 @@ namespace graphicbox2d
                 HitClientObject.IsSelect = !HitClientObject.IsSelect;
 
                 // 再描画
-                this.skControl.Invalidate(HitClientObject.GetInvalidateRect());
+                this.skControl.Invalidate2(HitClientObject.GetInvalidateRect());
             }
         }
 
@@ -978,7 +990,7 @@ namespace graphicbox2d
             //[Full更新]
             if (invalidateType == eInvalidateType.Full)
             {
-                this.skControl.Invalidate();
+                this.skControl.Invalidate2();
             }
             //[矩形更新]
             else if (invalidateType == eInvalidateType.Rect)
@@ -998,7 +1010,7 @@ namespace graphicbox2d
                 Rectangle invalidateRect = default;
                 invalidateRect = CalBoundBox.GetUnionRect(invalidateRects);
 
-                this.skControl.Invalidate(invalidateRect);
+                this.skControl.Invalidate2(invalidateRect);
             }
         }
 
@@ -1052,7 +1064,7 @@ namespace graphicbox2d
                         SnapDataPack.CurrentStep = eMode_Snap.Step3;
 
                         invalidateType = eInvalidateType.Rect;
-                        invalidateRect = HitClientObject.GetInvalidateRect();
+                        invalidateRect = SnapDataPack.Step3.SnappingObject.GetInvalidateRect();
                     }
 
                     break;
@@ -1078,7 +1090,7 @@ namespace graphicbox2d
 
             if(invalidateType == eInvalidateType.Rect)
             {
-                this.skControl.Invalidate(invalidateRect);
+                this.skControl.Invalidate2(invalidateRect);
             }
         }
 
@@ -1166,12 +1178,12 @@ namespace graphicbox2d
             //[Full更新]
             if (invalidateType == eInvalidateType.Full)
             {
-                this.skControl.Invalidate();
+                this.skControl.Invalidate2();
             }
             //[矩形更新]
             else if (invalidateType == eInvalidateType.Rect)
             {
-                this.skControl.Invalidate(invalidateRect);
+                this.skControl.Invalidate2(invalidateRect);
             }
         }
 
@@ -1225,9 +1237,7 @@ namespace graphicbox2d
         {
             Layers.Sort();
 
-            SKCanvas canvas = e.Surface.Canvas;
-
-            Rectangle invalidateRect = canvas.GetRectangleBounds();
+            Rectangle invalidateRect = this.skControl.GetInvalidateRect();
 
             foreach (Layer2D layer in Layers)
             {
@@ -1934,6 +1944,20 @@ namespace graphicbox2d
             return new Rectangle((int)left, (int)top, (int)(right - left), (int)(bottom - top));
         }
 
+        /// <summary>
+        /// グリッドのマウス位置を取得する
+        /// </summary>
+        /// <returns></returns>
+        public PointF GetGridMousePoint()
+        {
+            // クライアント座標のマウス位置を取得
+            Point ClientMousePoint = Global.Graphic2DControl.PointToClient(Cursor.Position);
+            // グリッド座標に変換
+            PointF GridMousePoint = CalConvert.ConvertClientPointToDisplayGridPoint(ClientMousePoint);
+
+            return GridMousePoint;
+        }
+
         // ==========================================
         //　 ＊ウィンドウプロシージャオーバーライド＊
         // ==========================================
@@ -2172,7 +2196,7 @@ namespace graphicbox2d
             // マウスヒットオブジェクトをクリア
             HitClientObject = null;
 
-            this.skControl.Invalidate();
+            this.skControl.Invalidate2();
         }
 
         /// <summary>
@@ -2367,10 +2391,10 @@ namespace graphicbox2d
             }
 
             // ユーザーズームを更新
-            UserZoom *= Zoom;
+            _UserZoom *= Zoom;
 
             // 再描画
-            this.skControl.Invalidate();
+            this.skControl.Invalidate2();
         }
 
         /// <summary>
@@ -2459,7 +2483,7 @@ namespace graphicbox2d
                     break;
             }
 
-            this.skControl.Invalidate();
+            this.skControl.Invalidate2();
         }
     }
 }

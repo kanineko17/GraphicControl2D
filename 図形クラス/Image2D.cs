@@ -146,7 +146,7 @@ namespace graphicbox2d
         /// <summary>
         /// ユーザーズーム
         /// </summary>
-        internal float CashUserZoom = Graphic2DControl.UserZoom;
+        internal float CashUserZoom = Graphic2DControl._UserZoom;
 
         /// <summary>
         /// 図形の中心点
@@ -410,7 +410,7 @@ namespace graphicbox2d
                 return;
             }
 
-            _Bitmap = SKBitmapUtil.MakeResizeBitMap(_OriginalBitmap, ClientWidth, ClientHeight, Graphic2DControl.UserZoom * _Scale);
+            _Bitmap = SKBitmapUtil.MakeResizeBitMap(_OriginalBitmap, ClientWidth, ClientHeight, Graphic2DControl._UserZoom * _Scale);
             _HitBitmap = SKBitmapUtil.MakeScaleBitMap(_Bitmap, MouseHitBitmapOffset);
         }
 
@@ -426,10 +426,10 @@ namespace graphicbox2d
                 return null;
             }
 
-            if (Graphic2DControl.UserZoom != CashUserZoom)
+            if (Graphic2DControl._UserZoom != CashUserZoom)
             {
                 // ユーザーズームが変わっている場合はビットマップを更新してから返す
-                CashUserZoom = Graphic2DControl.UserZoom;
+                CashUserZoom = Graphic2DControl._UserZoom;
 
                 UpdateDrawBitmap();
             }

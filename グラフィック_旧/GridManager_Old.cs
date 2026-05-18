@@ -495,7 +495,7 @@ namespace graphicbox2d
         private Font GetGridFont()
         {
             Font OriginalFont = m_Graphic2DControl.Font;
-            Font font = m_FontManager.GetFont(OriginalFont.SystemFontName, OriginalFont.Size * Graphic2DControl.UserZoom, OriginalFont.Style);
+            Font font = m_FontManager.GetFont(OriginalFont.SystemFontName, OriginalFont.Size * Graphic2DControl._UserZoom, OriginalFont.Style);
             
             return font;
         }
