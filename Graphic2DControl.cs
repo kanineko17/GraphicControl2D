@@ -366,7 +366,6 @@ namespace graphicbox2d
         internal const int INFO_TEXT_AREA_MARGIN = 5;
         internal const int INFO_TEXT_AREA_PADDING_X = 8;
         internal const int INFO_TEXT_AREA_PADDING_Y = 4;
-        internal const string INFO_TEXT_SAMPLE = "Mouse Position : X=-00000.0000, Y=-00000.0000 | Zoom : 000.00% | CALUCULATING...";
 
         // ===============================================================================
         // プロパティ
@@ -2409,10 +2408,15 @@ namespace graphicbox2d
         /// </summary>
         private void UpdateInfoTextDrawArea()
         {
-            SizeF textSize = CalText.GetTextSize(INFO_TEXT_SAMPLE, InfoTextFont, eCalculateType.Client);
+            string sampleText = BuildInfoText(
+                new PointF(-99999.9999f, -99999.9999f),
+                9.9999f,
+                true);
+
+            SizeF textSize = CalText.GetTextSize(sampleText, InfoTextFont, eCalculateType.Client);
 
             float areaWidth = textSize.Width + INFO_TEXT_AREA_PADDING_X * 2;
-            float areaHeight = Math.Max(textSize.Height, InfoTextFont.Height) + INFO_TEXT_AREA_PADDING_Y * 2;
+            float areaHeight = InfoTextFont.Height + INFO_TEXT_AREA_PADDING_Y * 2;
 
             float width = Math.Min(areaWidth, ClientSize.Width);
             float height = Math.Min(areaHeight, ClientSize.Height);
@@ -2421,6 +2425,23 @@ namespace graphicbox2d
             float y = Math.Max(0, ClientSize.Height - height - INFO_TEXT_AREA_MARGIN);
 
             InfoTextDrawArea = new RectangleF(x, y, width, height);
+        }
+
+        /// <summary>
+        /// 情報テキストを組み立てる
+        /// </summary>
+        internal static string BuildInfoText(PointF gridMousePoint, float zoom, bool isCaluculatingSusiki)
+        {
+            string mousePosText = string.Format("Mouse Position : X={0:0.0000}, Y={1:0.0000}", gridMousePoint.X, gridMousePoint.Y);
+            string scaleText = string.Format("Zoom : {0:0.00}%", zoom * 100);
+            string infoText = $"{mousePosText} | {scaleText}";
+
+            if (isCaluculatingSusiki == true)
+            {
+                infoText += $" | {GraphicDrawEngine.CALUCULATING_TEXT}";
+            }
+
+            return infoText;
         }
 
         /// <summary>

@@ -99,7 +99,7 @@ namespace graphicbox2d
         /// <summary>
         /// 数式計算中文字列
         /// </summary>
-        private const string CALUCULATING_TEXT = "Info : Calculating formula....";
+        internal const string CALUCULATING_TEXT = "Info : Calculating formula....";
 
         /// <summary>
         /// コンストラクタ
@@ -687,15 +687,7 @@ namespace graphicbox2d
             try
             {
                 PointF gridMousePoint = GetGridMousePoint();
-
-                string mousePosText = string.Format("Mouse Position : X={0:0.0000}, Y={1:0.0000}", gridMousePoint.X, gridMousePoint.Y);
-                string scaleText = string.Format("Zoom : {0:0.00}%", Graphic2DControl.UserZoom * 100);
-                string infoText = $"{mousePosText} | {scaleText}";
-
-                if (m_Parent.IsCaluculatingSusiki == true)
-                {
-                    infoText += $" | {CALUCULATING_TEXT}";
-                }
+                string infoText = Graphic2DControl.BuildInfoText(gridMousePoint, Graphic2DControl.UserZoom, m_Parent.IsCaluculatingSusiki);
 
                 RectangleF drawArea = m_Parent.InfoTextDrawArea;
                 if (drawArea.Width <= 0 || drawArea.Height <= 0)
